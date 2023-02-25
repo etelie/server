@@ -1,0 +1,17 @@
+version: '3.8'
+
+volumes:
+  dev-postgres:
+
+services:
+  dev-postgres:
+    env_file: ../.env
+    build: ./dev/postgres/
+    ports:
+      - '5432:5432'
+    restart: always
+    container_name: postgres-dev
+    volumes:
+      - type: volume
+        source: dev-postgres
+        target: /var/lib/postgresql/data
