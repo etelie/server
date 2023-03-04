@@ -99,9 +99,12 @@ function aws_vault_with_profile() {
 }
 
 alias awsp='aws_vault_with_profile $1'
-alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 --delim=" ")'
-alias currentvaultkill='kill -9 $(currentvaultpid)'
-alias currentvault='echo "$(test -z $AWS_VAULT && echo "*" || echo $AWS_VAULT) $(currentvaultpid)"'
+alias avl='aws-vault login'
+alias ave='aws-vault exec'
+alias aves='aws-vault exec --server'
+# alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 -w)' # only works with MacOS version of `cut`
+# alias currentvaultkill='kill -9 $(currentvaultpid)'
+# alias currentvault='echo "$(test -z $AWS_VAULT && echo "*" || echo $AWS_VAULT) $(currentvaultpid)"'
 ```
 
 ##### Troubleshooting
