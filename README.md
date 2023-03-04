@@ -1,4 +1,4 @@
-# Etelie backend services
+# etelie backend services
 Data ingress, processing, and egress
 
 ### Development environment setup
