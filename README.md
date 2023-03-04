@@ -104,7 +104,8 @@ alias ave='aws-vault exec'
 alias aves='aws-vault exec --server'
 # alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 -w)' # only works with MacOS version of `cut`
 # alias currentvaultkill='kill -9 $(currentvaultpid)'
-# alias currentvault='echo "$(test -z $AWS_VAULT && echo "*" || echo $AWS_VAULT) $(currentvaultpid)"'
+alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec")'                # less-convenient alternative
+alias currentvault='echo "$(test -z $AWS_VAULT && echo "*" || echo $AWS_VAULT) $(currentvaultpid)"'
 ```
 
 ##### Troubleshooting
