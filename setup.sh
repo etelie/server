@@ -11,7 +11,8 @@ then
 fi
 
 # Run Docker compose
-docker-compose --project-name=etelie --file=./docker/docker-compose.yml --env-file=./.env \
+docker-compose \
+  --project-name=etelie --file=./docker/docker-compose.yml --env-file=./.env \
   up --detach --remove-orphans
 
 function error {

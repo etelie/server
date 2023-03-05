@@ -118,8 +118,16 @@ You may encounter the following error resulting from `sudo` not having access to
 
 To fix this, edit `/etc/sudoers`, and add the path to the `aws-vault` binary to the `secure_path` variable.
 
+#### 5. Install the Amazon Corretto JDK 17
+We use Amazon Corretto, Amazon's JDK distribution.
+
+To install on MacOS:
+
+    curl -o /tmp/corretto17.pkg -L https://corretto.aws/downloads/latest_checksum/amazon-corretto-17-aarch64-macos-jdk.pkg \
+        && open /tmp/corretto17.pkg
+
 #### 4. Run the setup script
-Choose a location for your etelie home directory
+Choose a location for your etelie home directory (`~/etelie` is recommended)
 
 The script will spin up the Docker container for your local PostgreSQL instance
 
