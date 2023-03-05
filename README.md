@@ -126,7 +126,7 @@ To install on MacOS:
     curl -o /tmp/corretto17.pkg -L https://corretto.aws/downloads/latest_checksum/amazon-corretto-17-aarch64-macos-jdk.pkg \
         && open /tmp/corretto17.pkg
 
-#### 4. Run the setup script
+#### 5. Run the setup script
 Choose a location for your etelie home directory (`~/etelie` is recommended)
 
 The script will spin up the Docker container for your local PostgreSQL instance
