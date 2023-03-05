@@ -1,4 +1,5 @@
-# etelie backend services
+# Etelie backend services
+
 Data ingress, processing, and egress
 
 ### Development environment setup
@@ -111,6 +112,7 @@ alias currentvault='echo "$(test -z $AWS_VAULT && echo "*" || echo $AWS_VAULT) $
 ##### Troubleshooting
 
 ###### `sudo` can't find aws-vault
+
 You may encounter the following error resulting from `sudo` not having access to `aws-vault` in the system `PATH`.
 
     sudo: aws-vault: command not found
@@ -118,33 +120,64 @@ You may encounter the following error resulting from `sudo` not having access to
 
 To fix this, edit `/etc/sudoers`, and add the path to the `aws-vault` binary to the `secure_path` variable.
 
-#### 5. Install the Amazon Corretto JDK 17
+#### 4. Install the Amazon Corretto JDK 17
+
 We use Amazon Corretto, Amazon's JDK distribution.
 
-To install on MacOS:
+###### MacOS ARM
 
-    curl -o /tmp/corretto17.pkg -L https://corretto.aws/downloads/latest_checksum/amazon-corretto-17-aarch64-macos-jdk.pkg \
+    curl -o /tmp/corretto17.pkg -L https://corretto.aws/downloads/latest/amazon-corretto-17-aarch64-macos-jdk.pkg \
         && open /tmp/corretto17.pkg
 
+###### MacOS x86
+
+    curl -o /tmp/corretto17.pkg -L https://corretto.aws/downloads/latest/amazon-corretto-17-x64-macos-jdk.pkg \
+        && open /tmp/corretto17.pkg
+
+You can find the downloads and installation instructions for other operating systems [here](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
+
+##### Set your Java home path
+
+Add to your shell configurations:
+
+    export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+
+##### Set your IntelliJ project Java SDK
+
+Because you might have multiple installations of Java on your machine, make sure IntelliJ knows to use the Corretto 17 distribution.
+
+`File` | `Project Structure` - You can edit the JDK for the overall project in the `Project` tab, and can edit the JDK per-module under `Modules`.
+
 #### 5. Run the setup script
+
 Choose a location for your etelie home directory (`~/etelie` is recommended)
 
 The script will spin up the Docker container for your local PostgreSQL instance
 
 ### Deployment process
+
 Coming soon
 
 ### Contribution guidelines
+
 Tests
+
 - Unit testing is an essential component of the software development lifecycle
+
 - Good code is maintainable code
+
 - Superfluous tests extend build times unnecessarily
 
 Code review
+
 - All contributions must pass code review
-- The role of the code reviewer is to ensure code quality does not diminish over time
+
+- The role of the code reviewer is to ensure code quality does not diminish over
+time
+
 - [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
 
 ### Contact
+
 zachary@etelie.com
 
