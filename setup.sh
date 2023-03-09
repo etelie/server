@@ -13,7 +13,7 @@ fi
 # Run Docker compose
 docker-compose \
   --project-name=etelie --file=./docker/docker-compose.yml --env-file=./.env \
-  up --detach --remove-orphans
+  up --detach --remove-orphans --build
 
 function error {
   message=$1
