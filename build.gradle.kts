@@ -1,64 +1,49 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+val ktor_version: String by project
+val kotlin_version: String by project
+val logback_version: String by project
+val postgres_version: String by project
+val h2_version: String by project
+val prometeus_version: String by project
 
 plugins {
-	id("org.springframework.boot") version "3.0.3"
-	id("io.spring.dependency-management") version "1.1.0"
-	kotlin("jvm") version "1.7.22"
-	kotlin("plugin.spring") version "1.7.22"
+    kotlin("jvm") version "1.8.10"
+    id("io.ktor.plugin") version "2.2.4"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
 group = "com.etelie"
-version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+version = "0.0.1"
+application {
+    mainClass.set("com.etelie.ApplicationKt")
 
-configurations {
-	compileOnly {
-		extendsFrom(configurations.annotationProcessor.get())
-	}
+    val isDevelopment: Boolean = project.ext.has("development")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
-
-extra["springCloudVersion"] = "2022.0.1"
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-quartz")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("org.springframework.cloud:spring-cloud-starter-config")
-
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
-
-	runtimeOnly("io.micrometer:micrometer-registry-new-relic")
-
-	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-	// mockito
-	// ktorm
-	// gson
-}
-
-dependencyManagement {
-	imports {
-		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-	}
-}
-
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		// Enables JSR 305 annotation processing (null-safety)
-		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "17"
-	}
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
+    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
+    implementation("org.postgresql:postgresql:$postgres_version")
+    implementation("com.h2database:h2:$h2_version")
+    implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktor_version")
+    implementation("io.micrometer:micrometer-registry-prometheus:$prometeus_version")
+    implementation("io.ktor:ktor-server-metrics-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-call-logging-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-call-id-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-http-redirect-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-hsts-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-default-headers-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-caching-headers-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-resources:$ktor_version")
+    implementation("io.ktor:ktor-server-auto-head-response-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:$logback_version")
+    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

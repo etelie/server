@@ -1,2 +1,1 @@
-rootProject.name = "server"
-
+rootProject.name = "com.etelie.server"
