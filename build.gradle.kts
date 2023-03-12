@@ -1,3 +1,7 @@
+val org_id: String by project
+val module_id: String by project
+val repository_host: String by project
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -9,6 +13,7 @@ plugins {
     kotlin("jvm") version "1.8.10"
     id("io.ktor.plugin") version "2.2.4"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+    id("com.palantir.docker") version "0.34.0"
 }
 
 group = "com.etelie"
@@ -46,4 +51,12 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+docker {
+    name = "${repository_host}/${org_id}/${module_id}:${project.version}"
+    setDockerfile(File("./docker/deploy/Dockerfile"))
+    files(fileTree("./build/libs/"))
+
+    logger.info("*** Docker push: [$push]")
 }

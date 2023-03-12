@@ -5,8 +5,8 @@ volumes:
 
 services:
   dev-postgres:
-    env_file: ../.env
-    build: ./dev/postgres/
+    env_file: ../../.env
+    build: ./postgres/
     ports:
       - '5432:5432'
     restart: always
