@@ -57,14 +57,20 @@ dependencies {
 }
 
 docker {
+    project.version.toString().isEmpty().ifTrue {
+        throw Exception("Project version not found")
+    }
+
     val repository: String = "${repository_host}/${org_id}/${module_id}"
     val tag: String = project.version.toString()
 
     name = "${repository}:${tag}"
     setDockerfile(File("./docker/deploy/Dockerfile"))
     files(fileTree("./build/libs/"))
-
-    project.version.toString().isEmpty().ifTrue {
-        throw Exception("Project version not found")
-    }
+    buildArgs(
+        mapOf(
+            "PROJECT_VERSION" to project.version.toString()
+        )
+    )
+    noCache(true)
 }

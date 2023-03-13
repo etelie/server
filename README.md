@@ -16,8 +16,13 @@ The AWS CLI and AWS Vault allow us to connect to AWS from local consoles as well
 
     brew install awscli aws-vault
 
+#### 3. Install Docker and Docker Compose
 
-#### 3. Configure AWS Vault
+Docker is used to package the application into self-contained images which are deployed to AWS.
+
+    sudo apt install docker docker-compose
+
+#### 4. Configure AWS Vault
 
 AWS Vault is a conveinent utility which simplifies the use of multiple AWS account roles.
 
@@ -122,7 +127,7 @@ To fix this, edit `/etc/sudoers`, and add the path to the `aws-vault` binary to 
 
 Linux machines will not have access to the MacOS `osascript` utility, and the default `terminal` prompt option will not work with `aws-vault exec --server`, so you will need to install the `zenity` package and set use `--prompt=zenity` or set `AWS_VAULT_PROMPT=zenity` in your shell configuration.
 
-#### 4. Set up Docker with AWS ECR
+#### 5. Set up Docker with AWS ECR
 
 Log in to Docker using AWS ECR credentials. Use a profile with `PowerUserAccess`.
 
@@ -130,7 +135,7 @@ Log in to Docker using AWS ECR credentials. Use a profile with `PowerUserAccess`
         aws ecr get-login-password | \ 
         docker login --username=AWS --password-stdin 016089980303.dkr.ecr.us-east-1.amazonaws.com
 
-#### 5. Install the Amazon Corretto JDK 17
+#### 6. Install the Amazon Corretto JDK 17
 
 We use Amazon Corretto, Amazon's JDK distribution.
 
@@ -158,7 +163,7 @@ Because you might have multiple installations of Java on your machine, make sure
 
 `File` | `Project Structure` - You can edit the JDK for the overall project in the `Project` tab, and can edit the JDK per-module under `Modules`.
 
-#### 6. Run the setup script
+#### 7. Run the setup script
 
 Choose a location for your etelie home directory (`~/etelie` is recommended)
 
