@@ -30,7 +30,7 @@ Check that aws-vault was installed properly by querying the version
 By default, aws-vault will store your credentials in a brand new keychain vault. One side effect of this is that it will prompt you for your vault password fairly frequently. There are a couple of environment variables you can set to make it a smoother process.
 
     export AWS_VAULT_KEYCHAIN_NAME=login  # fewer keychain password prompts
-    export AWS_VAULT_PROMPT=osascript     # nice dialog prompt for entering mfa auth token
+    export AWS_VAULT_PROMPT=osascript     # nice dialog prompt for entering mfa auth token (use zenity on Linux)
 
 ##### Configuring credentials
 
@@ -42,10 +42,7 @@ Initialize your `~/.aws/config` file with the following. (`ETELIE_USERNAME` is y
 [default]
 region = us-east-1
 output = json
-cli_pager = json
-sso_start_url = https://d-9a6701454a.awsapps.com/start/
-sso_region = us-east-2
-sso_account_id = 016089980303
+cli_pager = less
 
 [sso-session ETELIE_USERNAME]
 sso_start_url = https://d-9a6701454a.awsapps.com/start/
@@ -80,7 +77,8 @@ To test you can use the AWS CLI with a specific profile:
 
 You can also use the traditional method built-in to the AWS CLI
 
-    aws s3 ls --profile PROFILE_NAME
+    aws sso login --profile=PROFILE_NAME
+    aws s3 ls --profile=PROFILE_NAME
 
 Run a credential server with AWS vault to allow local services using the AWS SDK to use your role permissions as would an EC2 instance.
 
@@ -103,15 +101,15 @@ alias awsp='aws_vault_with_profile $1'
 alias avl='aws-vault login'
 alias ave='aws-vault exec'
 alias aves='aws-vault exec --server'
-# alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 -w)' # only works with MacOS version of `cut`
-# alias currentvaultkill='kill -9 $(currentvaultpid)'
-alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec")'                # less-convenient alternative
+alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 -w)' # only works with MacOS version of `cut`
+alias currentvaultkill='kill -9 $(currentvaultpid)'
+# alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec")'            # less-desirable alternative
 alias currentvault='echo "$(test -z $AWS_VAULT && echo "*" || echo $AWS_VAULT) $(currentvaultpid)"'
 ```
 
 ##### Troubleshooting
 
-###### `sudo` can't find aws-vault
+- ###### `sudo` can't find aws-vault
 
 You may encounter the following error resulting from `sudo` not having access to `aws-vault` in the system `PATH`.
 
@@ -120,16 +118,28 @@ You may encounter the following error resulting from `sudo` not having access to
 
 To fix this, edit `/etc/sudoers`, and add the path to the `aws-vault` binary to the `secure_path` variable.
 
-#### 4. Install the Amazon Corretto JDK 17
+- ###### `osascript` not available
+
+Linux machines will not have access to the MacOS `osascript` utility, and the default `terminal` prompt option will not work with `aws-vault exec --server`, so you will need to install the `zenity` package and set use `--prompt=zenity` or set `AWS_VAULT_PROMPT=zenity` in your shell configuration.
+
+#### 4. Set up Docker with AWS ECR
+
+Log in to Docker using AWS ECR credentials. Use a profile with `PowerUserAccess`.
+
+    aws-vault exec --server PROFILE_NAME -- \
+        aws ecr get-login-password | \ 
+        docker login --username=AWS --password-stdin 016089980303.dkr.ecr.us-east-1.amazonaws.com
+
+#### 5. Install the Amazon Corretto JDK 17
 
 We use Amazon Corretto, Amazon's JDK distribution.
 
-###### MacOS ARM
+###### MacOS AArch64
 
     curl -o /tmp/corretto17.pkg -L https://corretto.aws/downloads/latest/amazon-corretto-17-aarch64-macos-jdk.pkg \
         && open /tmp/corretto17.pkg
 
-###### MacOS x86
+###### MacOS x86-64
 
     curl -o /tmp/corretto17.pkg -L https://corretto.aws/downloads/latest/amazon-corretto-17-x64-macos-jdk.pkg \
         && open /tmp/corretto17.pkg
@@ -148,7 +158,7 @@ Because you might have multiple installations of Java on your machine, make sure
 
 `File` | `Project Structure` - You can edit the JDK for the overall project in the `Project` tab, and can edit the JDK per-module under `Modules`.
 
-#### 5. Run the setup script
+#### 6. Run the setup script
 
 Choose a location for your etelie home directory (`~/etelie` is recommended)
 
@@ -175,7 +185,7 @@ Code review
 - The role of the code reviewer is to ensure code quality does not diminish over
 time
 
-- [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
+- Read: [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
 
 ### Contact
 
