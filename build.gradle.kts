@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 val org_id: String by project
 val module_id: String by project
 val repository_host: String by project
-val build_number: String = System.getenv("BUILD_NUMBER") ?: ""
+val build_number: String = System.getenv("BUILD_NUMBER").orEmpty().ifEmpty { "dev" }
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.etelie"
-version = "0.0.1"
+version = "0.0.1-${build_number}"
 application {
     mainClass.set("com.etelie.ApplicationKt")
 
@@ -57,7 +57,10 @@ dependencies {
 }
 
 docker {
-    name = "${repository_host}/${org_id}/${module_id}:${project.version}.${build_number}"
+    val repository: String = "${repository_host}/${org_id}/${module_id}"
+    val tag: String = project.version.toString()
+
+    name = "${repository}:${tag}"
     setDockerfile(File("./docker/deploy/Dockerfile"))
     files(fileTree("./build/libs/"))
 
