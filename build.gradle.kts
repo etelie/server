@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+
 val org_id: String by project
 val module_id: String by project
 val repository_host: String by project
+val build_number: String = System.getenv("BUILD_NUMBER") ?: ""
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -54,9 +57,11 @@ dependencies {
 }
 
 docker {
-    name = "${repository_host}/${org_id}/${module_id}:${project.version}"
+    name = "${repository_host}/${org_id}/${module_id}:${project.version}.${build_number}"
     setDockerfile(File("./docker/deploy/Dockerfile"))
     files(fileTree("./build/libs/"))
 
-    logger.info("*** Docker push: [$push]")
+    project.version.toString().isEmpty().ifTrue {
+        throw Exception("Project version not found")
+    }
 }
