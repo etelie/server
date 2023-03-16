@@ -4,11 +4,16 @@ Data ingress, processing, and egress
 
 ### Development environment setup
 
+#### 0. Clone this repository
+
+    git clone git@github.com:etelie/server.git
+
 #### 1. Install Homebrew and add it to your PATH
 
 Homebrew will be used to install necessary utilitites.
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    export PATH="$PATH:/opt/homebrew/bin/"
 
 #### 2. Install AWS CLI tools
 
@@ -16,15 +21,21 @@ The AWS CLI and AWS Vault allow us to connect to AWS from local consoles as well
 
     brew install awscli aws-vault
 
+On macOS, you may need to also install the XCode developer tools
+
+    xcode-select --install
+
 #### 3. Install Docker and Docker Compose
 
 Docker is used to package the application into self-contained images which are deployed to AWS.
 
     sudo apt install docker docker-compose
 
+On macOS, you will also want to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to easily get the Docker daemon running on your system.
+
 #### 4. Configure AWS Vault
 
-AWS Vault is a conveinent utility which simplifies the use of multiple AWS account roles.
+AWS Vault is a convenient utility which simplifies the use of multiple AWS account roles.
 
 ##### Environment setup
 
@@ -65,6 +76,7 @@ For each permission set, add a profile to your `~/.aws/config` using the followi
 ```properties
 [profile PROFILE_NAME]
 sso_role_name = ROLE_NAME
+sso_account_id = 016089980303
 sso_session = ETELIE_USERNAME
 ```
 
@@ -87,7 +99,7 @@ You can also use the traditional method built-in to the AWS CLI
 
 Run a credential server with AWS vault to allow local services using the AWS SDK to use your role permissions as would an EC2 instance.
 
-    aws-vault exec PROFILE_NAME --server
+    aws-vault exec PROFILE_NAME --ec2-server
     echo $AWS_VAULT  # environment variable set to your PROFILE_NAME
     ps               # aws-vault forks a separate process to run the server
     exit
@@ -105,10 +117,10 @@ function aws_vault_with_profile() {
 alias awsp='aws_vault_with_profile $1'
 alias avl='aws-vault login'
 alias ave='aws-vault exec'
-alias aves='aws-vault exec --server'
+alias aves='aws-vault exec --ec2-server'
 alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 -w)' # only works with MacOS version of `cut`
 alias currentvaultkill='kill -9 $(currentvaultpid)'
-# alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec")'            # less-desirable alternative
+# alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec")'            # less-desirable alternative for linux
 alias currentvault='echo "$(test -z $AWS_VAULT && echo "*" || echo $AWS_VAULT) $(currentvaultpid)"'
 ```
 
@@ -131,7 +143,7 @@ Linux machines will not have access to the MacOS `osascript` utility, and the de
 
 Log in to Docker using AWS ECR credentials. Use a profile with `PowerUserAccess`.
 
-    aws-vault exec --server PROFILE_NAME -- \
+    aws-vault exec --ec2-server PROFILE_NAME -- \
         aws ecr get-login-password | \ 
         docker login --username=AWS --password-stdin 016089980303.dkr.ecr.us-east-1.amazonaws.com
 
