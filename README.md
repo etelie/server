@@ -50,52 +50,25 @@ By default, aws-vault will store your credentials in a brand new keychain vault.
 
 ##### Configuring credentials
 
-If you have not already been given AWS access keys, send an email to devops@etelie.com to request access.
+Add your IAM user access credentials to the AWS Vault keyring. If you have not already been given AWS access keys, email devops@etelie.com to request access. (`ETELIE_USERNAME` should be the same as your email address before the '@' character)
 
-Initialize your `~/.aws/config` file with the following. (`ETELIE_USERNAME` is your email address before the '@' symbol)
+    aws-vault add ETELIE_USERNAME
 
-```properties
-[default]
-region = us-east-1
-output = json
-cli_pager = less
+Initialize your `~/.aws/config` file by invoking the provided script with your Etelie username as the single argument.
 
-[sso-session ETELIE_USERNAME]
-sso_start_url = https://d-9a6701454a.awsapps.com/start/
-sso_region = us-east-2
-sso_registration_scopes = sso:account:access
-sso_account_id = 016089980303
-```
-
-Note: `region` and `sso_region` are different. Login will fail if `sso_region` is set incorrectly.
-
-Log in to the [AWS Identity Center](https://d-9a6701454a.awsapps.com/start/) with your provided AWS username and password. The Identity Center user interface allows you to view each of the permission sets assigned to your user.  and choose one of them with which to interact with the AWS console. 
-
-For each permission set, add a profile to your `~/.aws/config` using the following template: (`ROLE_NAME` is the name of the permission set (e.g. `ReadOnlyAccess`), `PROFILE_NAME` may be whatever is conveinent for you)
-
-```properties
-[profile PROFILE_NAME]
-sso_role_name = ROLE_NAME
-sso_account_id = 016089980303
-sso_session = ETELIE_USERNAME
-```
-
-You should now be able to log in to the AWS console with each of your allowed roles using AWS Vault:
-
-    aws-vault login PROFILE_NAME
+    ./scripts/aws_config_init.sh ETELIE_USERNAME
 
 Note: You should not have an `~/.aws/credentials` file.
 
 ##### Usage
 
+You should now be able to log in to the AWS console with each of your allowed roles using AWS Vault:
+
+    aws-vault login PROFILE_NAME
+
 To test you can use the AWS CLI with a specific profile:
 
     aws-vault exec PROFILE_NAME -- aws s3 ls
-
-You can also use the traditional method built-in to the AWS CLI
-
-    aws sso login --profile=PROFILE_NAME
-    aws s3 ls --profile=PROFILE_NAME
 
 Run a credential server with AWS vault to allow local services using the AWS SDK to use your role permissions as would an EC2 instance.
 

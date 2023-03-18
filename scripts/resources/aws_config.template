@@ -1,0 +1,71 @@
+[default]
+region = us-east-1
+output = json
+cli_pager = less
+
+[profile ETELIE_USERNAME]
+region = us-east-1
+output = json
+cli_pager = less
+role_session_name = ETELIE_USERNAME
+mfa_serial=arn:aws:iam::016089980303:mfa/ETELIE_USERNAME
+
+#########################
+## Prime Account Roles ##
+#########################
+
+[profile prime-ro]
+role_arn = arn:aws:iam::016089980303:role/prime-readonly
+source_profile = ETELIE_USERNAME
+
+[profile prime-power]
+role_arn = arn:aws:iam::016089980303:role/prime-power
+source_profile = ETELIE_USERNAME
+
+[profile prime-admin]
+role_arn = arn:aws:iam::016089980303:role/prime-admin
+source_profile = ETELIE_USERNAME
+
+[profile prime-root]
+role_arn = arn:aws:iam::016089980303:role/prime-root
+source_profile = ETELIE_USERNAME
+
+######################
+## QA Account Roles ##
+######################
+
+[profile qa-ro]
+role_arn = arn:aws:iam::448017536866:role/qa-readonly
+source_profile = ETELIE_USERNAME
+
+[profile qa-power]
+role_arn = arn:aws:iam::448017536866:role/qa-power
+source_profile = ETELIE_USERNAME
+
+[profile qa-admin]
+role_arn = arn:aws:iam::448017536866:role/qa-admin
+source_profile = ETELIE_USERNAME
+
+[profile qa-root]
+role_arn = arn:aws:iam::448017536866:role/qa-root
+source_profile = ETELIE_USERNAME
+
+########################
+## Prod Account Roles ##
+########################
+
+[profile prod-ro]
+role_arn = arn:aws:iam::598312560689:role/prod-readonly
+source_profile = ETELIE_USERNAME
+
+[profile prod-power]
+role_arn = arn:aws:iam::598312560689:role/prod-power
+source_profile = ETELIE_USERNAME
+
+[profile prod-admin]
+role_arn = arn:aws:iam::598312560689:role/prod-admin
+source_profile = ETELIE_USERNAME
+
+[profile prod-root]
+role_arn = arn:aws:iam::598312560689:role/prod-root
+source_profile = ETELIE_USERNAME
