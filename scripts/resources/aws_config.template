@@ -30,26 +30,6 @@ source_profile = ETELIE_USERNAME
 role_arn = arn:aws:iam::016089980303:role/prime-root
 source_profile = ETELIE_USERNAME
 
-######################
-## QA Account Roles ##
-######################
-
-[profile qa-ro]
-role_arn = arn:aws:iam::448017536866:role/qa-readonly
-source_profile = ETELIE_USERNAME
-
-[profile qa-power]
-role_arn = arn:aws:iam::448017536866:role/qa-power
-source_profile = ETELIE_USERNAME
-
-[profile qa-admin]
-role_arn = arn:aws:iam::448017536866:role/qa-admin
-source_profile = ETELIE_USERNAME
-
-[profile qa-root]
-role_arn = arn:aws:iam::448017536866:role/qa-root
-source_profile = ETELIE_USERNAME
-
 ########################
 ## Prod Account Roles ##
 ########################
@@ -68,4 +48,24 @@ source_profile = ETELIE_USERNAME
 
 [profile prod-root]
 role_arn = arn:aws:iam::598312560689:role/prod-root
+source_profile = ETELIE_USERNAME
+
+######################
+## QA Account Roles ##
+######################
+
+[profile qa-ro]
+role_arn = arn:aws:iam::448017536866:role/qa-readonly
+source_profile = ETELIE_USERNAME
+
+[profile qa-power]
+role_arn = arn:aws:iam::448017536866:role/qa-power
+source_profile = ETELIE_USERNAME
+
+[profile qa-admin]
+role_arn = arn:aws:iam::448017536866:role/qa-admin
+source_profile = ETELIE_USERNAME
+
+[profile qa-root]
+role_arn = arn:aws:iam::448017536866:role/qa-root
 source_profile = ETELIE_USERNAME
