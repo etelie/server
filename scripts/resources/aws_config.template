@@ -30,6 +30,10 @@ source_profile = ETELIE_USERNAME
 role_arn = arn:aws:iam::016089980303:role/prime-root
 source_profile = ETELIE_USERNAME
 
+[profile prime-configure]
+role_arn = arn:aws:iam::016089980303:role/prime-configure
+source_profile = ETELIE_USERNAME
+
 ########################
 ## Prod Account Roles ##
 ########################
@@ -50,6 +54,10 @@ source_profile = ETELIE_USERNAME
 role_arn = arn:aws:iam::598312560689:role/prod-root
 source_profile = ETELIE_USERNAME
 
+[profile prod-configure]
+role_arn = arn:aws:iam::598312560689:role/prod-configure
+source_profile = ETELIE_USERNAME
+
 ######################
 ## QA Account Roles ##
 ######################
@@ -68,4 +76,8 @@ source_profile = ETELIE_USERNAME
 
 [profile qa-root]
 role_arn = arn:aws:iam::448017536866:role/qa-root
+source_profile = ETELIE_USERNAME
+
+[profile qa-configure]
+role_arn = arn:aws:iam::448017536866:role/qa-configure
 source_profile = ETELIE_USERNAME

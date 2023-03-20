@@ -33,7 +33,7 @@ fi
 # Replace the pattern in the template file
 echo "Initializing AWS configuration for user $username"
 if "$(dirname "$0")/find_and_replace.sh" -f "$template_file" -o "$output_file" "ETELIE_USERNAME" "$username"; then
-    echo "AWS configuration initialized successfully"
+    echo "AWS configuration successfully initialized at $output_file"
 else
     echo "Error: Failed to initialize AWS configuration" >&2
 fi
