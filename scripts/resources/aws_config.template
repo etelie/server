@@ -10,6 +10,12 @@ cli_pager = less
 role_session_name = ETELIE_USERNAME
 mfa_serial=arn:aws:iam::016089980303:mfa/ETELIE_USERNAME
 
+[profile terraform]
+region = us-east-1
+output = json
+cli_pager = less
+role_session_name = terraform
+
 #########################
 ## Prime Account Roles ##
 #########################
@@ -32,7 +38,7 @@ source_profile = ETELIE_USERNAME
 
 [profile prime-configure]
 role_arn = arn:aws:iam::016089980303:role/prime-configure
-source_profile = ETELIE_USERNAME
+source_profile = terraform
 
 ########################
 ## Prod Account Roles ##
@@ -56,7 +62,7 @@ source_profile = ETELIE_USERNAME
 
 [profile prod-configure]
 role_arn = arn:aws:iam::598312560689:role/prod-configure
-source_profile = ETELIE_USERNAME
+source_profile = terraform
 
 ######################
 ## QA Account Roles ##
@@ -80,4 +86,4 @@ source_profile = ETELIE_USERNAME
 
 [profile qa-configure]
 role_arn = arn:aws:iam::448017536866:role/qa-configure
-source_profile = ETELIE_USERNAME
+source_profile = terraform
