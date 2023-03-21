@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine-jdk
+FROM arm64v8/amazoncorretto:17
 
 ARG PROJECT_VERSION
 ENV PROJECT_VERSION=${PROJECT_VERSION}
