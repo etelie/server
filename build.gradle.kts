@@ -4,6 +4,8 @@ val org_id: String by project
 val module_id: String by project
 val repository_host: String by project
 val build_number: String = System.getenv("BUILD_NUMBER").orEmpty().ifEmpty { "dev" }
+val build_env: String = System.getenv("BUILD_ENV").orEmpty().ifEmpty { "dev" }
+val isDevelopment: Boolean = project.ext.has("development")
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -22,9 +24,9 @@ plugins {
 group = "com.etelie"
 version = "0.0.1-${build_number}"
 application {
-    mainClass.set("com.etelie.ApplicationKt")
+    assert(isDevelopment && build_env == "dev")
 
-    val isDevelopment: Boolean = project.ext.has("development")
+    mainClass.set("com.etelie.ApplicationKt")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
@@ -61,7 +63,9 @@ docker {
         throw Exception("Project version not found")
     }
 
-    val repository: String = "${repository_host}/${org_id}/${module_id}"
+    val repository: String = if (isDevelopment)
+        "${org_id}/${build_env}/${module_id}" else
+        "${repository_host}/${org_id}/${build_env}/${module_id}"
     val tag: String = project.version.toString()
 
     name = "${repository}:${tag}"
