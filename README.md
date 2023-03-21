@@ -91,8 +91,8 @@ alias awsp='aws_vault_with_profile $1'
 alias avl='aws-vault login'
 alias ave='aws-vault exec'
 alias aves='aws-vault exec --ec2-server'
-alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 -w)' # only works with MacOS version of `cut`
-alias currentvaultkill='kill -9 $(currentvaultpid)'
+alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 -w) $(ps -ef | grep "[a]ws-vault proxy" | cut -f3 -w)' # only works with MacOS version of `cut`
+alias currentvaultkill='sudo kill -9 $(currentvaultpid)'
 # alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec")'            # less-desirable alternative for linux
 alias currentvault='echo "$(test -z $AWS_VAULT && echo "*" || echo $AWS_VAULT) $(currentvaultpid)"'
 ```
