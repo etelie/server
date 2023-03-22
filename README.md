@@ -89,6 +89,7 @@ function aws_vault_with_profile() {
 
 alias awsp='aws_vault_with_profile $1'
 alias avl='aws-vault login'
+alias avlo='open "https://signin.aws.amazon.com/oauth?Action=logout&redirect_uri=https://aws.amazon.com"'
 alias ave='aws-vault exec'
 alias aves='aws-vault exec --ec2-server'
 alias currentvaultpid='echo $(ps -ef | grep "[a]ws-vault exec" | cut -f3 -w) $(ps -ef | grep "[a]ws-vault proxy" | cut -f3 -w)' # only works with MacOS version of `cut`
