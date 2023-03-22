@@ -2,17 +2,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 val orgId: String by project
 val moduleId: String by project
-val prodRepositoryHost: String by project
-val qaRepositoryHost: String by project
 val versionNumber: String = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" }
 val buildTag: String = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
-val buildEnv: String = System.getenv("BUILD_ENV").orEmpty().ifEmpty { "dev" }
 val isDevelopment: Boolean = project.ext.has("development")
-val repositoryHost: String? = when (buildEnv) {
-    "prod" -> prodRepositoryHost
-    "qa" -> qaRepositoryHost
-    else -> null
-}
 
 val ktorVersion: String by project
 val kotlinVersion: String by project
@@ -31,9 +23,6 @@ plugins {
 group = "com.${orgId}" // "com.etelie"
 version = buildTag     // "{version}-{build}"
 application {
-    assert(isDevelopment && buildEnv == "dev" && repositoryHost == null)
-    assert(!isDevelopment && buildEnv != "dev" && repositoryHost != null)
-
     mainClass.set("com.etelie.ApplicationKt")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
@@ -71,9 +60,7 @@ docker {
         throw Exception("Project version not found")
     }
 
-    val repository: String = if (isDevelopment)
-        "${orgId}/${moduleId}" else
-        "${repositoryHost}/${orgId}/${moduleId}"
+    val repository: String = "${orgId}/${moduleId}"
     val tag: String = project.version.toString()
 
     name = "${repository}:${tag}"
