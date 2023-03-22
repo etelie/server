@@ -68,7 +68,7 @@ docker {
     files(fileTree("./build/libs/"))
     buildArgs(
         mapOf(
-            "PROJECT_VERSION" to project.version.toString()
+            "BUILD_TAG" to buildTag
         )
     )
     noCache(true)
