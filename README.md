@@ -142,6 +142,7 @@ You can find the downloads and installation instructions for other operating sys
 Add to your shell configurations:
 
     export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+    export PATH="$PATH:$JAVA_HOME/bin/"
 
 ##### Set your IntelliJ project Java SDK
 
