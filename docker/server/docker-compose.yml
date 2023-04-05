@@ -10,7 +10,7 @@ services:
     ports:
       - '5434:5432'
     restart: always
-    container_name: postgres
+    container_name: server-postgres
     volumes:
       - type: volume
         source: server-postgres
