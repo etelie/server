@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 usage="Usage: ${0##*/} [-h] [-f file] [-o file] pattern1 replacement1 [pattern2 replacement2] ..."
-help="Replace all occurrences of patterns with corresponding replacements in a template file.
+help="Replace all occurrences of patterns in a template file with corresponding replacements.
 Arguments:
   pattern1       the first pattern to replace
   replacement1   the replacement for pattern1
