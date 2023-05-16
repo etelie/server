@@ -162,20 +162,15 @@ Coming soon
 
 ### Contribution guidelines
 
-Tests
+Repository processes
 
-- Unit testing is an essential component of the software development lifecycle
-
-- Good code is maintainable code
-
-- Superfluous tests extend build times unnecessarily
+- The `master` branch is kept in a production-deployable state at all times.
 
 Code review
 
-- All contributions must pass code review
+- All contributions must pass code review. All changes must be tested in the QA environment before merge.
 
-- The role of the code reviewer is to ensure code quality does not diminish over
-time
+- The role of the code reviewer is to ensure code quality does not diminish over time, not necessarily to ensure correctness. It is the responsibility of the developer to write correct code.
 
 - Read: [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
 
