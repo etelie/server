@@ -12,14 +12,13 @@ import io.ktor.server.application.*
 fun Application.configureRouting() {
     install(Resources)
     install(AutoHeadResponse)
-
-    routing {
-        get("/") {
-            call.respondText("Hello World!")
+    install(Routing) {
+        this@install.get("/") get@{
+            this@get.call.respondText("Hello World!")
         }
-        get<Articles> { article ->
+        this@install.get<Articles> get@{ article ->
             // Get all articles ...
-            call.respond("List of articles sorted starting from ${article.sort}")
+            this@get.call.respond("List of articles sorted starting from ${article.sort}")
         }
     }
 }

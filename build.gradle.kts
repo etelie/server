@@ -55,6 +55,7 @@ dependencies {
   implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
   implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
   implementation("io.ktor:ktor-server-cors:$ktorVersion")
+  implementation("io.ktor:ktor-network-tls-certificates:$ktorVersion")
 
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
   testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")

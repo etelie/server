@@ -7,20 +7,20 @@ import io.ktor.server.plugins.cachingheaders.*
 import io.ktor.server.plugins.defaultheaders.*
 
 fun Application.configureHTTP() {
-//    install(HttpsRedirect) {
+//    this.install(HttpsRedirect) {
 //            // The port to redirect to. By default 443, the default HTTPS port.
 //            sslPort = 443
 //            // 301 Moved Permanently, or 302 Found redirect.
 //            permanentRedirect = true
 //        }
-//    install(HSTS) {
+//    this.install(HSTS) {
 //        includeSubDomains = true
 //    }
-    install(DefaultHeaders) {
+    this.install(DefaultHeaders) {
         header("X-Engine", "Ktor") // will send this header with each response
     }
-    install(CachingHeaders) {
-        options { call, outgoingContent ->
+    this.install(CachingHeaders) {
+        options { _, outgoingContent ->
             when (outgoingContent.contentType?.withoutParameters()) {
                 ContentType.Text.CSS -> CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 24 * 60 * 60))
                 else -> null
