@@ -26,7 +26,7 @@ object TLSConfig {
             keyStorePassword = {KEYSTORE_PASSWORD.toCharArray()},
             privateKeyPassword = {CERTIFICATE_PASSWORD.toCharArray()},
         ) {
-            port = 8443
+            port = 443
             keyStorePath = keyStoreFile
             keyStore.saveToFile(keyStoreFile, KEYSTORE_PASSWORD)
         }
