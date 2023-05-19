@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
-
 val orgId: String by project
 val moduleId: String by project
 val versionNumber: String = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" }
@@ -21,6 +19,9 @@ val h2Version: String by project
 val prometeusVersion: String by project
 val tomcatNativeVersion: String by project
 
+group = "com.${orgId}" // "com.etelie"
+version = buildTag     // "{version}-{build}"
+
 plugins {
   kotlin("jvm") version "1.8.10"
   id("io.ktor.plugin") version "2.2.4"
@@ -28,8 +29,6 @@ plugins {
 //  id("com.palantir.docker") version "0.34.0"
 }
 
-group = "com.${orgId}" // "com.etelie"
-version = buildTag     // "{version}-{build}"
 application {
   mainClass.set("com.etelie.ApplicationKt")
   applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -47,11 +46,13 @@ dependencies {
   implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
   // Netty/TomcatNative
-  if (tomcatNativeOSClassifier != null) {
-    implementation("io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion:$tomcatNativeOSClassifier")
-  } else {
-    implementation("io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion")
-  }
+  implementation(
+    if (tomcatNativeOSClassifier != null) {
+      "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion:$tomcatNativeOSClassifier"
+    } else {
+      "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion"
+    }
+  )
 
   // Ktor
   implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")

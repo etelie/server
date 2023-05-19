@@ -1,4 +1,4 @@
-package com.etelie.plugins
+package com.etelie.schemas
 
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
