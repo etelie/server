@@ -1,7 +1,7 @@
-package com.etelie.plugins
+package com.etelie.plugin
 
-import com.etelie.schemas.City
-import com.etelie.schemas.CityService
+import com.etelie.schema.City
+import com.etelie.schema.CityService
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -10,7 +10,7 @@ import java.sql.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
-fun Application.configureDatabases() {
+fun Application.pluginDatabases() {
 
     val dbConnection: Connection = connectToPostgres(embedded = true)
     val cityService = CityService(dbConnection)

@@ -1,14 +1,12 @@
-package com.etelie.plugins
+package com.etelie.plugin
 
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cachingheaders.*
 import io.ktor.server.plugins.defaultheaders.*
-import io.ktor.server.plugins.hsts.HSTS
-import io.ktor.server.plugins.httpsredirect.HttpsRedirect
 
-fun Application.configureHTTP() {
+fun Application.pluginHTTP() {
 //    this.install(HttpsRedirect) {
 //            sslPort = 443
 //            permanentRedirect = false
