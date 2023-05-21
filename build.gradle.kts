@@ -72,6 +72,8 @@ dependencies {
   implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
   implementation("io.ktor:ktor-server-cors:$ktorVersion")
   implementation("io.ktor:ktor-network-tls-certificates:$ktorVersion")
+  implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
+  implementation("io.ktor:ktor-server-status-pages:2.2.4")
 
   // Test
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

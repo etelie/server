@@ -13,9 +13,9 @@ fun Routing.articlesRoutes() {
 }
 
 private fun Route.articlesRoute() {
-    get<Articles> { article ->
+    get<Articles> { articles ->
         // Get all articles ...
-        call.respond("List of articles sorted starting from ${article.sort}")
+        call.respond("List of articles sorted starting from ${articles.sort}")
     }
 }
 
