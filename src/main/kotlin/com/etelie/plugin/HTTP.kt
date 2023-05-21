@@ -1,10 +1,14 @@
 package com.etelie.plugin
 
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.cachingheaders.*
-import io.ktor.server.plugins.defaultheaders.*
+import io.ktor.http.CacheControl
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.CachingOptions
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.cachingheaders.CachingHeaders
+import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 
@@ -19,7 +23,7 @@ fun Application.pluginHTTP() {
 //    }
 
     install(DefaultHeaders) {
-        header("X-Engine", "Ktor") // will send this header with each response
+        header(HttpHeaders.Server, "redacted")
     }
 
     install(CachingHeaders) {
