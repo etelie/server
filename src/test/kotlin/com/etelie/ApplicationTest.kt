@@ -5,13 +5,13 @@ import io.ktor.client.statement.*
 import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
-import com.etelie.plugins.*
+import com.etelie.plugin.*
 
 class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
         application {
-            configureRouting()
+            pluginApi()
         }
         client.get("/").apply {
             assertEquals(HttpStatusCode.OK, status)

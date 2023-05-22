@@ -1,4 +1,4 @@
-package com.etelie.plugins
+package com.etelie.plugin
 
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -12,15 +12,15 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.slf4j.event.Level
 
-fun Application.configureMonitoring() {
+fun Application.pluginMonitoring() {
     val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
-    
+
     install(MicrometerMetrics) {
         registry = appMicrometerRegistry
         // ...
     }
     install(CallLogging) {
-        level = Level.INFO
+        level = Level.DEBUG
         filter { call -> call.request.path().startsWith("/") }
         callIdMdc("call-id")
     }

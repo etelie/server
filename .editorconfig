@@ -13,5 +13,17 @@ indent_size = 2
 [*.md]
 trim_trailing_whitespace = false
 
-[{*.kt,*.java}]
+[*.kt]
 indent_size = 4
+ij_kotlin_name_count_to_use_star_import = 999
+ij_kotlin_name_count_to_use_star_import_for_members = 999
+ij_kotlin_packages_to_use_import_on_demand = 999
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+
+[*.java]
+indent_size = 4
+ij_java_names_count_to_use_import_on_demand = 999
+ij_java_class_count_to_use_import_on_demand = 999
+ij_java_packages_to_use_import_on_demand = 999
+

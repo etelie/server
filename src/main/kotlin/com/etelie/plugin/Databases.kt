@@ -1,5 +1,7 @@
-package com.etelie.plugins
+package com.etelie.plugin
 
+import com.etelie.schema.City
+import com.etelie.schema.CityService
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -8,8 +10,8 @@ import java.sql.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
-fun Application.configureDatabases() {
-    
+fun Application.pluginDatabases() {
+
     val dbConnection: Connection = connectToPostgres(embedded = true)
     val cityService = CityService(dbConnection)
     routing {
@@ -44,6 +46,7 @@ fun Application.configureDatabases() {
         }
     }
 }
+
 /**
  * Makes a connection to a Postgres database.
  *
@@ -67,13 +70,13 @@ fun Application.configureDatabases() {
  * */
 fun Application.connectToPostgres(embedded: Boolean): Connection {
     Class.forName("org.postgresql.Driver")
-    if (embedded) {
-        return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
+    return if (embedded) {
+        DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
     } else {
         val url = environment.config.property("postgres.url").getString()
         val user = environment.config.property("postgres.user").getString()
         val password = environment.config.property("postgres.password").getString()
 
-        return DriverManager.getConnection(url, user, password)
+        DriverManager.getConnection(url, user, password)
     }
 }
