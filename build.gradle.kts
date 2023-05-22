@@ -2,7 +2,7 @@ val orgId: String by project
 val moduleId: String by project
 val versionNumber: String = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" }
 val buildTag: String = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
-val isDevelopment: Boolean = project.ext.has("development")
+val isDevelopment: Boolean = System.getenv("IS_DEVELOPMENT")?.equals("TRUE") ?: false
 val osName: String = System.getProperty("os.name").lowercase()
 val tomcatNativeOSClassifier: String? = when {
   osName.contains("win") -> "windows-x86_64"
@@ -40,10 +40,13 @@ repositories {
 }
 
 dependencies {
-  implementation("org.postgresql:postgresql:$postgresVersion")
-  implementation("com.h2database:h2:$h2Version")
-  implementation("io.micrometer:micrometer-registry-prometheus:$prometeusVersion")
-  implementation("ch.qos.logback:logback-classic:$logbackVersion")
+  // Persistence
+  implementation("org.postgresql", "postgresql", postgresVersion)
+  implementation("com.h2database", "h2", h2Version)
+
+  // Monitoring
+  implementation("io.micrometer", "micrometer-registry-prometheus", prometeusVersion)
+  implementation("ch.qos.logback", "logback-classic", logbackVersion)
 
   // Netty/TomcatNative
   implementation(
@@ -55,29 +58,30 @@ dependencies {
   )
 
   // Ktor
-  implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-metrics-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-call-id-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-http-redirect-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-hsts-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-default-headers-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-caching-headers-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-resources:$ktorVersion")
-  implementation("io.ktor:ktor-server-auto-head-response-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-cors:$ktorVersion")
-  implementation("io.ktor:ktor-network-tls-certificates:$ktorVersion")
-  implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
-  implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
+  implementation("io.ktor", "ktor-server-core-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-serialization-kotlinx-json-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-content-negotiation-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-metrics-micrometer-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-metrics-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-call-logging-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-call-id-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-http-redirect-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-hsts-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-default-headers-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-caching-headers-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-resources", ktorVersion)
+  implementation("io.ktor", "ktor-server-auto-head-response-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-auth-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-netty-jvm", ktorVersion)
+  implementation("io.ktor", "ktor-server-cors", ktorVersion)
+  implementation("io.ktor", "ktor-network-tls-certificates", ktorVersion)
+  implementation("io.ktor", "ktor-server-rate-limit", ktorVersion)
+  implementation("io.ktor", "ktor-server-status-pages", ktorVersion)
 
   // Test
-  testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
-  testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
+  testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
+  testImplementation("io.ktor", "ktor-server-test-host", ktorVersion)
+  testImplementation("io.ktor", "ktor-server-tests-jvm", ktorVersion)
 }
 
 //docker {
