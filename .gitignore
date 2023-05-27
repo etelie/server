@@ -39,3 +39,7 @@ out/
 
 ### Environemnt ###
 .env
+
+### Docker volumes ###
+docker/server/postgres/data
+docker/server/pgadmin/data
