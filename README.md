@@ -156,6 +156,13 @@ Choose a location for your etelie home directory (`~/etelie` is recommended)
 
 The script will spin up the Docker container for your local PostgreSQL instance
 
+#### 8. Start the local database
+
+Start the local PostgreSQL instance along with the pgAdmin web server.
+
+    cd ./docker/server
+    docker compose up
+
 ### Deployment process
 
 Coming soon

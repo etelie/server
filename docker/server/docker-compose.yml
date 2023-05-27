@@ -1,18 +1,26 @@
 version: '3.8'
 
-volumes:
-  server-postgres:
-
 services:
   postgres:
-    env_file: ../../.env
     build: ./postgres/
+    env_file: ../../.env
+    container_name: server-postgres
     ports:
       - '5434:5432'
     restart: always
-    container_name: server-postgres
     volumes:
-      - type: volume
-        source: server-postgres
-        target: /var/lib/postgresql/data
+      - ./postgres/data:/var/lib/postgresql/data
+    environment:
+      - PG_DATA=/var/lib/postgresql/data
 
+  pgadmin:
+    image: dpage/pgadmin4:7
+    env_file: ../../.env
+    container_name: server-pgadmin
+    ports:
+      - 6434:6432
+    restart: always
+    volumes:
+      - ./pgadmin/data:/var/lib/pgadmin
+    depends_on:
+      - postgres

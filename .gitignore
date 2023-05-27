@@ -36,3 +36,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Environemnt ###
+.env
+
+### Docker volumes ###
+docker/server/postgres/data
+docker/server/pgadmin/data
