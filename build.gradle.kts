@@ -27,6 +27,7 @@ plugins {
   id("io.ktor.plugin") version "2.2.4"
   id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 //  id("com.palantir.docker") version "0.34.0"
+  id("org.liquibase.gradle") version "2.2.0"
 }
 
 application {
