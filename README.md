@@ -163,23 +163,35 @@ Start the local PostgreSQL instance along with the pgAdmin web server.
     cd ./docker/server
     docker compose up
 
+The Dockerfile script creates the `etelie` user with password `etelie+1`. The maintenance database uses the standard `postgres` name. To database system is available within the docker network as `postgres:5432`. From the browser, its address is `localhost:5434`. 
+
 ### Deployment process
 
 Coming soon
 
 ### Contribution guidelines
 
-Repository processes
+#### Repository conventions
 
-- The `master` branch is kept in a production-deployable state at all times.
+The `master` branch is kept in a production-deployable state at all times.
 
-Code review
+#### Environment variables
 
-- All contributions must pass code review. All changes must be tested in the QA environment before merge.
+Developer-specific environment configurations are left blank in the `.env.template` file, which is checked in to version control. The template is copied to `.env` when running `setup.sh`, and the developer is prompted for values to fill in the blanks. To add an environment variable, be sure to add it to `.env.template`, and if the variable should not be checked in to version control, add a line to `setup.sh`:
 
-- The role of the code reviewer is to ensure code quality does not diminish over time, not necessarily to ensure correctness. It is the responsibility of the developer to write correct code.
+    set_env_value "MY_ENVIRONMENT_VARIABLE"
 
-- Read: [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
+#### Liquibase
+
+For a brief introduction to Liquibase and best practices, read [this guide](https://www.liquibase.org/get-started/best-practices)
+
+#### Code review
+
+All contributions must pass code review. All changes must be tested in the QA environment before merge.
+
+The role of the code reviewer is to ensure code quality does not diminish over time, not necessarily to ensure correctness. It is the responsibility of the developer to write correct code.
+
+Read: [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
 
 ### Contact
 
