@@ -156,7 +156,7 @@ Choose a location for your etelie home directory (`~/etelie` is recommended)
 
 The script will spin up the Docker container for your local PostgreSQL instance
 
-#### 8. Start the local database
+#### 8. Set up the local database
 
 Start the local PostgreSQL instance along with the pgAdmin web server.
 
@@ -164,6 +164,10 @@ Start the local PostgreSQL instance along with the pgAdmin web server.
     docker compose up
 
 The Dockerfile script creates the `etelie` user with password `etelie+1`. The maintenance database uses the standard `postgres` name. To database system is available within the docker network as `postgres:5432`. From the browser, its address is `localhost:5434`. 
+
+Initialize the database contents with [Flyway](https://documentation.red-gate.com/fd) by executing all migration scripts (stored in `src/main/resources/db/migration/`).
+
+    ./gradlew flywayMigrate
 
 ### Deployment process
 

@@ -49,6 +49,7 @@ flyway {
   url = System.getenv("FLYWAY_URL") ?: flywayUrl
   user = System.getenv("FLYWAY_USER") ?: flywayUser
   password = System.getenv("FLYWAY_PASSWORD") ?: flywayPassword
+  table = "changelog"
 }
 
 //docker {
