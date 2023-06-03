@@ -181,10 +181,6 @@ Developer-specific environment configurations are left blank in the `.env.templa
 
     set_env_value "MY_ENVIRONMENT_VARIABLE"
 
-#### Liquibase
-
-For a brief introduction to Liquibase and best practices, read [this guide](https://www.liquibase.org/get-started/best-practices)
-
 #### Code review
 
 All contributions must pass code review. All changes must be tested in the QA environment before merge.
