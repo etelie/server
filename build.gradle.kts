@@ -3,13 +3,6 @@ val moduleId: String by project
 val versionNumber: String = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" }
 val buildTag: String = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
 val isDevelopment: Boolean = System.getenv("IS_DEVELOPMENT")?.equals("TRUE") ?: false
-val osName: String = System.getProperty("os.name").lowercase()
-val tomcatNativeOSClassifier: String? = when {
-  osName.contains("win") -> "windows-x86_64"
-  osName.contains("linux") -> "linux-x86_64"
-  osName.contains("mac") -> "osx-x86_64"
-  else -> null
-}
 
 val ktorVersion: String by project
 val kotlinVersion: String by project
@@ -18,15 +11,33 @@ val postgresVersion: String by project
 val h2Version: String by project
 val prometeusVersion: String by project
 val tomcatNativeVersion: String by project
+val flywayUrl: String by project
+val flywayUser: String by project
+val flywayPassword: String by project
+
+val tomcatNativeOSClassifier: String? = System.getProperty("os.name").lowercase().run {
+  when {
+    contains("win") -> "windows-x86_64"
+    contains("linux") -> "linux-x86_64"
+    contains("mac") -> "osx-x86_64"
+    else -> null
+  }
+}
 
 group = "com.${orgId}" // "com.etelie"
 version = buildTag     // "{version}-{build}"
+
+repositories {
+  mavenCentral()
+  google()
+}
 
 plugins {
   kotlin("jvm") version "1.8.10"
   id("io.ktor.plugin") version "2.2.4"
   id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 //  id("com.palantir.docker") version "0.34.0"
+  id("org.flywaydb.flyway") version "9.8.1"
 }
 
 application {
@@ -34,10 +45,30 @@ application {
   applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-repositories {
-  mavenCentral()
-  google()
+flyway {
+  url = System.getenv("FLYWAY_URL") ?: flywayUrl
+  user = System.getenv("FLYWAY_USER") ?: flywayUser
+  password = System.getenv("FLYWAY_PASSWORD") ?: flywayPassword
 }
+
+//docker {
+//  project.version.toString().isEmpty().ifTrue {
+//    throw Exception("Project version not found")
+//  }
+//
+//  val repository: String = "${orgId}/${moduleId}"
+//  val tag: String = project.version.toString()
+//
+//  name = "${repository}:${tag}"
+//  setDockerfile(File("./docker/deploy/Dockerfile"))
+//  files(fileTree("./build/libs/"))
+//  buildArgs(
+//    mapOf(
+//      "BUILD_TAG" to buildTag
+//    )
+//  )
+//  noCache(true)
+//}
 
 dependencies {
   // Persistence
@@ -83,22 +114,3 @@ dependencies {
   testImplementation("io.ktor", "ktor-server-test-host", ktorVersion)
   testImplementation("io.ktor", "ktor-server-tests-jvm", ktorVersion)
 }
-
-//docker {
-//  project.version.toString().isEmpty().ifTrue {
-//    throw Exception("Project version not found")
-//  }
-//
-//  val repository: String = "${orgId}/${moduleId}"
-//  val tag: String = project.version.toString()
-//
-//  name = "${repository}:${tag}"
-//  setDockerfile(File("./docker/deploy/Dockerfile"))
-//  files(fileTree("./build/libs/"))
-//  buildArgs(
-//    mapOf(
-//      "BUILD_TAG" to buildTag
-//    )
-//  )
-//  noCache(true)
-//}

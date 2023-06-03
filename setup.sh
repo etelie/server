@@ -32,6 +32,7 @@ cd "${0:a:h}" || error "cd into repo failed"
 if ! test -f .env
 then
   cp .env.template .env
+  ln -s .env docker/server/.env
 fi
 
 set_env_value "ETELIE_HOME"
