@@ -31,3 +31,7 @@ ij_java_packages_to_use_import_on_demand = 999
 [{*.yml,*.yaml}]
 indent_size = 2
 ij_yaml_block_mapping_on_new_line = true
+
+[*.properties]
+ij_properties_key_value_delimiter = equals
+ij_properties_spaces_around_key_value_delimiter = true
