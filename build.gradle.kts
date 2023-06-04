@@ -11,6 +11,8 @@ val postgresVersion: String by project
 val h2Version: String by project
 val prometeusVersion: String by project
 val tomcatNativeVersion: String by project
+val exposedVersion: String by project
+
 val flywayUrl: String by project
 val flywayUser: String by project
 val flywayPassword: String by project
@@ -109,6 +111,14 @@ dependencies {
   implementation("io.ktor", "ktor-network-tls-certificates", ktorVersion)
   implementation("io.ktor", "ktor-server-rate-limit", ktorVersion)
   implementation("io.ktor", "ktor-server-status-pages", ktorVersion)
+
+  // Exposed
+  implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
+  implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
+  implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
+  implementation("org.jetbrains.exposed", "exposed-kotlin-datetime", exposedVersion)
+  implementation("org.jetbrains.exposed", "exposed-money", exposedVersion)
+  implementation("org.jetbrains.exposed", "exposed-crypt", exposedVersion)
 
   // Test
   testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
