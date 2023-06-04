@@ -1,0 +1,17 @@
+ktor:
+  application:
+    modules:
+      - com.etelie.ApplicationKt.module
+  environment: "$KTOR_ENV:dev"
+  deployment:
+    port: "$KTOR_PORT:402"
+    host: "$KTOR_HOST:0.0.0.0"
+
+postgresql:
+  deploy:
+    host: "$POSTGRES_HOST:localhost"
+    port: "$POSTGRES_PORT:5434"
+  credential:
+    user: "$POSTGRES_USER:etelie"
+    password: "$POSTGRES_PASSWORD:etelie+1"
+  database: "$POSTGRES_DB:etelie"
