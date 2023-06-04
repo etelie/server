@@ -7,7 +7,7 @@ val isDevelopment: Boolean = System.getenv("IS_DEVELOPMENT")?.equals("TRUE") ?: 
 val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
-val postgresVersion: String by project
+val postgresqlVersion: String by project
 val h2Version: String by project
 val prometeusVersion: String by project
 val tomcatNativeVersion: String by project
@@ -17,7 +17,7 @@ val flywayUrl: String by project
 val flywayUser: String by project
 val flywayPassword: String by project
 
-val tomcatNativeOSClassifier: String? = System.getProperty("os.name").lowercase().run {
+val tomcatNativeOSClassifier: String? = System.getProperty("os.name")?.lowercase()?.run {
   when {
     contains("win") -> "windows-x86_64"
     contains("linux") -> "linux-x86_64"
@@ -75,8 +75,7 @@ flyway {
 
 dependencies {
   // Persistence
-  implementation("org.postgresql", "postgresql", postgresVersion)
-  implementation("com.h2database", "h2", h2Version)
+  implementation("org.postgresql", "postgresql", postgresqlVersion)
 
   // Monitoring
   implementation("io.micrometer", "micrometer-registry-prometheus", prometeusVersion)
@@ -111,6 +110,7 @@ dependencies {
   implementation("io.ktor", "ktor-network-tls-certificates", ktorVersion)
   implementation("io.ktor", "ktor-server-rate-limit", ktorVersion)
   implementation("io.ktor", "ktor-server-status-pages", ktorVersion)
+  implementation("io.ktor", "ktor-server-config-yaml", ktorVersion)
 
   // Exposed
   implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
