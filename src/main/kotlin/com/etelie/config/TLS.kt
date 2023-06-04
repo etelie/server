@@ -20,7 +20,7 @@ object TLS {
     }
 
     fun ApplicationEngineEnvironmentBuilder.sslConnector() {
-       sslConnector(
+        sslConnector(
             keyStore = keyStore,
             keyAlias = CERTIFICATE_ALIAS,
             keyStorePassword = { KEYSTORE_PASSWORD.toCharArray() },

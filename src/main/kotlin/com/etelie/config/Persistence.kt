@@ -3,8 +3,12 @@ package com.etelie.config
 import io.ktor.server.application.Application
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.exposedLogger
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 
 object Persistence {
 
@@ -23,12 +27,23 @@ object Persistence {
 
         val jdbcUrl = "jdbc:postgresql://$host:$port/$db"
         val database = Database.connect(jdbcUrl, driverClassName, user, password)
+        TransactionManager.defaultDatabase = database
 
         exposedLogger.info("Successfully connected to ${database.url}")
     }
 
-    suspend fun <T> query(block: suspend () -> T): T {
-        return newSuspendedTransaction(Dispatchers.IO) { block() }
+    fun <T> blockingTransaction(block: () -> T): T {
+        return transaction {
+            addLogger(Slf4jSqlDebugLogger)
+            return@transaction block()
+        }
+    }
+
+    suspend fun <T> suspendedTransaction(block: suspend () -> T): T {
+        return newSuspendedTransaction(Dispatchers.IO) {
+            addLogger(Slf4jSqlDebugLogger)
+            return@newSuspendedTransaction block()
+        }
     }
 
 }
