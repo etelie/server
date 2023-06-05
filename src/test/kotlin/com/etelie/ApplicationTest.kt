@@ -12,7 +12,6 @@ class ApplicationTest {
 
     @Test
     fun root() = testApplication {
-        application { installAllPlugins() }
         client.get("/").apply {
             assertEquals(HttpStatusCode.OK, status)
             assertEquals("etelie api", bodyAsText())
@@ -21,7 +20,6 @@ class ApplicationTest {
 
     @Test
     fun healthcheck() = testApplication {
-//        application { installAllPlugins() }
         client.get("/control/healthcheck").also { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals("Service is healthy", response.body())
@@ -32,7 +30,6 @@ class ApplicationTest {
     fun status() = testApplication {
         client.get("/control/status").also { response ->
             assertEquals(HttpStatusCode.OK, response.status)
-            println(response.bodyAsText())
         }
     }
 
