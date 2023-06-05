@@ -3,14 +3,9 @@ package com.etelie.config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.Application
-import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.Connection
 
 object Persistence {
@@ -35,20 +30,6 @@ object Persistence {
 
         TransactionManager.defaultDatabase = database
         exposedLogger.info("Successfully connected to ${database.url}")
-    }
-
-    fun <T> blockingTransaction(block: () -> T): T {
-        return transaction {
-            addLogger(Slf4jSqlDebugLogger)
-            return@transaction block()
-        }
-    }
-
-    suspend fun <T> suspendedTransaction(block: suspend () -> T): T {
-        return newSuspendedTransaction(Dispatchers.IO) {
-            addLogger(Slf4jSqlDebugLogger)
-            return@newSuspendedTransaction block()
-        }
     }
 
     private fun createHikariDataSource(
