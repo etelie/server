@@ -39,7 +39,6 @@ plugins {
   kotlin("jvm") version "1.8.10"
   id("io.ktor.plugin") version "2.2.4"
   id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
-//  id("com.palantir.docker") version "0.34.0"
   id("org.flywaydb.flyway") version "9.8.1"
 }
 
@@ -54,25 +53,6 @@ flyway {
   password = System.getenv("FLYWAY_PASSWORD") ?: flywayPassword
   table = "changelog"
 }
-
-//docker {
-//  project.version.toString().isEmpty().ifTrue {
-//    throw Exception("Project version not found")
-//  }
-//
-//  val repository: String = "${orgId}/${moduleId}"
-//  val tag: String = project.version.toString()
-//
-//  name = "${repository}:${tag}"
-//  setDockerfile(File("./docker/deploy/Dockerfile"))
-//  files(fileTree("./build/libs/"))
-//  buildArgs(
-//    mapOf(
-//      "BUILD_TAG" to buildTag
-//    )
-//  )
-//  noCache(true)
-//}
 
 dependencies {
   // General Persistence
