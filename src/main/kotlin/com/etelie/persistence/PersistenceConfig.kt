@@ -1,4 +1,4 @@
-package com.etelie.config
+package com.etelie.persistence
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 
-object Persistence {
+object PersistenceConfig {
 
     /**
      * The fully qualified dot-separated name of the class, or null if the class is local or a class of an anonymous object.
@@ -39,7 +39,7 @@ object Persistence {
         password: String,
     ) = HikariDataSource(
         HikariConfig().also {
-            it.driverClassName = Persistence.driverClassName
+            it.driverClassName = driverClassName
             it.jdbcUrl = jdbcUrl
             it.maximumPoolSize = maxConnections
             it.isAutoCommit = false

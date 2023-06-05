@@ -1,6 +1,6 @@
 package com.etelie
 
-import com.etelie.config.Persistence.connectToDatabase
+import com.etelie.persistence.PersistenceConfig.connectToDatabase
 import com.etelie.plugin.pluginApi
 import com.etelie.plugin.pluginHTTP
 import com.etelie.plugin.pluginMonitoring
