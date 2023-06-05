@@ -1,7 +1,6 @@
 package com.etelie.plugin
 
 import com.etelie.control.controlRoutes
-import com.etelie.example.articlesRoutes
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
@@ -15,6 +14,5 @@ fun Application.pluginRouting() {
         }
 
         controlRoutes()
-        articlesRoutes()
     }
 }
