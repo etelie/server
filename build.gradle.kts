@@ -1,3 +1,5 @@
+import io.ktor.plugin.features.*
+
 val orgId: String by project
 val moduleId: String by project
 val versionNumber: String = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" }
@@ -45,6 +47,16 @@ plugins {
 application {
   mainClass.set("com.etelie.ApplicationKt")
   applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
+ktor {
+  docker {
+    jreVersion.set(JreVersion.JRE_17)
+    imageTag.set(buildTag)
+    portMappings.set(listOf(
+      DockerPortMapping(402, 402, DockerPortMappingProtocol.TCP)
+    ))
+  }
 }
 
 flyway {
