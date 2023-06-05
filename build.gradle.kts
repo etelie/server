@@ -12,6 +12,7 @@ val h2Version: String by project
 val prometeusVersion: String by project
 val tomcatNativeVersion: String by project
 val exposedVersion: String by project
+val hikariCPVersion: String by project
 
 val flywayUrl: String by project
 val flywayUser: String by project
@@ -74,8 +75,9 @@ flyway {
 //}
 
 dependencies {
-  // Persistence
+  // General Persistence
   implementation("org.postgresql", "postgresql", postgresqlVersion)
+  implementation("com.zaxxer", "HikariCP", hikariCPVersion)
 
   // Monitoring
   implementation("io.micrometer", "micrometer-registry-prometheus", prometeusVersion)
