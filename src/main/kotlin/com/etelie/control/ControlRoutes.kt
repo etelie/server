@@ -22,6 +22,12 @@ fun Route.healthCheckRoute() {
 
 fun Route.statusRoute() {
     get("/status") {
-        call.respond(Status.fetchCurrent() ?: Status.UNKNOWN)
+        val status = Status.fetchCurrent() ?: Status.UNKNOWN
+        call.respond<StatusResponse>(
+            StatusResponse(
+                ControlResponse(Control.STATUS.identifier, status.state),
+                status.name
+            )
+        )
     }
 }

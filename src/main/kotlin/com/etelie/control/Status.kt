@@ -9,7 +9,7 @@ enum class Status(val state: Int) {
 
     companion object {
         suspend fun fetchCurrent() = values().firstOrNull {
-            it.state == Controls.STATUS.fetchEntity()?.state
+            it.state == Control.STATUS.fetchEntity()?.state
         }
     }
 }

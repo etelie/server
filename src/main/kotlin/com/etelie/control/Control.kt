@@ -2,7 +2,7 @@ package com.etelie.control
 
 import com.etelie.common.Transactions.suspendedTransaction
 
-enum class Controls(
+enum class Control(
     val identifier: String,
 ) {
 
