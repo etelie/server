@@ -1,5 +1,7 @@
 package com.etelie.control
 
+import com.etelie.control.status.Status
+import com.etelie.control.status.StatusResponse
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
