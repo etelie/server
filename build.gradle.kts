@@ -7,6 +7,7 @@ val moduleId: String by project
 
 val versionNumber = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" }
 val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
+
 /** "production" | "staging" | "test" | "development" **/
 val executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
 val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
@@ -22,9 +23,9 @@ val exposedVersion: String by project
 val hikariCPVersion: String by project
 val newRelicVersion: String by project
 
-val flywayUrl: String by project
-val flywayUser: String by project
-val flywayPassword: String by project
+val localFlywayUrl: String by project
+val localFlywayUser: String by project
+val localFlywayPassword: String by project
 
 val tomcatNativeOSClassifier: String? = System.getProperty("os.name")?.lowercase()?.run {
     when {
@@ -80,9 +81,9 @@ ktor {
 }
 
 flyway {
-    url = System.getenv("FLYWAY_URL") ?: flywayUrl
-    user = System.getenv("FLYWAY_USER") ?: flywayUser
-    password = System.getenv("FLYWAY_PASSWORD") ?: flywayPassword
+    url = System.getenv("FLYWAY_URL") ?: localFlywayUrl
+    user = System.getenv("FLYWAY_USER") ?: localFlywayUser
+    password = System.getenv("FLYWAY_PASSWORD") ?: localFlywayPassword
     table = "changelog"
 }
 
