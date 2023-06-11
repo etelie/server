@@ -22,7 +22,7 @@ import io.ktor.server.netty.Netty
 fun main(args: Array<String>) {
     embeddedServer(
         factory = Netty,
-        commandLineEnvironment(args)
+        commandLineEnvironment(args),
     ).start(wait = true)
 }
 

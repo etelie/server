@@ -41,5 +41,10 @@ out/
 .env
 
 ### Docker volumes ###
-docker/server/postgres/data
-docker/server/pgadmin/data
+docker/server/postgres/data/
+docker/server/pgadmin/data/
+
+### New Relic ###
+newrelic/*
+!newrelic/newrelic.zip
+!newrelic/newrelic.yml

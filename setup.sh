@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-
-
 function error {
   message=$1
   code=$2
@@ -24,20 +22,29 @@ function set_env_value {
   return 0
 }
 
-
-
+echo -n "Normalizing working directory..."
 cd "${0:a:h}" || error "cd into repo failed"
+echo "done"
+echo "Working directory set to $(pwd)"
 
+echo
+echo -n "Checking environment variables..."
 # Copy .env.template into .env if doesn't already exist
-if ! test -f .env
-then
+if ! test -f .env; then
   cp .env.template .env
   ln -s .env docker/server/.env
 fi
+echo "done"
 
 set_env_value "ETELIE_HOME"
 set_env_value "PGADMIN_DEFAULT_EMAIL"
 set_env_value "PGADMIN_DEFAULT_PASSWORD"
 test -f .enve && rm .enve # Not sure why this file is being created
+
+if ! test -f newrelic/newrelic.jar; then
+  echo
+  echo "Extracting New Relic archive into $(pwd)/newrelic/"
+  unzip newrelic/newrelic.zip -d .
+fi
 
 exit 0
