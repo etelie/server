@@ -43,8 +43,11 @@ test -f .enve && rm .enve # Not sure why this file is being created
 
 if ! test -f newrelic/newrelic.jar; then
   echo
-  echo "Extracting New Relic archive into $(pwd)/newrelic/"
-  unzip newrelic/newrelic.zip -d .
+  echo "Downloading New Relic instrumentation package"
+  curl -o newrelic/newrelic.zip -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/8.3.0/newrelic-java.zip &&
+    echo "Extracting New Relic archive into $(pwd)/newrelic/" &&
+    unzip newrelic/newrelic.zip -x newrelic/newrelic.yml &&
+    rm newrelic/newrelic.zip
 fi
 
 exit 0

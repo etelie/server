@@ -99,10 +99,11 @@ dependencies {
 
     // Netty/TomcatNative
     implementation(
-        if (tomcatNativeOSClassifier != null) {
-            "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion:$tomcatNativeOSClassifier"
+        "io.netty", "netty-tcnative-boringssl-static",
+        if (tomcatNativeOSClassifier == null) {
+            tomcatNativeVersion
         } else {
-            "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion"
+            "$tomcatNativeVersion:$tomcatNativeOSClassifier"
         },
     )
 
