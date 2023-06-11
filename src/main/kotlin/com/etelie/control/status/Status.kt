@@ -10,8 +10,12 @@ enum class Status(val state: Int) {
     UNKNOWN(4);
 
     companion object {
-        suspend fun fetchCurrent() = values().firstOrNull {
-            it.state == Control.STATUS.fetchEntity()?.state
+        private fun fromState(state: Int) = values().firstOrNull {
+            it.state == state
+        }
+
+        suspend fun fetchCurrent() = Control.STATUS.fetchEntity()?.state?.let {
+            fromState(it)
         }
     }
 }
