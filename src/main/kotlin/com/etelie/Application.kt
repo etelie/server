@@ -1,6 +1,6 @@
 package com.etelie
 
-import com.etelie.config.Persistence.connectToDatabase
+import com.etelie.persistence.PersistenceConfig.connectToDatabase
 import com.etelie.plugin.pluginApi
 import com.etelie.plugin.pluginHTTP
 import com.etelie.plugin.pluginMonitoring
@@ -22,9 +22,14 @@ import io.ktor.server.netty.Netty
 fun main(args: Array<String>) {
     embeddedServer(
         factory = Netty,
-        commandLineEnvironment(args)
+        commandLineEnvironment(args),
     ).start(wait = true)
 }
+
+val Application.executionEnvironment: ExecutionEnvironment?
+    get() = System.getenv("EXECUTION_ENVIRONMENT")?.let {
+        ExecutionEnvironment.fromLabel(it)
+    }
 
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {

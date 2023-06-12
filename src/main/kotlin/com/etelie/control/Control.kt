@@ -1,6 +1,6 @@
 package com.etelie.control
 
-import com.etelie.common.Transactions.suspendedTransaction
+import com.etelie.persistence.Transactions.suspendedTransaction
 
 enum class Control(
     val identifier: String,

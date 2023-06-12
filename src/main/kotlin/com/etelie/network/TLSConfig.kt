@@ -1,4 +1,4 @@
-package com.etelie.config
+package com.etelie.network
 
 import io.ktor.network.tls.certificates.buildKeyStore
 import io.ktor.network.tls.certificates.saveToFile
@@ -6,7 +6,7 @@ import io.ktor.server.engine.ApplicationEngineEnvironmentBuilder
 import io.ktor.server.engine.sslConnector
 import java.io.File
 
-object TLS {
+object TLSConfig {
     private const val CERTIFICATE_ALIAS = "etelie_local_tls_cert"
     private const val CERTIFICATE_PASSWORD = "certificate"
     private const val KEYSTORE_PASSWORD = "keystore"

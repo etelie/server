@@ -1,5 +1,6 @@
-package com.etelie.control
+package com.etelie.control.status
 
+import com.etelie.control.ControlResponse
 import kotlinx.serialization.Serializable
 
 @Serializable

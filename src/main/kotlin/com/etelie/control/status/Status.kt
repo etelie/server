@@ -1,4 +1,6 @@
-package com.etelie.control
+package com.etelie.control.status
+
+import com.etelie.control.Control
 
 enum class Status(val state: Int) {
     OPERATIONAL(0),

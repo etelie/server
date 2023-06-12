@@ -1,4 +1,4 @@
-package com.etelie.common
+package com.etelie.persistence
 
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
