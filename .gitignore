@@ -47,3 +47,8 @@ docker/server/pgadmin/data/
 ### New Relic ###
 newrelic/*
 !newrelic/newrelic.yml
+
+### Open Telemetry ###
+opentelemetry/*
+!opentelemetry/.keep
+

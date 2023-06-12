@@ -5,13 +5,6 @@ import io.ktor.plugin.features.JreVersion
 val orgId: String by project
 val moduleId: String by project
 
-val versionNumber = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" }
-val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
-
-/** "production" | "staging" | "test" | "development" **/
-val executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
-val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
-
 val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
@@ -22,12 +15,20 @@ val tomcatNativeVersion: String by project
 val exposedVersion: String by project
 val hikariCPVersion: String by project
 val newRelicVersion: String by project
+val openTelemetryVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
 val localFlywayPassword: String by project
 
-val tomcatNativeOSClassifier: String? = System.getProperty("os.name")?.lowercase()?.run {
+val versionNumber = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" }
+val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
+
+/** "production" | "staging" | "test" | "development" **/
+var executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
+val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
+
+val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase().run {
     when {
         contains("win") -> "windows-x86_64"
         contains("linux") -> "linux-x86_64"
@@ -36,6 +37,7 @@ val tomcatNativeOSClassifier: String? = System.getProperty("os.name")?.lowercase
     }
 }
 val newRelicJar = projectDir.resolve("newrelic/newrelic.jar")
+val openTelemetryJar = projectDir.resolve("opentelemetry/opentelemetry-javaagent.jar")
 val deployableEnvironments = setOf("production", "staging")
 
 group = "com.${orgId}" // "com.etelie"
@@ -54,14 +56,18 @@ plugins {
 }
 
 application {
+    val openTelemetryProperties = projectDir.resolve("src/main/resources/opentelemetry.properties")
     val isDeployed = deployableEnvironments.contains(executionEnvironment)
     val jvmArgs = mutableSetOf(
         "-Dio.ktor.development=${!isDeployed}",
         "-Dnewrelic.environment=$executionEnvironment",
         "-Dnewrelic.config.license_key=$newRelicLicenseKey",
-    )
-    if (isDeployed) {
-        jvmArgs.add("-javaagent:${newRelicJar.absolutePath}")
+        "-Dotel.javaagent.configuration-file=${openTelemetryProperties.absolutePath}",
+        "-Dotel.resource.attributes=service.name=server-$executionEnvironment",
+    ).apply {
+        if (!isDeployed) return@apply
+        add("-javaagent:${newRelicJar.absolutePath}")
+        add("-javaagent:${openTelemetryJar.absolutePath}")
     }
 
     mainClass.set("com.etelie.ApplicationKt")
@@ -96,15 +102,18 @@ dependencies {
     implementation("io.micrometer", "micrometer-registry-prometheus", prometeusVersion)
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
     implementation("com.newrelic.agent.android", "agent-gradle-plugin", newRelicVersion)
+    implementation(platform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion"))
+    implementation("io.opentelemetry", "opentelemetry-api")
+    implementation("io.opentelemetry", "opentelemetry-sdk")
+    implementation("io.opentelemetry", "opentelemetry-exporter-otlp")
 
     // Netty/TomcatNative
     implementation(
-        "io.netty", "netty-tcnative-boringssl-static",
-        if (tomcatNativeOSClassifier == null) {
-            tomcatNativeVersion
+        if (tomcatNativeOSClassifier != null) {
+            "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion:$tomcatNativeOSClassifier"
         } else {
-            "$tomcatNativeVersion:$tomcatNativeOSClassifier"
-        },
+            "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion"
+        }
     )
 
     // Ktor

@@ -50,4 +50,12 @@ if ! test -f newrelic/newrelic.jar; then
     rm newrelic/newrelic.zip
 fi
 
+if ! test -f opentelemetry/opentelemetry-javaagent.jar; then
+  echo
+  echo "Downloading Open Telemetry agent package"
+  curl \
+    -o 'opentelemetry/opentelemetry-javaagent.jar' \
+    -L 'https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.26.0/opentelemetry-javaagent.jar'
+fi
+
 exit 0

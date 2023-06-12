@@ -17,6 +17,7 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.slf4j.event.Level
 
 fun Application.pluginMonitoring() {
+
     val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
     install(MicrometerMetrics) {
