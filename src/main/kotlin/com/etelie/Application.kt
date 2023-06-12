@@ -26,6 +26,11 @@ fun main(args: Array<String>) {
     ).start(wait = true)
 }
 
+val Application.executionEnvironment: ExecutionEnvironment?
+    get() = System.getenv("EXECUTION_ENVIRONMENT")?.let {
+        ExecutionEnvironment.fromLabel(it)
+    }
+
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {
     connectToDatabase()

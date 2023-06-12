@@ -16,6 +16,7 @@ val exposedVersion: String by project
 val hikariCPVersion: String by project
 val newRelicVersion: String by project
 val openTelemetryVersion: String by project
+val openTelemetryInstrumentationVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
@@ -25,7 +26,7 @@ val versionNumber = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" 
 val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
 
 /** "production" | "staging" | "test" | "development" **/
-var executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
+val executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
 val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
 
 val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase().run {
@@ -94,18 +95,30 @@ flyway {
 }
 
 dependencies {
-    // General Persistence
+    // Persistence (General)
     implementation("org.postgresql", "postgresql", postgresqlVersion)
     implementation("com.zaxxer", "HikariCP", hikariCPVersion)
 
-    // Monitoring
-    implementation("io.micrometer", "micrometer-registry-prometheus", prometeusVersion)
+    // Exposed
+    implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-kotlin-datetime", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-money", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-crypt", exposedVersion)
+
+    // Monitoring (General)
+    implementation("io.ktor", "ktor-server-metrics-micrometer", ktorVersion)
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
-    implementation("com.newrelic.agent.android", "agent-gradle-plugin", newRelicVersion)
+
+    // OpenTelemetry
     implementation(platform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion"))
     implementation("io.opentelemetry", "opentelemetry-api")
     implementation("io.opentelemetry", "opentelemetry-sdk")
+    implementation("io.opentelemetry", "opentelemetry-semconv")
     implementation("io.opentelemetry", "opentelemetry-exporter-otlp")
+    implementation("io.opentelemetry", "opentelemetry-extension-kotlin")
+    implementation("io.opentelemetry.instrumentation", "opentelemetry-ktor-2.0", openTelemetryInstrumentationVersion)
 
     // Netty/TomcatNative
     implementation(
@@ -137,14 +150,6 @@ dependencies {
     implementation("io.ktor", "ktor-server-rate-limit", ktorVersion)
     implementation("io.ktor", "ktor-server-status-pages", ktorVersion)
     implementation("io.ktor", "ktor-server-config-yaml", ktorVersion)
-
-    // Exposed
-    implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
-    implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
-    implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
-    implementation("org.jetbrains.exposed", "exposed-kotlin-datetime", exposedVersion)
-    implementation("org.jetbrains.exposed", "exposed-money", exposedVersion)
-    implementation("org.jetbrains.exposed", "exposed-crypt", exposedVersion)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
