@@ -1,5 +1,8 @@
 #!/usr/bin/env zsh
 
+NEW_RELIC_VERSION="8.3.0"
+OPENTELEMETRY_VERSION="1.26.0"
+
 function error {
   message=$1
   code=$2
@@ -43,8 +46,8 @@ test -f .enve && rm .enve # Not sure why this file is being created
 
 if ! test -f newrelic/newrelic.jar; then
   echo
-  echo "Downloading New Relic instrumentation package"
-  curl -o newrelic/newrelic.zip -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/8.3.0/newrelic-java.zip &&
+  echo "Downloading New Relic instrumentation package (version ${NEW_RELIC_VERSION})"
+  curl -o newrelic/newrelic.zip -O "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/${NEW_RELIC_VERSION}/newrelic-java.zip" &&
     echo "Extracting New Relic archive into $(pwd)/newrelic/" &&
     unzip newrelic/newrelic.zip -x newrelic/newrelic.yml &&
     rm newrelic/newrelic.zip
@@ -52,10 +55,10 @@ fi
 
 if ! test -f opentelemetry/opentelemetry-javaagent.jar; then
   echo
-  echo "Downloading Open Telemetry agent package"
+  echo "Downloading Open Telemetry agent package (version ${OPENTELEMETRY_VERSION})"
   curl \
     -o 'opentelemetry/opentelemetry-javaagent.jar' \
-    -L 'https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.26.0/opentelemetry-javaagent.jar'
+    -L "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OPENTELEMETRY_VERSION}/opentelemetry-javaagent.jar"
 fi
 
 exit 0
