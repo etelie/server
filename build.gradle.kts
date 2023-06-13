@@ -17,6 +17,7 @@ val hikariCPVersion: String by project
 val newRelicVersion: String by project
 val openTelemetryVersion: String by project
 val openTelemetryInstrumentationVersion: String by project
+val tegralVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
@@ -150,6 +151,11 @@ dependencies {
     implementation("io.ktor", "ktor-server-rate-limit", ktorVersion)
     implementation("io.ktor", "ktor-server-status-pages", ktorVersion)
     implementation("io.ktor", "ktor-server-config-yaml", ktorVersion)
+
+    // Tegral
+    implementation(tegralLibs.core)
+    implementation(tegralLibs.openapi.dsl)
+    implementation(tegralLibs.openapi.ktor)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
