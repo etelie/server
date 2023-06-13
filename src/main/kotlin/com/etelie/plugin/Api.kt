@@ -1,5 +1,6 @@
 package com.etelie.plugin
 
+import guru.zoroark.tegral.openapi.ktor.TegralOpenApiKtor
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -14,4 +15,9 @@ fun Application.pluginApi() {
     }
     install(AutoHeadResponse)
     install(Resources)
+    install(TegralOpenApiKtor) {
+        title = "Etelie Server API"
+        version = "0.1.0"
+        contactEmail = "hello@etelie.com"
+    }
 }
