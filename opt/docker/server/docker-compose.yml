@@ -8,7 +8,7 @@ services:
         POSTGRES_USER: ${POSTGRES_USER}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         POSTGRES_DB: ${POSTGRES_DB}
-    env_file: ../../.env
+    env_file: .env
     container_name: server-postgres
     ports:
       - '${POSTGRES_PORT}:5432'
@@ -18,7 +18,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:7
-    env_file: ../../.env
+    env_file: .env
     container_name: server-pgadmin
     ports:
       - '${PGADMIN_PORT}:6432'

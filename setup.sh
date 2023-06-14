@@ -44,20 +44,20 @@ set_env_value "PGADMIN_DEFAULT_EMAIL"
 set_env_value "PGADMIN_DEFAULT_PASSWORD"
 test -f .enve && rm .enve # Not sure why this file is being created
 
-if ! test -f newrelic/newrelic.jar; then
+if ! test -f opt/newrelic/newrelic.jar; then
   echo
   echo "Downloading New Relic instrumentation package (version ${NEW_RELIC_VERSION})"
-  curl -o newrelic/newrelic.zip -O "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/${NEW_RELIC_VERSION}/newrelic-java.zip" &&
-    echo "Extracting New Relic archive into $(pwd)/newrelic/" &&
-    unzip newrelic/newrelic.zip -x newrelic/newrelic.yml &&
-    rm newrelic/newrelic.zip
+  curl -o opt/newrelic/newrelic.zip -O "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/${NEW_RELIC_VERSION}/newrelic-java.zip" &&
+    echo "Extracting New Relic archive into $(pwd)/opt/newrelic/" &&
+    unzip opt/newrelic/newrelic.zip -x opt/newrelic/newrelic.yml &&
+    rm opt/newrelic/newrelic.zip
 fi
 
-if ! test -f opentelemetry/opentelemetry-javaagent.jar; then
+if ! test -f opt/opentelemetry/opentelemetry-javaagent.jar; then
   echo
   echo "Downloading Open Telemetry agent package (version ${OPENTELEMETRY_VERSION})"
   curl \
-    -o 'opentelemetry/opentelemetry-javaagent.jar' \
+    -o 'opt/opentelemetry/opentelemetry-javaagent.jar' \
     -L "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OPENTELEMETRY_VERSION}/opentelemetry-javaagent.jar"
 fi
 

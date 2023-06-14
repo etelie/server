@@ -41,14 +41,14 @@ out/
 .env
 
 ### Docker volumes ###
-docker/server/postgres/data/
-docker/server/pgadmin/data/
+opt/docker/server/postgres/data/
+opt/docker/server/pgadmin/data/
 
 ### New Relic ###
-newrelic/*
-!newrelic/newrelic.yml
+opt/newrelic/*
+!opt/newrelic/newrelic.yml
 
 ### Open Telemetry ###
-opentelemetry/*
-!opentelemetry/.keep
+opt/opentelemetry/*
+!opt/opentelemetry/.keep
 

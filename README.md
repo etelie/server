@@ -160,7 +160,7 @@ The script will spin up the Docker container for your local PostgreSQL instance
 
 Start the local PostgreSQL instance along with the pgAdmin web server.
 
-    cd ./docker/server
+    cd ./opt/docker/server
     docker compose up
 
 The Dockerfile script creates the `etelie` user with password `etelie+1`. The maintenance database uses the standard `postgres` name. To database system is available within the docker network as `postgres:5432`. From the browser, its address is `localhost:5434`. 

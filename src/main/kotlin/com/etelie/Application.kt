@@ -5,10 +5,9 @@ import com.etelie.plugin.pluginApi
 import com.etelie.plugin.pluginHTTP
 import com.etelie.plugin.pluginMonitoring
 import com.etelie.plugin.pluginRouting
-import io.ktor.server.application.Application
-import io.ktor.server.engine.commandLineEnvironment
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 
 
 //val environment = applicationEngineEnvironment {
@@ -25,11 +24,6 @@ fun main(args: Array<String>) {
         commandLineEnvironment(args),
     ).start(wait = true)
 }
-
-val Application.executionEnvironment: ExecutionEnvironment?
-    get() = System.getenv("EXECUTION_ENVIRONMENT")?.let {
-        ExecutionEnvironment.fromLabel(it)
-    }
 
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {

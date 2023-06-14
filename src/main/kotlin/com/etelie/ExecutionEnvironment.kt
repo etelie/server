@@ -10,7 +10,14 @@ enum class ExecutionEnvironment(
     PRODUCTION("production");
 
     companion object {
-        fun fromLabel(label: String) = values().firstOrNull {
+        val current: ExecutionEnvironment
+            get() = env?.let { fromLabel(it) } ?: UNKNOWN
+
+        private val env: String? by lazy {
+            System.getenv("EXECUTION_ENVIRONMENT")
+        }
+
+        private fun fromLabel(label: String) = values().firstOrNull {
             it.label.equals(label, ignoreCase = true)
         }
     }

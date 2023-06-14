@@ -38,8 +38,8 @@ val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase
         else -> null
     }
 }
-val newRelicJar = projectDir.resolve("newrelic/newrelic.jar")
-val openTelemetryJar = projectDir.resolve("opentelemetry/opentelemetry-javaagent.jar")
+val newRelicJar = projectDir.resolve("opt/newrelic/newrelic.jar")
+val openTelemetryJar = projectDir.resolve("opt/opentelemetry/opentelemetry-javaagent.jar")
 val deployableEnvironments = setOf("production", "staging")
 
 group = "com.${orgId}" // "com.etelie"
