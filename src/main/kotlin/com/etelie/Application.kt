@@ -1,13 +1,15 @@
 package com.etelie
 
-import com.etelie.persistence.PersistenceConfig.connectToDatabase
+import com.etelie.persistence.PersistenceConfig
 import com.etelie.plugin.pluginApi
 import com.etelie.plugin.pluginHTTP
 import com.etelie.plugin.pluginMonitoring
 import com.etelie.plugin.pluginRouting
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import com.etelie.schedule.Scheduler
+import io.ktor.server.application.Application
+import io.ktor.server.engine.commandLineEnvironment
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 
 
 //val environment = applicationEngineEnvironment {
@@ -15,8 +17,6 @@ import io.ktor.server.netty.*
 //    sslConnector()
 //    module(Application::module)
 //}
-//val port = environment.config.property("ktor.deployment.port").getString().toInt()
-//val host = environment.config.property("ktor.deployment.host").getString()
 
 fun main(args: Array<String>) {
     embeddedServer(
@@ -27,7 +27,8 @@ fun main(args: Array<String>) {
 
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {
-    connectToDatabase()
+    PersistenceConfig.connectToDatabase(environment)
+    Scheduler.listen(environment)
     installAllPlugins()
 }
 

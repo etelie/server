@@ -2,7 +2,7 @@ package com.etelie.persistence
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationEnvironment
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -16,7 +16,7 @@ object PersistenceConfig {
      */
     private val driverClassName: String = org.postgresql.Driver::class.qualifiedName!!
 
-    fun Application.connectToDatabase() {
+    fun connectToDatabase(environment: ApplicationEnvironment) {
         val host = environment.config.property("postgresql.deploy.host").getString()
         val port = environment.config.property("postgresql.deploy.port").getString()
         val user = environment.config.property("postgresql.credential.user").getString()
