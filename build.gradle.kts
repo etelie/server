@@ -18,6 +18,7 @@ val newRelicVersion: String by project
 val openTelemetryVersion: String by project
 val openTelemetryInstrumentationVersion: String by project
 val tegralVersion: String by project
+val quartzVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
@@ -156,6 +157,9 @@ dependencies {
     implementation(tegralLibs.core)
     implementation(tegralLibs.openapi.dsl)
     implementation(tegralLibs.openapi.ktor)
+
+    // Miscellaneous
+    implementation("org.quartz-scheduler", "quartz", quartzVersion)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
