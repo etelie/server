@@ -6,6 +6,9 @@
 -- This is a trivially-modified version of the quartz-provided DDL (table prefix)
 -- The original script can be found here: https://github.com/quartz-scheduler/quartz/blob/a5c4d27e963f51097f9b2777489d310a88897ca4/quartz/src/main/resources/org/quartz/impl/jdbcjobstore/tables_postgres.sql
 
+-- Set the default schema to 'quartz'. 'public' elements require qualified access
+SET search_path TO quartz;
+
 DROP TABLE IF EXISTS quartz__FIRED_TRIGGERS;
 DROP TABLE IF EXISTS quartz__PAUSED_TRIGGER_GRPS;
 DROP TABLE IF EXISTS quartz__SCHEDULER_STATE;
@@ -17,6 +20,10 @@ DROP TABLE IF EXISTS quartz__BLOB_TRIGGERS;
 DROP TABLE IF EXISTS quartz__TRIGGERS;
 DROP TABLE IF EXISTS quartz__JOB_DETAILS;
 DROP TABLE IF EXISTS quartz__CALENDARS;
+
+DROP SCHEMA IF EXISTS quartz;
+
+CREATE SCHEMA quartz;
 
 CREATE TABLE quartz__JOB_DETAILS
 (
