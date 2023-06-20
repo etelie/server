@@ -1,7 +1,7 @@
 package com.etelie.monitoring
 
-import com.etelie.ExecutionEnvironment
-import com.etelie.deployable
+import com.etelie.application.ExecutionEnvironment
+import com.etelie.application.deployable
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator

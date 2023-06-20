@@ -1,4 +1,4 @@
-package com.etelie
+package com.etelie.application
 
 import com.etelie.persistence.PersistenceConfig
 import com.etelie.plugin.pluginApi

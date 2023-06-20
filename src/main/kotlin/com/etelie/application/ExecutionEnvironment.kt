@@ -1,4 +1,4 @@
-package com.etelie
+package com.etelie.application
 
 enum class ExecutionEnvironment(
     val label: String,

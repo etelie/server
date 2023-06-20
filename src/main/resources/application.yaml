@@ -1,7 +1,7 @@
 ktor:
   application:
     modules:
-      - com.etelie.ApplicationKt.module
+      - com.etelie.application.ApplicationKt.module
   environment: "$KTOR_ENV:dev"
   deployment:
     port: "$KTOR_PORT:402"

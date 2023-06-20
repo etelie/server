@@ -73,7 +73,7 @@ application {
         add("-javaagent:${openTelemetryJar.absolutePath}")
     }
 
-    mainClass.set("com.etelie.ApplicationKt")
+    mainClass.set("com.etelie.application.ApplicationKt")
     applicationDefaultJvmArgs = jvmArgs
 }
 
