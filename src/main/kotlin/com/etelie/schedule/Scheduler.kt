@@ -3,6 +3,8 @@ package com.etelie.schedule
 import io.ktor.server.application.ApplicationEnvironment
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.ApplicationStopPreparing
+import org.quartz.JobDetail
+import org.quartz.Trigger
 import org.quartz.impl.StdSchedulerFactory
 
 object Scheduler {
@@ -19,6 +21,11 @@ object Scheduler {
         environment.monitor.subscribe(ApplicationStopPreparing) {
             shutdown()
         }
+    }
+
+    fun subscribe(job: JobDetail, trigger: Trigger) {
+        scheduler.scheduleJob(job, trigger)
+        // todo: catch SchedulerException, log error
     }
 
 }
