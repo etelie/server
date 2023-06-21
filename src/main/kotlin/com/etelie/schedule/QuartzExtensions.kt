@@ -4,9 +4,12 @@ import org.quartz.CronScheduleBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDetail
+import org.quartz.JobExecutionContext
 import org.quartz.ScheduleBuilder
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 
 class JobMissingSimpleNameException : IllegalStateException("Simple name not found on Job KClass")
@@ -58,3 +61,21 @@ fun KClass<out Job>.createStandardQuartzComponents(cronExpression: String): Quar
     val trigger = createStandardTrigger(scheduleBuilder)
     return QuartzComponents(jobDetail, trigger)
 }
+
+val JobExecutionContext?.name: String
+    get() = this?.jobDetail?.description ?: "Unknown job"
+
+val JobExecutionContext?.startMessage: String
+    get() = run {
+        val fireTime: String = this?.fireTime?.toInstant()?.let {
+            DateTimeFormatter.RFC_1123_DATE_TIME.format(it)
+        } ?: "unknown time"
+        "$name started at $fireTime"
+    }
+
+
+val JobExecutionContext?.finishMessage: String
+    get() = run {
+        val endTime: String = DateTimeFormatter.RFC_1123_DATE_TIME.format(Instant.now())
+        "$name finished at $endTime"
+    }

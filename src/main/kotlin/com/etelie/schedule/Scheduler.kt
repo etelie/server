@@ -12,7 +12,7 @@ import org.quartz.SchedulerException
 import org.quartz.Trigger
 import org.quartz.impl.StdSchedulerFactory
 
-val log = KotlinLogging.logger {}
+private val log = KotlinLogging.logger {}
 
 object Scheduler {
     private val scheduler = StdSchedulerFactory().scheduler
