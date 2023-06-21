@@ -1,9 +1,15 @@
 package com.etelie.schedule
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.ApplicationEnvironment
 import io.ktor.server.application.ApplicationStarted
+import io.ktor.server.application.ApplicationStarting
 import io.ktor.server.application.ApplicationStopPreparing
+import io.ktor.server.application.ApplicationStopped
+import io.ktor.server.application.ApplicationStopping
 import org.quartz.impl.StdSchedulerFactory
+
+val log = KotlinLogging.logger {}
 
 object Scheduler {
     private val scheduler = StdSchedulerFactory().scheduler
@@ -12,12 +18,22 @@ object Scheduler {
     private fun shutdown(wait: Boolean = false): Unit = scheduler.shutdown(wait)
 
     fun listen(environment: ApplicationEnvironment) {
+        environment.monitor.subscribe(ApplicationStarting) {
+            log.info("ApplicationStarting")
+        }
         environment.monitor.subscribe(ApplicationStarted) {
+            log.info("ApplicationStarted")
             start()
         }
-
         environment.monitor.subscribe(ApplicationStopPreparing) {
+            log.info("ApplicationStopPreparing")
             shutdown()
+        }
+        environment.monitor.subscribe(ApplicationStopping) {
+            log.info("ApplicationStopping")
+        }
+        environment.monitor.subscribe(ApplicationStopped) {
+            log.info("ApplicationStopped")
         }
     }
 
