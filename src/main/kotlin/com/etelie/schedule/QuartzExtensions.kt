@@ -1,5 +1,6 @@
 package com.etelie.schedule
 
+import io.github.oshai.kotlinlogging.KLogger
 import org.quartz.CronScheduleBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
@@ -79,3 +80,9 @@ val JobExecutionContext?.finishMessage: String
         val endTime: String = DateTimeFormatter.RFC_1123_DATE_TIME.format(Instant.now())
         "$name finished at $endTime"
     }
+
+fun <JobType : Job> JobType.logged(logger: KLogger, context: JobExecutionContext?, execute: () -> Unit) {
+    logger.info { context.startMessage }
+    execute()
+    logger.info { context.finishMessage }
+}

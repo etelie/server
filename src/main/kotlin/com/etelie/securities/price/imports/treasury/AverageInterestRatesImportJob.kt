@@ -2,8 +2,7 @@ package com.etelie.securities.price.imports.treasury
 
 import com.etelie.schedule.Scheduler
 import com.etelie.schedule.createStandardQuartzComponents
-import com.etelie.schedule.finishMessage
-import com.etelie.schedule.startMessage
+import com.etelie.schedule.logged
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.quartz.Job
 import org.quartz.JobExecutionContext
@@ -21,8 +20,8 @@ class AverageInterestRatesImportJob : Job {
     }
 
     override fun execute(context: JobExecutionContext?) {
-        log.info { context.startMessage }
-        AverageInterestRatesImport.import()
-        log.info { context.finishMessage }
+        logged(log, context) {
+            AverageInterestRatesImport.import()
+        }
     }
 }
