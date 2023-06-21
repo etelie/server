@@ -8,6 +8,7 @@ import io.ktor.server.application.ApplicationStopPreparing
 import io.ktor.server.application.ApplicationStopped
 import io.ktor.server.application.ApplicationStopping
 import org.quartz.JobDetail
+import org.quartz.SchedulerException
 import org.quartz.Trigger
 import org.quartz.impl.StdSchedulerFactory
 
@@ -40,8 +41,15 @@ object Scheduler {
     }
 
     fun subscribe(job: JobDetail, trigger: Trigger) {
-        scheduler.scheduleJob(job, trigger)
-        // todo: catch SchedulerException, log error
+        try {
+            scheduler.scheduleJob(job, trigger)
+        } catch (e: SchedulerException) {
+            log.error(e) { "Error scheduling job ${job.description}" }
+        }
+    }
+
+    fun subscribe(components: QuartzComponents) {
+        this.subscribe(components.jobDetail, components.trigger)
     }
 
 }
