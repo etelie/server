@@ -28,8 +28,11 @@ fun main(args: Array<String>) {
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {
     PersistenceConfig.connectToDatabase(environment)
-    Scheduler.listen(environment)
     installAllPlugins()
+
+    if (ExecutionEnvironment.current.deployable()) {
+        Scheduler.listen(environment)
+    }
 }
 
 fun Application.installAllPlugins() {
