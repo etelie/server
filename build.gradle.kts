@@ -20,6 +20,7 @@ val openTelemetryInstrumentationVersion: String by project
 val tegralVersion: String by project
 val quartzVersion: String by project
 val kotlinLoggingVersion: String by project
+val khttpVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
@@ -162,6 +163,7 @@ dependencies {
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
     implementation("io.github.oshai", "kotlin-logging-jvm", kotlinLoggingVersion)
+    implementation("org.danilopianini", "khttp", khttpVersion)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
