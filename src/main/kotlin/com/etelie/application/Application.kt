@@ -30,8 +30,8 @@ fun Application.module() {
     PersistenceConfig.connectToDatabase(environment)
     installAllPlugins()
 
-    if (ExecutionEnvironment.current.deployable()) {
-        Scheduler.listen(environment)
+    if (!developmentMode) {
+        Scheduler.start(environment)
     }
 }
 

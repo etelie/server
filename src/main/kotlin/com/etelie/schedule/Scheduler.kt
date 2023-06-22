@@ -1,5 +1,6 @@
 package com.etelie.schedule
 
+import com.etelie.securities.price.imports.treasury.AverageInterestRatesImportJob
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.ApplicationEnvironment
 import io.ktor.server.application.ApplicationStarted
@@ -15,26 +16,32 @@ import org.quartz.impl.StdSchedulerFactory
 private val log = KotlinLogging.logger {}
 
 object Scheduler {
+
     private val scheduler = StdSchedulerFactory().scheduler
 
-    private fun start(): Unit = scheduler.start()
-    private fun shutdown(wait: Boolean = false): Unit = scheduler.shutdown(wait)
+    init {
+        AverageInterestRatesImportJob::class.initialize()
+    }
 
-    fun listen(environment: ApplicationEnvironment) {
+    fun start(environment: ApplicationEnvironment) {
         environment.monitor.subscribe(ApplicationStarting) {
             log.info("ApplicationStarting")
         }
+
         environment.monitor.subscribe(ApplicationStarted) {
             log.info("ApplicationStarted")
-            start()
+            scheduler.start()
         }
+
         environment.monitor.subscribe(ApplicationStopPreparing) {
             log.info("ApplicationStopPreparing")
-            shutdown()
+            scheduler.shutdown(false)
         }
+
         environment.monitor.subscribe(ApplicationStopping) {
             log.info("ApplicationStopping")
         }
+
         environment.monitor.subscribe(ApplicationStopped) {
             log.info("ApplicationStopped")
         }
@@ -48,7 +55,7 @@ object Scheduler {
         }
     }
 
-    fun subscribe(components: QuartzComponents) {
+    fun subscribe(components: JobDefinition) {
         this.subscribe(components.jobDetail, components.trigger)
     }
 
