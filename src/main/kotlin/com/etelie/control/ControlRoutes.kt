@@ -8,11 +8,10 @@ import guru.zoroark.tegral.openapi.ktor.openApiEndpoint
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 
-fun Routing.controlRoutes() {
+fun Route.controlRoutes() {
     route("/control") {
         healthCheckRoute()
         statusRoute()
