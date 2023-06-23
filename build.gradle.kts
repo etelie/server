@@ -20,7 +20,7 @@ val openTelemetryInstrumentationVersion: String by project
 val tegralVersion: String by project
 val quartzVersion: String by project
 val kotlinLoggingVersion: String by project
-val khttpVersion: String by project
+val http4kVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
@@ -160,10 +160,14 @@ dependencies {
     implementation(tegralLibs.openapi.dsl)
     implementation(tegralLibs.openapi.ktor)
 
+    // Http4k
+    implementation(platform("org.http4k:http4k-bom:$http4kVersion"))
+    implementation("org.http4k", "http4k-core")
+    implementation("org.http4k", "http4k-client-apache")
+
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
     implementation("io.github.oshai", "kotlin-logging-jvm", kotlinLoggingVersion)
-    implementation("org.danilopianini", "khttp", khttpVersion)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
