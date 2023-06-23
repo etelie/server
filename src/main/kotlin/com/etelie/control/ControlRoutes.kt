@@ -4,7 +4,6 @@ import com.etelie.control.status.Status
 import com.etelie.control.status.StatusResponse
 import guru.zoroark.tegral.openapi.dsl.schema
 import guru.zoroark.tegral.openapi.ktor.describe
-import guru.zoroark.tegral.openapi.ktor.openApiEndpoint
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -15,7 +14,6 @@ fun Route.controlRoutes() {
     route("/control") {
         healthCheckRoute()
         statusRoute()
-        openAPIRoute()
     }
 }
 
@@ -53,11 +51,5 @@ fun Route.statusRoute() {
                 )
             }
         }
-    }
-}
-
-fun Route.openAPIRoute() {
-    openApiEndpoint("/openapi") describe {
-        summary = "OpenAPI documentation"
     }
 }

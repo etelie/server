@@ -19,7 +19,7 @@ fun Route.averageInterestRatesImportRoute() {
         AverageInterestRatesImport.import()
         call.respond<Unit>(HttpStatusCode.OK, Unit)
     } describe {
-        summary = "Average Interest Rates Import"
+        summary = "Average interest rates import"
         200 response {}
     }
 }
