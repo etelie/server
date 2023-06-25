@@ -12,7 +12,6 @@ import org.quartz.TriggerBuilder
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
-import kotlin.reflect.full.companionObjectInstance
 
 class JobMissingSimpleNameException : IllegalStateException("Simple name not found on Job KClass")
 
@@ -58,11 +57,6 @@ fun KClass<out Job>.createStandardJobDefinition(cronExpression: String): JobDefi
     val scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withStandardSettings()
     val trigger = createStandardTrigger(scheduleBuilder)
     return JobDefinition(jobDetail, trigger)
-}
-
-fun KClass<out Job>.initialize() {
-    // Trigger the static initialization block
-    this.companionObjectInstance
 }
 
 val JobExecutionContext?.name: String

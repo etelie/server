@@ -20,7 +20,7 @@ object Scheduler {
     private val scheduler = StdSchedulerFactory().scheduler
 
     init {
-        AverageInterestRatesImportJob::class.initialize()
+        subscribe(AverageInterestRatesImportJob.jobDefinition)
     }
 
     fun start(environment: ApplicationEnvironment) {
