@@ -1,6 +1,7 @@
 package com.etelie.securities.price.imports.treasury
 
 import com.etelie.network.addAllQueries
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -12,6 +13,41 @@ import org.http4k.core.Request
 import java.net.URI
 
 object TreasuryClient {
+
+    private const val basePath: String = "https://api.fiscaldata.treasury.gov/services/api/fiscal_service"
+    private val client: HttpHandler = ApacheClient()
+    private val baseURI: URI = URI.create(basePath)
+    private val baseParams: Map<String, String> = mapOf(
+        "page[size]" to "100",
+        "page[number]" to "1",
+        "format" to "json",
+    )
+
+
+    fun averageInterestRateForTypeAndDate(
+        securityType: AverageInterestRatesImport.SecurityType,
+        currentDate: LocalDate,
+    ): Response {
+        val name: String = securityType.treasurySerialName
+        val year: String = currentDate.year.let {
+            String.format("%04d", it)
+        }
+        val month: String = currentDate.month.value.let {
+            String.format("%02d", it)
+        }
+
+        val path = "${basePath}/v2/accounting/od/avg_interest_rates"
+        val request = Request(Method.GET, path)
+            .addAllQueries(baseParams)
+            .addAllQueries(
+                mapOf(
+                    "filter" to "security_desc:eq:$name,record_calendar_year:eq:$year,record_calendar_month:eq:$month",
+                    "sort" to "record_date",
+                ),
+            )
+        val response = client(request)
+        return Json.decodeFromString(response.bodyString())
+    }
 
     @Serializable
     data class Response(
@@ -37,29 +73,6 @@ object TreasuryClient {
             val next: String?,
             val last: String,
         )
-    }
-
-
-    const val basePath: String = "https://api.fiscaldata.treasury.gov/services/api/fiscal_service"
-    val baseURI: URI = URI.create(basePath)
-    val baseParams: Map<String, String> = mapOf(
-        "page[size]" to "100",
-        "page[number]" to "1",
-        "format" to "json",
-    )
-    val client: HttpHandler = ApacheClient()
-
-    fun averageInterestRatesRequest(): Response {
-        val path = "${basePath}/v2/accounting/od/avg_interest_rates"
-        val request = Request(Method.GET, path)
-            .addAllQueries(
-                baseParams + mapOf(
-                    "filter" to "record_date:eq:2023-05-31",
-                    "sort" to "avg_interest_rate_amt",
-                ),
-            )
-        val response = client(request)
-        return Json.decodeFromString(response.bodyString())
     }
 
 }
