@@ -17,7 +17,7 @@ fun Route.treasuryImportRoutes() {
 fun Route.averageInterestRatesImportRoute() {
     patch("/average-interest-rates") {
         val importResponse = AverageInterestRatesImport.import()
-        call.respond<TreasuryClient.Response>(HttpStatusCode.OK, importResponse)
+        call.respond<String>(HttpStatusCode.OK, importResponse)
     } describe {
         summary = "Average interest rates import"
         200 response {}

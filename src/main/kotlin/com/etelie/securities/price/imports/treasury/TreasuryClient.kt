@@ -1,6 +1,7 @@
 package com.etelie.securities.price.imports.treasury
 
 import com.etelie.network.addAllQueries
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -10,11 +11,16 @@ import org.http4k.client.ApacheClient
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
+import java.math.BigDecimal
 import java.net.URI
+
+private val log = KotlinLogging.logger {}
 
 object TreasuryClient {
 
-    private const val basePath: String = "https://api.fiscaldata.treasury.gov/services/api/fiscal_service"
+    private const val scheme: String = "https"
+    private const val host: String = "api.fiscaldata.treasury.gov"
+    private const val basePath: String = "/services/api/fiscal_service"
     private val client: HttpHandler = ApacheClient()
     private val baseURI: URI = URI.create(basePath)
     private val baseParams: Map<String, String> = mapOf(
@@ -22,31 +28,49 @@ object TreasuryClient {
         "page[number]" to "1",
         "format" to "json",
     )
+    private val json = Json.Default
 
-
-    fun averageInterestRateForTypeAndDate(
-        securityType: AverageInterestRatesImport.SecurityType,
+    fun averageInterestRateForDate(
         currentDate: LocalDate,
-    ): Response {
-        val name: String = securityType.treasurySerialName
+    ): Map<String, BigDecimal> {
+        val path = "$basePath/v2/accounting/od/avg_interest_rates"
         val year: String = currentDate.year.let {
             String.format("%04d", it)
         }
         val month: String = currentDate.month.value.let {
             String.format("%02d", it)
         }
-
-        val path = "${basePath}/v2/accounting/od/avg_interest_rates"
-        val request = Request(Method.GET, path)
+        val request = Request(Method.GET, "$scheme://$host$path")
             .addAllQueries(baseParams)
             .addAllQueries(
                 mapOf(
-                    "filter" to "security_desc:eq:$name,record_calendar_year:eq:$year,record_calendar_month:eq:$month",
+                    "filter" to "record_calendar_year:eq:$year,record_calendar_month:eq:$month",
                     "sort" to "record_date",
                 ),
             )
-        val response = client(request)
-        return Json.decodeFromString(response.bodyString())
+
+
+        val responseBody = client(request).bodyString()
+        val response = json.decodeFromString<Response>(responseBody)
+
+        return response.data.fold(mapOf()) { acc, datum ->
+            val securityName: String = datum.getOrElse("security_desc") {
+                log.error(IllegalStateException()) { "Field [security_desc] not found in external API response" }
+                return@fold acc
+            }
+            val rateString: String = datum.getOrElse("avg_interest_rate_amt") {
+                log.error(IllegalStateException()) { "Field [avg_interest_rate_amt] not found in external API response" }
+                return@fold acc
+            }
+            val rate: BigDecimal = try {
+                rateString.toBigDecimal()
+            } catch (exception: NumberFormatException) {
+                log.error(exception) { "Error converting interest rate string to BigDecimal" }
+                return@fold acc
+            }
+
+            acc.plus(securityName to rate)
+        }
     }
 
     @Serializable
