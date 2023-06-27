@@ -13,7 +13,6 @@ private val log = KotlinLogging.logger {}
 
 object AverageInterestRatesImport {
 
-
     fun import(): String {
         val currentDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date.minus(1, DateTimeUnit.MONTH)
         val currentAverageRates: Map<SecurityType, BigDecimal> = TreasuryClient.averageInterestRateForDate(currentDate)
@@ -21,7 +20,7 @@ object AverageInterestRatesImport {
                 SecurityType.values().map { securityType ->
                     securityType.treasurySerialName
                 }.contains(key)
-            }.mapKeys {(key, _) ->
+            }.mapKeys { (key, _) ->
                 SecurityType.values().find {
                     it.treasurySerialName == key
                 } ?: throw IllegalStateException("SecurityType not found after filter")
