@@ -77,7 +77,7 @@ val JobExecutionContext?.finishMessage: String
         "$name finished at $endTime"
     }
 
-fun <JobType : Job> JobType.logged(logger: KLogger, context: JobExecutionContext?, execute: () -> Unit) {
+suspend fun <JobType : Job> JobType.logged(logger: KLogger, context: JobExecutionContext?, execute: suspend () -> Unit) {
     logger.info { context.startMessage }
     execute()
     logger.info { context.finishMessage }

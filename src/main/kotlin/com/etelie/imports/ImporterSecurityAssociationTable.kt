@@ -5,7 +5,7 @@ import com.etelie.securities.detail.SecurityDetailTable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 object ImporterSecurityAssociationTable : IntIdTable(
     name = "association_importer_security",
@@ -20,7 +20,7 @@ object ImporterSecurityAssociationTable : IntIdTable(
         uniqueIndex(importerId, securityId)
     }
 
-    fun fetchSecuritiesForImporter(id: Int): Collection<Pair<SecurityDetail, String>> = transaction {
+    suspend fun fetchSecuritiesForImporter(id: Int): Collection<Pair<SecurityDetail, String>> = newSuspendedTransaction {
         join(
             SecurityDetailTable,
             JoinType.RIGHT,
