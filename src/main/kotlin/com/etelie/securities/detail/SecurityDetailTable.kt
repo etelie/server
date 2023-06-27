@@ -1,10 +1,11 @@
 package com.etelie.securities.detail
 
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ResultRow
 
 object SecurityDetailTable : IntIdTable(
     name = "security_detail",
-    columnName = "detail_id"
+    columnName = "detail_id",
 ) {
     val securityId = integer("security_id").uniqueIndex()
     val securityName = varchar("security_name", 100).uniqueIndex()
@@ -21,4 +22,23 @@ object SecurityDetailTable : IntIdTable(
     val isTaxableFederal = bool("is_taxable_federal")
     val isTaxableState = bool("is_taxable_state")
     val isTaxableLocal = bool("is_taxable_local")
+
+    fun toSecurityDetail(row: ResultRow): SecurityDetail {
+        return SecurityDetail(
+            name = row.get(securityName),
+            description = row.get(securityDescription),
+            interestFrequency = row.get(interestFrequency),
+            compoundingFrequency = row.get(compoundingFrequency),
+            isCurrent = row.get(isCurrent),
+            isFixedRate = row.get(isFixedRate),
+            isFixedPar = row.get(isFixedPar),
+            isCompoundable = row.get(isCompoundable),
+            isAuctioned = row.get(isAuctioned),
+            isMarketable = row.get(isMarketable),
+            isCallable = row.get(isCallable),
+            isTaxableFederal = row.get(isTaxableFederal),
+            isTaxableState = row.get(isTaxableState),
+            isTaxableLocal = row.get(isTaxableLocal),
+        )
+    }
 }

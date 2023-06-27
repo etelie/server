@@ -1,6 +1,6 @@
 package com.etelie.schedule
 
-import com.etelie.securities.price.imports.treasury.AverageInterestRatesImportJob
+import com.etelie.imports.treasury.AverageInterestRatesImportJob
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.ApplicationEnvironment
 import io.ktor.server.application.ApplicationStarted

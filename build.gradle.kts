@@ -7,6 +7,7 @@ val moduleId: String by project
 
 val ktorVersion: String by project
 val kotlinVersion: String by project
+val kotlinxVersion: String by project
 val logbackVersion: String by project
 val postgresqlVersion: String by project
 val h2Version: String by project
@@ -99,6 +100,9 @@ flyway {
 }
 
 dependencies {
+    // Kotlin
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", kotlinxVersion)
+
     // Persistence (General)
     implementation("org.postgresql", "postgresql", postgresqlVersion)
     implementation("com.zaxxer", "HikariCP", hikariCPVersion)
@@ -164,6 +168,7 @@ dependencies {
     implementation(platform("org.http4k:http4k-bom:$http4kVersion"))
     implementation("org.http4k", "http4k-core")
     implementation("org.http4k", "http4k-client-apache")
+    implementation("org.http4k", "http4k-client-apache-async")
 
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
