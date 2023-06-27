@@ -1,4 +1,4 @@
-package com.etelie.securities.price.imports.treasury
+package com.etelie.imports.treasury
 
 import com.etelie.network.addAllQueries
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -30,6 +30,10 @@ object TreasuryClient {
     )
     private val json = Json.Default
 
+    /**
+     * Get the average interest rate for the given security from the US Treasury API
+     * @return Map of the security's serial name to the average interest rate
+     */
     fun averageInterestRateForDate(
         currentDate: LocalDate,
     ): Map<String, BigDecimal> {

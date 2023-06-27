@@ -1,4 +1,4 @@
-package com.etelie.securities.price.imports.treasury
+package com.etelie.imports.treasury
 
 import guru.zoroark.tegral.openapi.ktor.describe
 import io.ktor.http.HttpStatusCode

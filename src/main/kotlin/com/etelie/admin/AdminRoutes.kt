@@ -1,6 +1,6 @@
 package com.etelie.admin
 
-import com.etelie.securities.price.imports.treasury.treasuryImportRoutes
+import com.etelie.imports.treasury.treasuryImportRoutes
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.route
 

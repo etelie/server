@@ -1,4 +1,4 @@
-package com.etelie.securities.price.imports.treasury
+package com.etelie.imports.treasury
 
 import com.etelie.schedule.createStandardJobDefinition
 import com.etelie.schedule.logged
@@ -18,7 +18,7 @@ class AverageInterestRatesImportJob : Job {
 
     companion object {
         /** Every day at 12pm UTC */
-        private const val CRON_EXPRESSION = "0 0 12 * * *"
+        private const val CRON_EXPRESSION = "0 0 12 ? * *"
         val jobDefinition = AverageInterestRatesImportJob::class.createStandardJobDefinition(CRON_EXPRESSION)
     }
 
