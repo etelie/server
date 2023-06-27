@@ -16,13 +16,16 @@ object AverageInterestRatesImport {
 
     fun import(): String {
         val currentDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date.minus(1, DateTimeUnit.MONTH)
-        val currentAverageRates: Map<String, BigDecimal> = TreasuryClient.averageInterestRateForDate(currentDate)
+        val currentAverageRates: Map<SecurityType, BigDecimal> = TreasuryClient.averageInterestRateForDate(currentDate)
             .filterKeys { key ->
                 SecurityType.values().map { securityType ->
                     securityType.treasurySerialName
                 }.contains(key)
+            }.mapKeys {(key, _) ->
+                SecurityType.values().find {
+                    it.treasurySerialName == key
+                } ?: throw IllegalStateException("SecurityType not found after filter")
             }
-
         return currentAverageRates.toString()
     }
 
@@ -33,7 +36,7 @@ object AverageInterestRatesImport {
     )
     enum class SecurityType(
         val treasurySerialName: String,
-        val detailId: Int,
+        val securityId: Int,
     ) {
         TREASURY_BILL("Treasury Bills", 3),
         TREASURY_BOND("Treasury Bonds", 4),

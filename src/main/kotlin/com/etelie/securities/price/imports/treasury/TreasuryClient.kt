@@ -68,7 +68,6 @@ object TreasuryClient {
                 log.error(exception) { "Error converting interest rate string to BigDecimal" }
                 return@fold acc
             }
-
             acc.plus(securityName to rate)
         }
     }
