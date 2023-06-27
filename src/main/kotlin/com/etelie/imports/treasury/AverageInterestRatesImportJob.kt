@@ -1,5 +1,7 @@
 package com.etelie.imports.treasury
 
+import com.etelie.imports.ImporterTable
+import com.etelie.schedule.JobDefinition
 import com.etelie.schedule.createStandardJobDefinition
 import com.etelie.schedule.logged
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -23,9 +25,12 @@ class AverageInterestRatesImportJob : Job {
     }
 
     companion object {
-        /** Every day at 12pm UTC */
-        private const val CRON_EXPRESSION = "0 0 12 ? * *"
-        val jobDefinition = AverageInterestRatesImportJob::class.createStandardJobDefinition(CRON_EXPRESSION)
+        private suspend fun getCronExpression(): String {
+            return ImporterTable.fetchCronExpression(1)
+        }
+        suspend fun getJobDefinition(): JobDefinition {
+            return AverageInterestRatesImportJob::class.createStandardJobDefinition(getCronExpression())
+        }
     }
 
 }

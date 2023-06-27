@@ -8,6 +8,10 @@ import io.ktor.server.application.ApplicationStarting
 import io.ktor.server.application.ApplicationStopPreparing
 import io.ktor.server.application.ApplicationStopped
 import io.ktor.server.application.ApplicationStopping
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.quartz.JobDetail
 import org.quartz.SchedulerException
 import org.quartz.Trigger
@@ -20,7 +24,14 @@ object Scheduler {
     private val scheduler = StdSchedulerFactory().scheduler
 
     init {
-        subscribe(AverageInterestRatesImportJob.jobDefinition)
+        runBlocking(CoroutineName("${this::class.simpleName}")) {
+            awaitAll(
+                async { AverageInterestRatesImportJob.getJobDefinition() },
+            ).forEach {
+                subscribe(it)
+                log.info { "Scheduled job: ${it.jobDetail.description}" }
+            }
+        }
     }
 
     fun start(environment: ApplicationEnvironment) {
