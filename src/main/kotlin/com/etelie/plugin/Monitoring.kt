@@ -1,6 +1,6 @@
 package com.etelie.plugin
 
-import com.etelie.ExecutionEnvironment
+import com.etelie.application.ExecutionEnvironment
 import com.etelie.monitoring.getOpenTelemetry
 import io.ktor.http.*
 import io.ktor.server.application.*

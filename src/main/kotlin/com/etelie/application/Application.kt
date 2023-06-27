@@ -1,4 +1,4 @@
-package com.etelie
+package com.etelie.application
 
 import com.etelie.persistence.PersistenceConfig
 import com.etelie.plugin.pluginApi
@@ -28,8 +28,11 @@ fun main(args: Array<String>) {
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {
     PersistenceConfig.connectToDatabase(environment)
-    Scheduler.listen(environment)
     installAllPlugins()
+
+    if (!developmentMode) {
+        Scheduler.start(environment)
+    }
 }
 
 fun Application.installAllPlugins() {
