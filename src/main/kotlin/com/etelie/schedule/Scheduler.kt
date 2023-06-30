@@ -59,6 +59,10 @@ object Scheduler {
     }
 
     fun subscribe(job: JobDetail, trigger: Trigger) {
+        if (scheduler.checkExists(job.key)) {
+            return
+        }
+
         try {
             scheduler.scheduleJob(job, trigger)
         } catch (e: SchedulerException) {
