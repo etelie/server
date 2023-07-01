@@ -11,18 +11,12 @@ import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
-
-//val environment = applicationEngineEnvironment {
-//    log = LoggerFactory.getLogger(this::class.simpleName)
-//    sslConnector()
-//    module(Application::module)
-//}
-
 fun main(args: Array<String>) {
     embeddedServer(
         factory = Netty,
         commandLineEnvironment(args),
     ).start(wait = true)
+
 }
 
 @Suppress("unused") // Referenced in application.yaml
