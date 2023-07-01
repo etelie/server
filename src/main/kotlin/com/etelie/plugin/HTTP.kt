@@ -1,5 +1,6 @@
 package com.etelie.plugin
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.CacheControl
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -11,6 +12,8 @@ import io.ktor.server.plugins.cachingheaders.CachingHeaders
 import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
+
+private val log = KotlinLogging.logger {}
 
 fun Application.pluginHTTP() {
 //    install(HttpsRedirect) {
@@ -36,9 +39,10 @@ fun Application.pluginHTTP() {
     }
 
     install(StatusPages) {
-        exception<Throwable> { call, cause ->
+        exception<Throwable> { call, exception ->
+            log.error(exception) { "${exception.javaClass.simpleName} (suppressed by Ktor StatusPages plugin)" }
             call.response.status(HttpStatusCode.InternalServerError)
-            call.respond("${call.response.status()}: $cause")
+            call.respond("${call.response.status()}: $exception")
         }
     }
 }
