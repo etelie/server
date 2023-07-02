@@ -1,6 +1,8 @@
 package com.etelie.schedule
 
 import io.github.oshai.kotlinlogging.KLogger
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Dispatchers
 import org.quartz.CronScheduleBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
@@ -82,3 +84,9 @@ suspend fun <JobType : Job> JobType.logged(logger: KLogger, context: JobExecutio
     execute()
     logger.info { context.finishMessage }
 }
+
+val <JobType : Job> JobType.coroutineName
+    get() = CoroutineName("${this::class.simpleName}")
+
+val <JobType : Job> JobType.coroutineContext
+    get() = Dispatchers.IO + this.coroutineName

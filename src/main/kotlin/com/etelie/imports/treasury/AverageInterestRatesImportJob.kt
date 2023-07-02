@@ -2,11 +2,10 @@ package com.etelie.imports.treasury
 
 import com.etelie.imports.ImporterTable
 import com.etelie.schedule.JobDefinition
+import com.etelie.schedule.coroutineContext
 import com.etelie.schedule.createStandardJobDefinition
 import com.etelie.schedule.logged
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.quartz.Job
 import org.quartz.JobExecutionContext
@@ -15,10 +14,7 @@ private val log = KotlinLogging.logger {}
 
 class AverageInterestRatesImportJob : Job {
 
-    private val coroutineName = CoroutineName("${this::class.simpleName}")
-    private val coroutineContext = Dispatchers.IO + coroutineName
-
-    override fun execute(context: JobExecutionContext?): Unit = runBlocking(coroutineContext) {
+    override fun execute(context: JobExecutionContext?): Unit = runBlocking(this.coroutineContext) {
         logged(log, context) {
             AverageInterestRatesImport.import()
         }
