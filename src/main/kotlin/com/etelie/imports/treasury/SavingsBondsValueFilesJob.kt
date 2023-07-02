@@ -12,20 +12,21 @@ import org.quartz.JobExecutionContext
 
 private val log = KotlinLogging.logger {}
 
-class AverageInterestRatesImportJob : Job {
+class SavingsBondsValueFilesJob : Job {
 
     override fun execute(context: JobExecutionContext?): Unit = runBlocking(this.coroutineContext) {
         logged(log, context) {
-            AverageInterestRatesImport.import()
+            SavingsBondsValueFiles.import()
         }
     }
 
     companion object {
         private suspend fun getCronExpression(): String {
-            return ImporterTable.fetchCronExpression(AverageInterestRatesImport.importerId)
+            return ImporterTable.fetchCronExpression(SavingsBondsValueFiles.importerId)
         }
+
         suspend fun getJobDefinition(): JobDefinition {
-            return AverageInterestRatesImportJob::class.createStandardJobDefinition(getCronExpression())
+            return SavingsBondsValueFilesJob::class.createStandardJobDefinition(getCronExpression())
         }
     }
 

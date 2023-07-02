@@ -17,7 +17,7 @@ private val log = KotlinLogging.logger {}
 
 object AverageInterestRatesImport {
 
-    private const val importerId = 1
+    const val importerId = 1
 
     suspend fun import(): String = coroutineScope {
         val currentDate: LocalDate =

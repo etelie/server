@@ -1,6 +1,7 @@
 package com.etelie.schedule
 
 import com.etelie.imports.treasury.AverageInterestRatesImportJob
+import com.etelie.imports.treasury.SavingsBondsValueFilesJob
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.ApplicationEnvironment
 import io.ktor.server.application.ApplicationStarted
@@ -24,9 +25,10 @@ object Scheduler {
     private val scheduler = StdSchedulerFactory().scheduler
 
     init {
-        runBlocking(CoroutineName("${this::class.simpleName}")) {
+        runBlocking(CoroutineName("${this::class.simpleName}-init")) {
             awaitAll(
                 async { AverageInterestRatesImportJob.getJobDefinition() },
+                async { SavingsBondsValueFilesJob.getJobDefinition() },
             ).forEach {
                 subscribe(it)
                 log.info { "Scheduled job: ${it.jobDetail.description}" }
