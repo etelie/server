@@ -16,7 +16,7 @@ import java.net.URI
 
 private val log = KotlinLogging.logger {}
 
-object TreasuryClient {
+object FiscalDataClient {
 
     private const val scheme: String = "https"
     private const val host: String = "api.fiscaldata.treasury.gov"

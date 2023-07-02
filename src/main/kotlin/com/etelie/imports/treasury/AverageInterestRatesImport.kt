@@ -22,7 +22,7 @@ object AverageInterestRatesImport {
     suspend fun import(): String = coroutineScope {
         val currentDate: LocalDate =
             Clock.System.now().toLocalDateTime(TimeZone.UTC).date.minus(1, DateTimeUnit.MONTH)
-        val currentAverageRates = async { TreasuryClient.averageInterestRateForDate(currentDate) }
+        val currentAverageRates = async { FiscalDataClient.averageInterestRateForDate(currentDate) }
         val associatedSecurities = async { ImporterSecurityAssociationTable.fetchSecuritiesForImporter(importerId) }
         val averageRatesPerSecurity: Map<SecurityDetail, BigDecimal> = currentAverageRates.await()
             .filterKeys { key ->
