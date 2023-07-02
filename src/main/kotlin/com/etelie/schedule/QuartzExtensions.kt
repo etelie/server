@@ -85,8 +85,8 @@ suspend fun <JobType : Job> JobType.logged(logger: KLogger, context: JobExecutio
     logger.info { context.finishMessage }
 }
 
-val <JobType : Job> JobType.coroutineName
+val <JobType : Job> JobType.jobCoroutineName
     get() = CoroutineName("${this::class.simpleName}")
 
-val <JobType : Job> JobType.coroutineContext
-    get() = Dispatchers.IO + this.coroutineName
+val <JobType : Job> JobType.jobCoroutineContext
+    get() = Dispatchers.IO + this.jobCoroutineName
