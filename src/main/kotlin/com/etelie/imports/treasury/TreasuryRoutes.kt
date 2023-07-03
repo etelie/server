@@ -11,6 +11,7 @@ import io.ktor.server.routing.route
 fun Route.treasuryImportRoutes() {
     route("/treasury-imports") {
         averageInterestRatesImportRoute()
+        auctionedRoute()
     }
 }
 

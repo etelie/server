@@ -1,15 +1,23 @@
 package com.etelie.imports.treasury
 
+import com.etelie.application.logger
 import com.etelie.imports.ImporterSecurityAssociationTable
 import com.etelie.imports.ImporterSecurityAssociationTable.detailForSerialName
 import com.etelie.imports.ImporterSecurityAssociationTable.serialNames
+import com.etelie.securities.SecurityTerm
 import com.etelie.securities.SecurityType
 import com.etelie.securities.detail.SecurityDetail
 import com.etelie.securities.price.SecurityPrice
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toDateTimePeriod
+import kotlinx.datetime.toInstant
 import java.math.BigDecimal
+import kotlin.time.Duration
+
+private val log = logger {}
 
 object AuctionedImport {
 
@@ -17,7 +25,7 @@ object AuctionedImport {
 
     suspend fun import(): String = coroutineScope {
         val securitiesAuctionedToday = async {
-            TreasuryDirectClient.auctionedSecurities(0)
+            TreasuryDirectClient.auctionedSecurities(4)
         }
         val associatedSecurities = async { ImporterSecurityAssociationTable.fetchSecuritiesForImporter(importerId) }
 
@@ -41,25 +49,34 @@ object AuctionedImport {
 
         // todo: insert into database
 
-        ""
+        securityPrices.entries.joinToString("\n")
     }
 
-    // todo: implement
     private fun asSecurityPrice(
         securityDetail: SecurityDetail,
         security: TreasuryDirectClient.Security,
     ): SecurityPrice {
-        assert(security.highPrice == security.pricePer100)
+        security.apply {
+            assert(highPrice == pricePer100)
+        }
 
-        val purchasedTimestamp = Instant.parse(security.auctionDate)
-        val issuedTimestamp = Instant.parse(security.issueDate)
+        // TODO: confirm UTC assumption
+        val purchasedTimestamp = LocalDateTime.parse(security.auctionDate).toInstant(TimeZone.UTC)
+        val issuedTimestamp = LocalDateTime.parse(security.issueDate).toInstant(TimeZone.UTC)
+        val maturityTimestamp = LocalDateTime.parse(security.maturityDate).toInstant(TimeZone.UTC)
+        val termDuration: Duration = (maturityTimestamp - issuedTimestamp).apply {
+            assert(isPositive())
+        }
+        val termMonths = SecurityTerm.months(termDuration.toDateTimePeriod().months)
+        // TODO: confirm truncation correctness
+        val termWeeks = SecurityTerm.weeks(termDuration.toDateTimePeriod().days / 7)
 
         return when (securityDetail.type) {
             SecurityType.TREASURY_MARKET_BILL ->
                 SecurityPrice(
                     purchasedTimestamp = purchasedTimestamp,
                     issuedTimestamp = issuedTimestamp,
-                    term = 0, // todo: weeks and months in db
+                    term = termWeeks,
                     parValue = BigDecimal(100),
                     discountPrice = BigDecimal(security.pricePer100),
                     interestRateFixed = BigDecimal.ZERO,

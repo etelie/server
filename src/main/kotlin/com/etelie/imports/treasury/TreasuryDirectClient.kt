@@ -17,7 +17,9 @@ object TreasuryDirectClient {
     private val baseParams: Map<String, String> = mapOf(
         "format" to "json",
     )
-    private val json = Json.Default
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     fun auctionedSecurities(days: Int): List<Security> {
         val path = "$basePath/auctioned"
