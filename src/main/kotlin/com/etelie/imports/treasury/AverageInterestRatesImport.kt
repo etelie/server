@@ -1,6 +1,8 @@
 package com.etelie.imports.treasury
 
 import com.etelie.imports.ImporterSecurityAssociationTable
+import com.etelie.imports.ImporterSecurityAssociationTable.detailForSerialName
+import com.etelie.imports.ImporterSecurityAssociationTable.serialNames
 import com.etelie.securities.detail.SecurityDetail
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.async
@@ -26,17 +28,11 @@ object AverageInterestRatesImport {
         val associatedSecurities = async { ImporterSecurityAssociationTable.fetchSecuritiesForImporter(importerId) }
         val averageRatesPerSecurity: Map<SecurityDetail, BigDecimal> = currentAverageRates.await()
             .filterKeys { key ->
-                associatedSecurities.await().map { (_, serialName) ->
-                    serialName
-                }
-                    .contains(key)
+                associatedSecurities.await().serialNames().contains(key)
             }
             .mapKeys { (key, _) ->
-                associatedSecurities.await().find { (_, serialName) ->
-                    serialName == key
-                }
-                    ?.first
-                    ?: throw IllegalStateException("SecurityType not found after filter")
+                associatedSecurities.await().detailForSerialName(key)
+                    ?: throw IllegalStateException("Security type not found after filter")
             }
 
         averageRatesPerSecurity.entries.joinToString("\n")

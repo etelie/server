@@ -12,7 +12,6 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
 import java.math.BigDecimal
-import java.net.URI
 
 private val log = KotlinLogging.logger {}
 
@@ -22,7 +21,6 @@ object FiscalDataClient {
     private const val host: String = "api.fiscaldata.treasury.gov"
     private const val basePath: String = "/services/api/fiscal_service"
     private val client: HttpHandler = ApacheClient()
-    private val baseURI: URI = URI.create(basePath)
     private val baseParams: Map<String, String> = mapOf(
         "page[size]" to "100",
         "page[number]" to "1",
@@ -77,7 +75,7 @@ object FiscalDataClient {
     }
 
     @Serializable
-    data class Response(
+    private data class Response(
         val data: List<Map<String, String>>,
         val meta: Meta,
         val links: Links,
