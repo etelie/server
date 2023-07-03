@@ -1,6 +1,12 @@
 package com.etelie.imports.treasury
 
 import com.etelie.network.addAllQueries
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -8,6 +14,9 @@ import org.http4k.client.ApacheClient
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
+import java.math.BigDecimal
+import java.time.Period
+import kotlin.time.Duration
 
 object TreasuryDirectClient {
     private const val scheme: String = "https"
@@ -154,6 +163,38 @@ object TreasuryDirectClient {
         val xmlFilenameAnnouncement: String, // "A_20230627_3.xml",
         val xmlFilenameCompetitiveResults: String, // "R_20230629_2.xml",
         val xmlFilenameSpecialAnnouncement: String, // "",
-    )
+    ) {
+
+        private fun getTermDuration(): Duration = getMaturityTimestamp() - getIssuedTimestamp()
+
+        private fun getTermPeriod(): Period = Period.between(
+            getIssuedTimestamp().toLocalDateTime(TimeZone.UTC).toJavaLocalDateTime().toLocalDate(),
+            getMaturityTimestamp().toLocalDateTime(TimeZone.UTC).toJavaLocalDateTime().toLocalDate(),
+        )
+
+        private fun getMaturityTimestamp(): Instant = LocalDateTime.parse(maturityDate).toInstant(TimeZone.UTC)
+
+        // TODO: confirm UTC assumption
+        fun getPurchasedTimestamp(): Instant = LocalDateTime.parse(auctionDate).toInstant(TimeZone.UTC)
+
+        fun getIssuedTimestamp(): Instant = LocalDateTime.parse(issueDate).toInstant(TimeZone.UTC)
+
+        fun getTermInWeeks(): Int {
+            val termDuration = getTermDuration()
+            val weeks = termDuration.inWholeDays.floorDiv(7) +
+                if (termDuration.inWholeDays % 7 != 0L) 1 else 0
+            return weeks.toInt()
+        }
+
+        fun getTermInMonths(): Int {
+            val termPeriod = getTermPeriod()
+            val months = termPeriod.toTotalMonths() +
+                if (termPeriod.days > 0) 1 else 0
+            return months.toInt()
+        }
+
+        fun getParValue(): BigDecimal = BigDecimal(100)
+
+    }
 
 }

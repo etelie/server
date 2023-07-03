@@ -10,14 +10,7 @@ import com.etelie.securities.detail.SecurityDetail
 import com.etelie.securities.price.SecurityPrice
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toLocalDateTime
 import java.math.BigDecimal
-import java.time.Period
-import kotlin.time.Duration
 
 private val log = logger {}
 
@@ -59,56 +52,112 @@ object AuctionedImport {
         security: TreasuryDirectClient.Security,
     ): SecurityPrice {
         assert(security.highPrice == security.pricePer100)
+        assert(security.auctionFormat == "Single-Price")
 
-        // TODO: confirm UTC assumption
-        val purchasedTime = LocalDateTime.parse(security.auctionDate).toInstant(TimeZone.UTC)
-        val issuedTime = LocalDateTime.parse(security.issueDate).toInstant(TimeZone.UTC)
-        val maturityTimestamp = LocalDateTime.parse(security.maturityDate).toInstant(TimeZone.UTC)
-        val termDuration: Duration = maturityTimestamp - issuedTime
-        val termPeriod: Period = Period.between(
-            issuedTime.toLocalDateTime(TimeZone.UTC).toJavaLocalDateTime().toLocalDate(),
-            maturityTimestamp.toLocalDateTime(TimeZone.UTC).toJavaLocalDateTime().toLocalDate(),
-        )
-        val termWeeks: SecurityTerm = SecurityTerm.weeks(
-            (termDuration.inWholeDays.floorDiv(7) +
-                if (termDuration.inWholeDays % 7 != 0L) 1 else 0).toInt(),
-        )
-        val termMonths: SecurityTerm = SecurityTerm.months(
-            (termPeriod.toTotalMonths() +
-                if (termPeriod.days > 0) 1 else 0).toInt(),
-        )
-        val parValue = BigDecimal("100")
+        // todo: 3 types map to NOTE
 
-        return when (securityDetail.type) {
-            SecurityType.TREASURY_MARKET_BILL -> {
+        return SecurityPriceConverter.findConverter(securityDetail.type)?.let {
+            it.convert(security)
+        }
+            ?: throw UnsupportedOperationException("Unsupported security type for ${this::class.simpleName}")
+    }
+
+    private enum class SecurityPriceConverter(
+        val securityType: SecurityType,
+        val convert: (security: TreasuryDirectClient.Security) -> SecurityPrice,
+    ) {
+
+        BILL(
+            SecurityType.TREASURY_MARKET_BILL,
+            { security ->
+                assert(security.floatingRate == "No")
+                assert(security.tips == "No")
                 assert(security.highDiscountRate.isNotEmpty())
                 SecurityPrice(
-                    purchasedTimestamp = purchasedTime,
-                    issuedTimestamp = issuedTime,
-                    term = termWeeks,
-                    parValue = parValue,
+                    purchasedTimestamp = security.getPurchasedTimestamp(),
+                    issuedTimestamp = security.getIssuedTimestamp(),
+                    term = SecurityTerm.weeks(security.getTermInWeeks()),
+                    parValue = security.getParValue(),
                     interestRateFixed = BigDecimal(security.highDiscountRate),
                     interestRateVariable = BigDecimal.ZERO,
                 )
-            }
-
-            SecurityType.TREASURY_MARKET_BOND -> {
+            },
+        ),
+        BOND(
+            SecurityType.TREASURY_MARKET_BOND,
+            { security ->
+                assert(security.floatingRate == "No")
+                assert(security.tips == "No")
                 assert(security.interestRate.isNotEmpty())
                 SecurityPrice(
-                    purchasedTimestamp = purchasedTime,
-                    issuedTimestamp = issuedTime,
-                    term = termMonths,
-                    parValue = parValue,
+                    purchasedTimestamp = security.getPurchasedTimestamp(),
+                    issuedTimestamp = security.getIssuedTimestamp(),
+                    term = SecurityTerm.months(security.getTermInMonths()),
+                    parValue = security.getParValue(),
                     interestRateFixed = BigDecimal(security.interestRate),
                     interestRateVariable = BigDecimal.ZERO,
                 )
-            }
+            },
+        ),
+        NOTE(
+            SecurityType.TREASURY_MARKET_NOTE,
+            { security ->
+                assert(security.floatingRate == "No")
+                assert(security.tips == "No")
+                assert(security.interestRate.isNotEmpty())
+                SecurityPrice(
+                    purchasedTimestamp = security.getPurchasedTimestamp(),
+                    issuedTimestamp = security.getIssuedTimestamp(),
+                    term = SecurityTerm.months(security.getTermInMonths()),
+                    parValue = security.getParValue(),
+                    interestRateFixed = BigDecimal(security.interestRate),
+                    interestRateVariable = BigDecimal.ZERO,
+                )
+            },
+        ),
+        FRN(
+            SecurityType.TREASURY_MARKET_FRN,
+            { security ->
+                assert(security.floatingRate == "Yes")
+                assert(security.tips == "No")
+                assert(security.spread.isNotEmpty())
+                assert(security.frnIndexDeterminationRate.isNotEmpty())
+                SecurityPrice(
+                    purchasedTimestamp = security.getPurchasedTimestamp(),
+                    issuedTimestamp = security.getIssuedTimestamp(),
+                    term = SecurityTerm.months(security.getTermInMonths()),
+                    parValue = security.getParValue(),
+                    interestRateFixed = BigDecimal(security.spread),
+                    interestRateVariable = BigDecimal(security.frnIndexDeterminationRate),
+                )
+            },
+        ),
+        TIPS(
+            SecurityType.TREASURY_MARKET_TIPS,
+            { security ->
+                assert(security.floatingRate == "No")
+                assert(security.tips == "Yes")
+                assert(security.interestRate.isNotEmpty())
+                SecurityPrice(
+                    purchasedTimestamp = security.getPurchasedTimestamp(),
+                    issuedTimestamp = security.getIssuedTimestamp(),
+                    term = SecurityTerm.months(security.getTermInMonths()),
+                    parValue = security.getParValue(),
+                    interestRateFixed = BigDecimal(security.interestRate),
+                    interestRateVariable = BigDecimal.ZERO,
+                )
+            },
+        );
 
-            SecurityType.TREASURY_MARKET_NOTE -> TODO()
-            SecurityType.TREASURY_MARKET_FRN -> TODO()
-            SecurityType.TREASURY_MARKET_TIPS -> TODO()
-            else -> throw UnsupportedOperationException("Unsupported security type for ${this::class.simpleName}")
+        companion object {
+            fun findConverter(type: SecurityType): SecurityPriceConverter? {
+                return SecurityPriceConverter.values()
+                    .find {
+                        it.securityType == type
+                    }
+            }
         }
+
     }
 
 }
