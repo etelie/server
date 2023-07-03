@@ -13,7 +13,10 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import java.math.BigDecimal
+import java.time.Period
 import kotlin.time.Duration
 
 private val log = logger {}
@@ -24,7 +27,7 @@ object AuctionedImport {
 
     suspend fun import(): String = coroutineScope {
         val securitiesAuctionedToday = async {
-            TreasuryDirectClient.auctionedSecurities(4)
+            TreasuryDirectClient.auctionedSecurities(16)
         }
         val associatedSecurities = async { ImporterSecurityAssociationTable.fetchSecuritiesForImporter(importerId) }
 
@@ -55,31 +58,52 @@ object AuctionedImport {
         securityDetail: SecurityDetail,
         security: TreasuryDirectClient.Security,
     ): SecurityPrice {
-        security.apply {
-            assert(highPrice == pricePer100)
-        }
+        assert(security.highPrice == security.pricePer100)
 
         // TODO: confirm UTC assumption
-        val purchasedTimestamp = LocalDateTime.parse(security.auctionDate).toInstant(TimeZone.UTC)
-        val issuedTimestamp = LocalDateTime.parse(security.issueDate).toInstant(TimeZone.UTC)
+        val purchasedTime = LocalDateTime.parse(security.auctionDate).toInstant(TimeZone.UTC)
+        val issuedTime = LocalDateTime.parse(security.issueDate).toInstant(TimeZone.UTC)
         val maturityTimestamp = LocalDateTime.parse(security.maturityDate).toInstant(TimeZone.UTC)
-        val termDuration: Duration = (maturityTimestamp - issuedTimestamp).apply {
-            assert(isPositive())
-        }
-        val parValue = BigDecimal("100.00000000")
+        val termDuration: Duration = maturityTimestamp - issuedTime
+        val termPeriod: Period = Period.between(
+            issuedTime.toLocalDateTime(TimeZone.UTC).toJavaLocalDateTime().toLocalDate(),
+            maturityTimestamp.toLocalDateTime(TimeZone.UTC).toJavaLocalDateTime().toLocalDate(),
+        )
+        val termWeeks: SecurityTerm = SecurityTerm.weeks(
+            (termDuration.inWholeDays.floorDiv(7) +
+                if (termDuration.inWholeDays % 7 != 0L) 1 else 0).toInt(),
+        )
+        val termMonths: SecurityTerm = SecurityTerm.months(
+            (termPeriod.toTotalMonths() +
+                if (termPeriod.days > 0) 1 else 0).toInt(),
+        )
+        val parValue = BigDecimal("100")
 
         return when (securityDetail.type) {
-            SecurityType.TREASURY_MARKET_BILL ->
+            SecurityType.TREASURY_MARKET_BILL -> {
+                assert(security.highDiscountRate.isNotEmpty())
                 SecurityPrice(
-                    purchasedTimestamp = purchasedTimestamp,
-                    issuedTimestamp = issuedTimestamp,
-                    term = SecurityTerm.weeks((termDuration.inWholeDays.floorDiv(7) + 1).toInt()),
+                    purchasedTimestamp = purchasedTime,
+                    issuedTimestamp = issuedTime,
+                    term = termWeeks,
                     parValue = parValue,
                     interestRateFixed = BigDecimal(security.highDiscountRate),
                     interestRateVariable = BigDecimal.ZERO,
                 )
+            }
 
-            SecurityType.TREASURY_MARKET_BOND -> TODO()
+            SecurityType.TREASURY_MARKET_BOND -> {
+                assert(security.interestRate.isNotEmpty())
+                SecurityPrice(
+                    purchasedTimestamp = purchasedTime,
+                    issuedTimestamp = issuedTime,
+                    term = termMonths,
+                    parValue = parValue,
+                    interestRateFixed = BigDecimal(security.interestRate),
+                    interestRateVariable = BigDecimal.ZERO,
+                )
+            }
+
             SecurityType.TREASURY_MARKET_NOTE -> TODO()
             SecurityType.TREASURY_MARKET_FRN -> TODO()
             SecurityType.TREASURY_MARKET_TIPS -> TODO()

@@ -28,6 +28,7 @@ object TreasuryDirectClient {
             .addAllQueries(
                 mapOf(
                     "days" to "$days",
+                    "type" to "Bond",
                 ),
             )
 
