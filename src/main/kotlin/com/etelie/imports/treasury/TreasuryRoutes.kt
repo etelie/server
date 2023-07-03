@@ -19,15 +19,17 @@ fun Route.averageInterestRatesImportRoute() {
         val importResponse = AverageInterestRatesImport.import()
         call.respond<String>(HttpStatusCode.OK, importResponse)
     } describe {
-        summary = "Average interest rates import"
+        summary = "Average interest rates treasury import"
         200 response {}
     }
+}
 
-    patch("/savings-bonds-value-files") {
-        val importResponse = SavingsBondsValueFiles.import()
+fun Route.auctionedRoute() {
+    patch("/auctioned") {
+        val importResponse = AuctionedImport.import()
         call.respond<String>(HttpStatusCode.OK, importResponse)
     } describe {
-        summary = "Savings bonds value files import"
+        summary = "Auctioned securities treasury import"
         200 response {}
     }
 }
