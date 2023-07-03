@@ -9,8 +9,6 @@ data class SecurityPrice(
     val issuedTimestamp: Instant?,
     val term: SecurityTerm,
     val parValue: BigDecimal?,
-    val discountPrice: BigDecimal?,
     val interestRateFixed: BigDecimal,
     val interestRateVariable: BigDecimal,
-    val yieldToMaturity: BigDecimal,
 )

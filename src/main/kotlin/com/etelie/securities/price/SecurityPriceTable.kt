@@ -17,5 +17,4 @@ object SecurityPriceTable : IntIdTable(
     val discountPrice = decimal("discount_price", 1000, 4).nullable()
     val interestRateFixed = decimal("interest_rate_fixed", 1000, 4)
     val interestRateVariable = decimal("interest_rate_variable", 1000, 4)
-    val yieldToMaturity = decimal("yield_to_maturity", 1000, 4)
 }

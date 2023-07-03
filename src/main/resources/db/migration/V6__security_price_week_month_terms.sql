@@ -10,4 +10,7 @@ alter table security_price
 alter table security_price
   add constraint constraint_term_one_nonnull check (num_nonnulls(term_weeks, term_months) = 1);
 
+alter table security_price
+  drop column yield_to_maturity;
+
 comment on column security_price.term_weeks is 'unit: weeks';

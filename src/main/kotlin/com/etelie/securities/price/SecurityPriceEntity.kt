@@ -18,7 +18,6 @@ class SecurityPriceEntity(priceId: EntityID<Int>) : Entity<Int>(priceId) {
     val discountPrice by SecurityPriceTable.discountPrice
     val interestRateFixed by SecurityPriceTable.interestRateFixed
     val interestRateVariable by SecurityPriceTable.interestRateVariable
-    val yieldToMaturity by SecurityPriceTable.yieldToMaturity
 
     val securityDetail by SecurityDetailEntity referencedOn SecurityPriceTable.securityId
 }

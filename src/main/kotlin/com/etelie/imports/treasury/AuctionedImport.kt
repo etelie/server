@@ -70,6 +70,7 @@ object AuctionedImport {
         val termMonths = SecurityTerm.months(termDuration.toDateTimePeriod().months)
         // TODO: confirm truncation correctness
         val termWeeks = SecurityTerm.weeks(termDuration.toDateTimePeriod().days / 7)
+        val parValue = BigDecimal(100)
 
         return when (securityDetail.type) {
             SecurityType.TREASURY_MARKET_BILL ->
@@ -77,11 +78,9 @@ object AuctionedImport {
                     purchasedTimestamp = purchasedTimestamp,
                     issuedTimestamp = issuedTimestamp,
                     term = termWeeks,
-                    parValue = BigDecimal(100),
-                    discountPrice = BigDecimal(security.pricePer100),
-                    interestRateFixed = BigDecimal.ZERO,
+                    parValue = parValue,
+                    interestRateFixed = (BigDecimal(100) - BigDecimal(security.pricePer100)) / BigDecimal(100),
                     interestRateVariable = BigDecimal.ZERO,
-                    yieldToMaturity = BigDecimal.ZERO,
                 )
 
             SecurityType.TREASURY_MARKET_BOND -> TODO()
