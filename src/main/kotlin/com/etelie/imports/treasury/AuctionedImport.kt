@@ -12,7 +12,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toDateTimePeriod
 import kotlinx.datetime.toInstant
 import java.math.BigDecimal
 import kotlin.time.Duration
@@ -49,7 +48,7 @@ object AuctionedImport {
 
         // todo: insert into database
 
-        securityPrices.entries.joinToString("\n")
+        securityPrices.values.flatten().joinToString("\n")
     }
 
     private fun asSecurityPrice(
@@ -67,19 +66,16 @@ object AuctionedImport {
         val termDuration: Duration = (maturityTimestamp - issuedTimestamp).apply {
             assert(isPositive())
         }
-        val termMonths = SecurityTerm.months(termDuration.toDateTimePeriod().months)
-        // TODO: confirm truncation correctness
-        val termWeeks = SecurityTerm.weeks(termDuration.toDateTimePeriod().days / 7)
-        val parValue = BigDecimal(100)
+        val parValue = BigDecimal("100.00000000")
 
         return when (securityDetail.type) {
             SecurityType.TREASURY_MARKET_BILL ->
                 SecurityPrice(
                     purchasedTimestamp = purchasedTimestamp,
                     issuedTimestamp = issuedTimestamp,
-                    term = termWeeks,
+                    term = SecurityTerm.weeks((termDuration.inWholeDays.floorDiv(7) + 1).toInt()),
                     parValue = parValue,
-                    interestRateFixed = (BigDecimal(100) - BigDecimal(security.pricePer100)) / BigDecimal(100),
+                    interestRateFixed = BigDecimal(security.highDiscountRate),
                     interestRateVariable = BigDecimal.ZERO,
                 )
 
