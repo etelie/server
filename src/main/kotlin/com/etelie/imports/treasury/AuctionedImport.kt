@@ -39,7 +39,9 @@ object AuctionedImport {
             }
             .mapValues { (securityDetail, securities) ->
                 securities.map { security ->
-                    asSecurityPrice(securityDetail, security)
+                    SecurityPriceConverter.findConverter(securityDetail.type)?.let { converter ->
+                        converter.convert(security)
+                    } ?: throw UnsupportedOperationException("Unsupported security type for ${this::class.simpleName}")
                 }
             }
 
@@ -50,19 +52,6 @@ object AuctionedImport {
         }
 
         securityPrices.values.flatten().joinToString("\n")
-    }
-
-    private fun asSecurityPrice(
-        securityDetail: SecurityDetail,
-        security: TreasuryDirectClient.Security,
-    ): SecurityPrice {
-        assert(security.highPrice == security.pricePer100)
-        assert(security.auctionFormat == "Single-Price")
-
-        return SecurityPriceConverter.findConverter(securityDetail.type)?.let {
-            it.convert(security)
-        }
-            ?: throw UnsupportedOperationException("Unsupported security type for ${this::class.simpleName}")
     }
 
     private enum class SecurityPriceConverter(

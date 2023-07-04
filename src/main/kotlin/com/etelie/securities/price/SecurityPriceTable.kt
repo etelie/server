@@ -6,8 +6,10 @@ import com.etelie.securities.detail.SecurityDetailTable
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 object SecurityPriceTable : IntIdTable(
@@ -27,11 +29,22 @@ object SecurityPriceTable : IntIdTable(
     suspend fun insert(
         securityDetail: SecurityDetail,
         securityPrice: SecurityPrice,
-    ) = newSuspendedTransaction(coroutineContext) {
+    ): Unit = newSuspendedTransaction(coroutineContext) {
         val termInMonths: Int? = if (securityPrice.term.unit == SecurityTerm.Unit.MONTHS)
             securityPrice.term.length else null
         val termInWeeks: Int? = if (securityPrice.term.unit == SecurityTerm.Unit.WEEKS)
             securityPrice.term.length else null
+
+        val alreadyExistsQuery = selectAll().apply {
+            andWhere { securityId eq securityDetail.type.persistentId }
+            andWhere { issuedTimestamp eq securityPrice.issuedTimestamp }
+            andWhere { termMonths eq termInMonths }
+            andWhere { termWeeks eq termInWeeks }
+        }
+
+        if (!alreadyExistsQuery.empty()) {
+            return@newSuspendedTransaction
+        }
 
         insert {
             it[securityId] = securityDetail.type.persistentId
