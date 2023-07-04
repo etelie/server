@@ -37,7 +37,6 @@ object TreasuryDirectClient {
             .addAllQueries(
                 mapOf(
                     "days" to "$days",
-                    "type" to "Bond",
                 ),
             )
 
@@ -49,7 +48,7 @@ object TreasuryDirectClient {
     data class Security(
         val cusip: String, // "912797GA9",
         val issueDate: String, // "2023-07-05T00:00:00",
-        val securityType: String, // "Bill",
+        val securityType: String, // WARN: USE type INSTEAD ("Note" is overloaded in securityType field)
         val securityTerm: String, // "4-Week",
         val maturityDate: String, // "2023-08-01T00:00:00",
         val interestRate: String, // "",

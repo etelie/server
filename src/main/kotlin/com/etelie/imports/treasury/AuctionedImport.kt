@@ -27,10 +27,10 @@ object AuctionedImport {
         val securityPrices: Map<SecurityDetail, List<SecurityPrice>> = securitiesAuctionedToday.await()
             .filter { security ->
                 associatedSecurities.await().serialNames()
-                    .contains(security.securityType)
+                    .contains(security.type)
             }
             .groupBy { security ->
-                security.securityType
+                security.type
             }
             .mapKeys { (key, _) ->
                 associatedSecurities.await().detailForSerialName(key)
@@ -53,8 +53,6 @@ object AuctionedImport {
     ): SecurityPrice {
         assert(security.highPrice == security.pricePer100)
         assert(security.auctionFormat == "Single-Price")
-
-        // todo: 3 types map to NOTE
 
         return SecurityPriceConverter.findConverter(securityDetail.type)?.let {
             it.convert(security)
