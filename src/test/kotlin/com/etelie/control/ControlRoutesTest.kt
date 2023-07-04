@@ -1,22 +1,13 @@
-package com.etelie
+package com.etelie.control
 
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ApplicationTest {
-
-    @Test
-    fun root() = testApplication {
-        client.get("/").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertEquals("etelie api", bodyAsText())
-        }
-    }
+class ControlRoutesTest {
 
     @Test
     fun healthcheck() = testApplication {

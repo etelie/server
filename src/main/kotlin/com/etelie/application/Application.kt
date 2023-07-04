@@ -6,6 +6,7 @@ import com.etelie.plugin.pluginHTTP
 import com.etelie.plugin.pluginMonitoring
 import com.etelie.plugin.pluginRouting
 import com.etelie.schedule.Scheduler
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.Application
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
@@ -35,3 +36,5 @@ fun Application.installAllPlugins() {
     pluginApi()
     pluginRouting()
 }
+
+fun logger(lambda: () -> Unit) = KotlinLogging.logger(lambda)
