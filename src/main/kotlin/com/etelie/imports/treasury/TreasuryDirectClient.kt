@@ -25,6 +25,7 @@ object TreasuryDirectClient {
     private val client: HttpHandler = ApacheClient()
     private val baseParams: Map<String, String> = mapOf(
         "format" to "json",
+        "pagesize" to "1000",
     )
     private val json = Json {
         ignoreUnknownKeys = true

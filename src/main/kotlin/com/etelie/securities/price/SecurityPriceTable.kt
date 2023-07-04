@@ -26,10 +26,15 @@ object SecurityPriceTable : IntIdTable(
 
     private val coroutineContext = Dispatchers.IO + CoroutineName(this::class.simpleName!!)
 
+    /**
+     * Insert a SecurityPrice into the security_price table
+     * @return Number of inserted records
+     * @see SecurityPrice
+     */
     suspend fun insert(
         securityDetail: SecurityDetail,
         securityPrice: SecurityPrice,
-    ): Unit = newSuspendedTransaction(coroutineContext) {
+    ): Int = newSuspendedTransaction(coroutineContext) {
         val termInMonths: Int? = if (securityPrice.term.unit == SecurityTerm.Unit.MONTHS)
             securityPrice.term.length else null
         val termInWeeks: Int? = if (securityPrice.term.unit == SecurityTerm.Unit.WEEKS)
@@ -43,10 +48,10 @@ object SecurityPriceTable : IntIdTable(
         }
 
         if (!alreadyExistsQuery.empty()) {
-            return@newSuspendedTransaction
+            return@newSuspendedTransaction 0
         }
 
-        insert {
+        return@newSuspendedTransaction insert {
             it[securityId] = securityDetail.type.persistentId
             it[purchasedTimestamp] = securityPrice.purchasedTimestamp
             it[issuedTimestamp] = securityPrice.issuedTimestamp
@@ -54,7 +59,7 @@ object SecurityPriceTable : IntIdTable(
             it[termWeeks] = termInWeeks
             it[interestRateFixed] = securityPrice.interestRateFixed
             it[interestRateVariable] = securityPrice.interestRateVariable
-        }
+        }.insertedCount
     }
 
 }

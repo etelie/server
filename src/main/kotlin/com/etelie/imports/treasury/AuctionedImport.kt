@@ -21,7 +21,7 @@ object AuctionedImport {
 
     suspend fun import(): String = coroutineScope {
         val securitiesAuctionedToday = async {
-            TreasuryDirectClient.auctionedSecurities(16)
+            TreasuryDirectClient.auctionedSecurities(0)
         }
         val associatedSecurities = async { ImporterSecurityAssociationTable.fetchSecuritiesForImporter(importerId) }
 
@@ -45,13 +45,16 @@ object AuctionedImport {
                 }
             }
 
+        var insertedPrices = 0
         securityPrices.entries.forEach { (detail, prices) ->
             prices.forEach { price ->
-                SecurityPriceTable.insert(detail, price)
+                insertedPrices += SecurityPriceTable.insert(detail, price)
             }
         }
 
-        securityPrices.values.flatten().joinToString("\n")
+        val finishMessage = "${this@AuctionedImport::class.simpleName} complete; $insertedPrices prices inserted into security_price table"
+        log.info { finishMessage }
+        finishMessage
     }
 
     private enum class SecurityPriceConverter(
