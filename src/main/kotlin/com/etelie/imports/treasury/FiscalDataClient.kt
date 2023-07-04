@@ -3,8 +3,6 @@ package com.etelie.imports.treasury
 import com.etelie.network.addAllQueries
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.http4k.client.ApacheClient
@@ -53,7 +51,7 @@ object FiscalDataClient {
 
 
         val responseBody = client(request).bodyString()
-        val response = json.decodeFromString<Response>(responseBody)
+        val response = json.decodeFromString<FiscalDataResponse>(responseBody)
 
         return response.data.fold(mapOf()) { acc, datum ->
             val securityName: String = datum.getOrElse("security_desc") {
@@ -72,32 +70,6 @@ object FiscalDataClient {
             }
             acc.plus(securityName to rate)
         }
-    }
-
-    @Serializable
-    private data class Response(
-        val data: List<Map<String, String>>,
-        val meta: Meta,
-        val links: Links,
-    ) {
-        @Serializable
-        data class Meta(
-            val count: Int,
-            @SerialName("total-count") val totalCount: Int,
-            @SerialName("total-pages") val totalPages: Int,
-            val labels: Map<String, String>,
-            val dataTypes: Map<String, String>,
-            val dataFormats: Map<String, String>,
-        )
-
-        @Serializable
-        data class Links(
-            val self: String,
-            val first: String,
-            val prev: String?,
-            val next: String?,
-            val last: String,
-        )
     }
 
 }

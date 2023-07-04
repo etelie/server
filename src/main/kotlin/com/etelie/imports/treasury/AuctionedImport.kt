@@ -20,15 +20,12 @@ object AuctionedImport {
     const val importerId = 2
 
     suspend fun import(): String = coroutineScope {
-        val securitiesAuctionedToday = async {
-            TreasuryDirectClient.auctionedSecurities(0)
-        }
+        val securitiesAuctionedToday = async { TreasuryDirectClient.auctionedSecurities(0) }
         val associatedSecurities = async { ImporterSecurityAssociationTable.fetchSecuritiesForImporter(importerId) }
 
         val securityPrices: Map<SecurityDetail, List<SecurityPrice>> = securitiesAuctionedToday.await()
             .filter { security ->
-                associatedSecurities.await().serialNames()
-                    .contains(security.type)
+                associatedSecurities.await().serialNames().contains(security.type)
             }
             .groupBy { security ->
                 security.type
@@ -39,9 +36,11 @@ object AuctionedImport {
             }
             .mapValues { (securityDetail, securities) ->
                 securities.map { security ->
-                    SecurityPriceConverter.findConverter(securityDetail.type)?.let { converter ->
-                        converter.convert(security)
-                    } ?: throw UnsupportedOperationException("Unsupported security type for ${this::class.simpleName}")
+                    SecurityPriceConverter.findConverter(securityDetail.type)?.run {
+                        convert(security)
+                    } ?: throw UnsupportedOperationException(
+                        "Unsupported security type for ${this@AuctionedImport::class.simpleName}",
+                    )
                 }
             }
 
@@ -52,14 +51,16 @@ object AuctionedImport {
             }
         }
 
-        val finishMessage = "${this@AuctionedImport::class.simpleName} complete; $insertedPrices prices inserted into security_price table"
-        log.info { finishMessage }
+        val finishMessage =
+            """${this@AuctionedImport::class.simpleName} complete;
+                |$insertedPrices prices inserted into security_price table""".trimMargin()
+        log.info { finishMessage.replace("\n", "") }
         finishMessage
     }
 
     private enum class SecurityPriceConverter(
         val securityType: SecurityType,
-        val convert: (security: TreasuryDirectClient.Security) -> SecurityPrice,
+        val convert: (security: TreasuryDirectSecurityResponse) -> SecurityPrice,
     ) {
 
         BILL(
