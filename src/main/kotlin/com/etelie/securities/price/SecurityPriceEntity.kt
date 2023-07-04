@@ -14,8 +14,6 @@ class SecurityPriceEntity(priceId: EntityID<Int>) : Entity<Int>(priceId) {
     val issuedTimestamp by SecurityPriceTable.issuedTimestamp
     val termMonths by SecurityPriceTable.termMonths
     val termWeeks by SecurityPriceTable.termWeeks
-    val parValue by SecurityPriceTable.parValue
-    val discountPrice by SecurityPriceTable.discountPrice
     val interestRateFixed by SecurityPriceTable.interestRateFixed
     val interestRateVariable by SecurityPriceTable.interestRateVariable
 

@@ -13,4 +13,14 @@ alter table security_price
 alter table security_price
   drop column yield_to_maturity;
 
+alter table security_price
+  drop column discount_price;
+
+alter table security_price
+  drop column par_value;
+
+alter table security_price
+  add constraint unique_price_content unique nulls not distinct
+    (security_id, issued_timestamp, term_weeks, term_months);
+
 comment on column security_price.term_weeks is 'unit: weeks';

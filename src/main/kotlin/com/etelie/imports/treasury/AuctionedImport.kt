@@ -8,6 +8,7 @@ import com.etelie.securities.SecurityTerm
 import com.etelie.securities.SecurityType
 import com.etelie.securities.detail.SecurityDetail
 import com.etelie.securities.price.SecurityPrice
+import com.etelie.securities.price.SecurityPriceTable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.math.BigDecimal
@@ -32,17 +33,21 @@ object AuctionedImport {
             .groupBy { security ->
                 security.type
             }
-            .mapKeys { (key, _) ->
-                associatedSecurities.await().detailForSerialName(key)
+            .mapKeys { (securityType, _) ->
+                associatedSecurities.await().detailForSerialName(securityType)
                     ?: throw IllegalStateException("Security type not found after filter")
             }
-            .mapValues { (key, value) ->
-                value.map { security ->
-                    asSecurityPrice(key, security)
+            .mapValues { (securityDetail, securities) ->
+                securities.map { security ->
+                    asSecurityPrice(securityDetail, security)
                 }
             }
 
-        // todo: insert into database
+        securityPrices.entries.forEach { (detail, prices) ->
+            prices.forEach { price ->
+                SecurityPriceTable.insert(detail, price)
+            }
+        }
 
         securityPrices.values.flatten().joinToString("\n")
     }
@@ -75,7 +80,6 @@ object AuctionedImport {
                     purchasedTimestamp = security.getPurchasedTimestamp(),
                     issuedTimestamp = security.getIssuedTimestamp(),
                     term = SecurityTerm.weeks(security.getTermInWeeks()),
-                    parValue = security.getParValue(),
                     interestRateFixed = BigDecimal(security.highDiscountRate),
                     interestRateVariable = BigDecimal.ZERO,
                 )
@@ -91,7 +95,6 @@ object AuctionedImport {
                     purchasedTimestamp = security.getPurchasedTimestamp(),
                     issuedTimestamp = security.getIssuedTimestamp(),
                     term = SecurityTerm.months(security.getTermInMonths()),
-                    parValue = security.getParValue(),
                     interestRateFixed = BigDecimal(security.interestRate),
                     interestRateVariable = BigDecimal.ZERO,
                 )
@@ -107,7 +110,6 @@ object AuctionedImport {
                     purchasedTimestamp = security.getPurchasedTimestamp(),
                     issuedTimestamp = security.getIssuedTimestamp(),
                     term = SecurityTerm.months(security.getTermInMonths()),
-                    parValue = security.getParValue(),
                     interestRateFixed = BigDecimal(security.interestRate),
                     interestRateVariable = BigDecimal.ZERO,
                 )
@@ -124,7 +126,6 @@ object AuctionedImport {
                     purchasedTimestamp = security.getPurchasedTimestamp(),
                     issuedTimestamp = security.getIssuedTimestamp(),
                     term = SecurityTerm.months(security.getTermInMonths()),
-                    parValue = security.getParValue(),
                     interestRateFixed = BigDecimal(security.spread),
                     interestRateVariable = BigDecimal(security.frnIndexDeterminationRate),
                 )
@@ -140,7 +141,6 @@ object AuctionedImport {
                     purchasedTimestamp = security.getPurchasedTimestamp(),
                     issuedTimestamp = security.getIssuedTimestamp(),
                     term = SecurityTerm.months(security.getTermInMonths()),
-                    parValue = security.getParValue(),
                     interestRateFixed = BigDecimal(security.interestRate),
                     interestRateVariable = BigDecimal.ZERO,
                 )

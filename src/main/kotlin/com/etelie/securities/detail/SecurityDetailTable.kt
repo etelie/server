@@ -26,7 +26,7 @@ object SecurityDetailTable : IntIdTable(
     val isTaxableLocal = bool("is_taxable_local")
 
     fun toSecurityDetail(row: ResultRow): SecurityDetail {
-        val securityType = SecurityType.findBySerialName(row.get(securityName))
+        val securityType = SecurityType.findByPersistentName(row.get(securityName))
             ?: throw IllegalStateException("No SecurityType#serialName matches ${row.get(securityName)} in database")
 
         return SecurityDetail(

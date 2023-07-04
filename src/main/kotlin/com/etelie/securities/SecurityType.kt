@@ -1,21 +1,22 @@
 package com.etelie.securities
 
 enum class SecurityType(
-    val serialName: String,
+    val persistentId: Int,
+    val persistentName: String,
 ) {
 
-    TREASURY_SAVINGS_EE("treasury-savings-ee"),
-    TREASURY_SAVINGS_I("treasury-savings-i"),
-    TREASURY_MARKET_BILL("treasury-market-bill"),
-    TREASURY_MARKET_BOND("treasury-market-bond"),
-    TREASURY_MARKET_NOTE("treasury-market-note"),
-    TREASURY_MARKET_FRN("treasury-market-frn"),
-    TREASURY_MARKET_TIPS("treasury-market-tips");
+    TREASURY_SAVINGS_EE(1, "treasury-savings-ee"),
+    TREASURY_SAVINGS_I(2, "treasury-savings-i"),
+    TREASURY_MARKET_BILL(3, "treasury-market-bill"),
+    TREASURY_MARKET_BOND(4, "treasury-market-bond"),
+    TREASURY_MARKET_NOTE(5, "treasury-market-note"),
+    TREASURY_MARKET_FRN(6, "treasury-market-frn"),
+    TREASURY_MARKET_TIPS(7, "treasury-market-tips");
 
     companion object {
-        fun findBySerialName(serialName: String): SecurityType? {
+        fun findByPersistentName(persistentName: String): SecurityType? {
             return SecurityType.values().find {
-                it.serialName == serialName
+                it.persistentName == persistentName
             }
         }
     }
