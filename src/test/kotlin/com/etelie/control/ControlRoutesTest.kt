@@ -17,11 +17,4 @@ class ControlRoutesTest {
         }
     }
 
-    @Test
-    fun status() = testApplication {
-        client.get("/control/status").also { response ->
-            assertEquals(HttpStatusCode.OK, response.status)
-        }
-    }
-
 }

@@ -1,13 +1,11 @@
 package com.etelie.persistence
 
-import com.etelie.application.ExecutionEnvironment
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.ApplicationEnvironment
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.postgresql.util.PSQLException
 import java.sql.Connection
 
 object PersistenceConfig {
@@ -28,18 +26,10 @@ object PersistenceConfig {
 
         val jdbcUrl = "jdbc:postgresql://$host:$port/$db"
         val dataSource = createHikariDataSource(jdbcUrl, maxConnections, user, password)
-
-        var database: Database? = null
-        try {
-            database = Database.connect(dataSource)
-        } catch (e: PSQLException) {
-            if (ExecutionEnvironment.current.isServer()) {
-                throw e
-            }
-        }
+        val database = Database.connect(dataSource)
 
         TransactionManager.defaultDatabase = database
-        exposedLogger.info("Successfully connected to ${database?.url}")
+        exposedLogger.info("Successfully connected to ${database.url}")
     }
 
     private fun createHikariDataSource(
