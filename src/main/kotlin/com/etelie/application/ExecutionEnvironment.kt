@@ -10,7 +10,7 @@ enum class ExecutionEnvironment(
     PRODUCTION("production");
 
     companion object {
-        private val env: String? = System.getenv("EXECUTION_ENVIRONMENT")
+        private val env: String? by lazy { System.getenv("EXECUTION_ENVIRONMENT") }
 
         val current: ExecutionEnvironment
             get() = env?.let { fromLabel(it) } ?: UNKNOWN
@@ -20,7 +20,13 @@ enum class ExecutionEnvironment(
         }
     }
 
-    fun deployable() = this == PRODUCTION || this == STAGING
+    fun isDeployable() = this == PRODUCTION || this == STAGING
+
+    fun isUnknown(): Boolean = current == UNKNOWN
+    fun isDevelopment(): Boolean = current == DEVELOPMENT
+    fun isTest(): Boolean = current == TEST
+    fun isStaging(): Boolean = current == STAGING
+    fun isProduction(): Boolean = current == PRODUCTION
 }
 
-fun ExecutionEnvironment?.deployable() = this?.deployable() ?: false
+fun ExecutionEnvironment?.isDeployable() = this?.isDeployable() ?: false
