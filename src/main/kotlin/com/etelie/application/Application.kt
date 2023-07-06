@@ -24,9 +24,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     installAllPlugins()
 
-    if (ExecutionEnvironment.current.isServer()) {
-        PersistenceConfig.connectToDatabase(environment)
-    }
+    PersistenceConfig.connectToDatabase(environment)
 
     if (ExecutionEnvironment.current.isDeployable()) {
         Scheduler.start(environment)
