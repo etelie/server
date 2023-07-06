@@ -22,10 +22,13 @@ fun main(args: Array<String>) {
 
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {
-    PersistenceConfig.connectToDatabase(environment)
     installAllPlugins()
 
-    if (!developmentMode) {
+    if (ExecutionEnvironment.current.isServer()) {
+        PersistenceConfig.connectToDatabase(environment)
+    }
+
+    if (ExecutionEnvironment.current.isDeployable()) {
         Scheduler.start(environment)
     }
 }

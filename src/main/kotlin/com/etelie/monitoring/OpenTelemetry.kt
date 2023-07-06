@@ -1,7 +1,7 @@
 package com.etelie.monitoring
 
 import com.etelie.application.ExecutionEnvironment
-import com.etelie.application.deployable
+import com.etelie.application.isDeployable
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator
@@ -20,7 +20,7 @@ import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import io.opentelemetry.semconv.resource.attributes.ResourceAttributes
 
 fun getOpenTelemetry(executionEnvironment: ExecutionEnvironment?): OpenTelemetry {
-    if (!executionEnvironment.deployable()) {
+    if (!executionEnvironment.isDeployable()) {
         return OpenTelemetry.noop()
     }
 
