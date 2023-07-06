@@ -21,6 +21,7 @@ enum class ExecutionEnvironment(
     }
 
     fun isDeployable() = this == PRODUCTION || this == STAGING
+    fun isServer() = isDeployable() || this == DEVELOPMENT
 
     fun isUnknown(): Boolean = current == UNKNOWN
     fun isDevelopment(): Boolean = current == DEVELOPMENT
