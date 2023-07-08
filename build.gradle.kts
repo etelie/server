@@ -10,8 +10,6 @@ val kotlinVersion: String by project
 val kotlinxVersion: String by project
 val logbackVersion: String by project
 val postgresqlVersion: String by project
-val h2Version: String by project
-val prometeusVersion: String by project
 val tomcatNativeVersion: String by project
 val exposedVersion: String by project
 val hikariCPVersion: String by project

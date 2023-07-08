@@ -193,6 +193,12 @@ The role of the code reviewer is to ensure code quality does not diminish over t
 
 Read: [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
 
+#### Dependencies
+
+A list of approved open source licenses and specific dependencies is maintained in [this document](https://etelie.atlassian.net/wiki/spaces/ETELIE/pages/9535489/Open+source+dependencies)
+
+New dependencies must be approved and documented.
+
 ### Contact
 
 zachary@etelie.com
