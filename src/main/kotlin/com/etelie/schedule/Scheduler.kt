@@ -1,14 +1,10 @@
 package com.etelie.schedule
 
+import com.etelie.imports.treasury.AuctionedImportJob
 import com.etelie.imports.treasury.AverageInterestRatesImportJob
 import com.etelie.imports.treasury.SavingsBondsValueFilesJob
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.server.application.ApplicationEnvironment
-import io.ktor.server.application.ApplicationStarted
-import io.ktor.server.application.ApplicationStarting
-import io.ktor.server.application.ApplicationStopPreparing
-import io.ktor.server.application.ApplicationStopped
-import io.ktor.server.application.ApplicationStopping
+import io.ktor.server.application.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -28,6 +24,7 @@ object Scheduler {
         runBlocking(CoroutineName("${this::class.simpleName}-init")) {
             awaitAll(
                 async { AverageInterestRatesImportJob.getJobDefinition() },
+                async { AuctionedImportJob.getJobDefinition() },
                 async { SavingsBondsValueFilesJob.getJobDefinition() },
             ).forEach {
                 subscribe(it)

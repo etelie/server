@@ -2,9 +2,9 @@ package com.etelie.imports.treasury
 
 import kotlinx.coroutines.coroutineScope
 
-object SavingsBondsValueFiles {
+object SavingsBondsValueFilesImport {
 
-    const val importerId = 2
+    const val importerId = 3
 
     suspend fun import(): String = coroutineScope {
         ""

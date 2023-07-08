@@ -1,7 +1,9 @@
 package com.etelie.securities.detail
 
+import com.etelie.securities.SecurityType
+
 data class SecurityDetail(
-    val name: String,
+    val type: SecurityType,
     val description: String,
     val interestFrequency: Int,
     val compoundingFrequency: Int?,

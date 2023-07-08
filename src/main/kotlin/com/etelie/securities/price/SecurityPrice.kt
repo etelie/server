@@ -1,15 +1,13 @@
 package com.etelie.securities.price
 
+import com.etelie.securities.SecurityTerm
 import kotlinx.datetime.Instant
 import java.math.BigDecimal
 
 data class SecurityPrice(
     val purchasedTimestamp: Instant,
-    val issuedTimestamp: Instant?,
-    val term: Int,
-    val parValue: BigDecimal?,
-    val discountPrice: BigDecimal?,
+    val issuedTimestamp: Instant,
+    val term: SecurityTerm,
     val interestRateFixed: BigDecimal,
     val interestRateVariable: BigDecimal,
-    val yieldToMaturity: BigDecimal,
 )

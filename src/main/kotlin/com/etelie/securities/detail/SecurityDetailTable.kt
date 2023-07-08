@@ -1,5 +1,6 @@
 package com.etelie.securities.detail
 
+import com.etelie.securities.SecurityType
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -7,6 +8,7 @@ object SecurityDetailTable : IntIdTable(
     name = "security_detail",
     columnName = "detail_id",
 ) {
+
     val securityId = integer("security_id").uniqueIndex()
     val securityName = varchar("security_name", 100).uniqueIndex()
     val securityDescription = varchar("security_description", 500)
@@ -24,8 +26,11 @@ object SecurityDetailTable : IntIdTable(
     val isTaxableLocal = bool("is_taxable_local")
 
     fun toSecurityDetail(row: ResultRow): SecurityDetail {
+        val securityType = SecurityType.findByPersistentName(row.get(securityName))
+            ?: throw IllegalStateException("No SecurityType#serialName matches ${row.get(securityName)} in database")
+
         return SecurityDetail(
-            name = row.get(securityName),
+            type = securityType,
             description = row.get(securityDescription),
             interestFrequency = row.get(interestFrequency),
             compoundingFrequency = row.get(compoundingFrequency),
@@ -41,4 +46,5 @@ object SecurityDetailTable : IntIdTable(
             isTaxableLocal = row.get(isTaxableLocal),
         )
     }
+
 }

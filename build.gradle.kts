@@ -22,6 +22,8 @@ val tegralVersion: String by project
 val quartzVersion: String by project
 val kotlinLoggingVersion: String by project
 val http4kVersion: String by project
+val mockkVersion: String by project
+val junitVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
@@ -97,6 +99,10 @@ flyway {
     user = System.getenv("FLYWAY_USER") ?: localFlywayUser
     password = System.getenv("FLYWAY_PASSWORD") ?: localFlywayPassword
     table = "changelog"
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 dependencies {
@@ -178,4 +184,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
     testImplementation("io.ktor", "ktor-server-test-host", ktorVersion)
     testImplementation("io.ktor", "ktor-server-tests-jvm", ktorVersion)
+    testImplementation("io.mockk", "mockk", mockkVersion)
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", junitVersion)
 }

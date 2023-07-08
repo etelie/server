@@ -11,6 +11,7 @@ import io.ktor.server.routing.route
 fun Route.treasuryImportRoutes() {
     route("/treasury-imports") {
         averageInterestRatesImportRoute()
+        auctionedRoute()
     }
 }
 
@@ -19,12 +20,22 @@ fun Route.averageInterestRatesImportRoute() {
         val importResponse = AverageInterestRatesImport.import()
         call.respond<String>(HttpStatusCode.OK, importResponse)
     } describe {
-        summary = "Average interest rates import"
+        summary = "Average interest rates treasury import"
+        200 response {}
+    }
+}
+
+fun Route.auctionedRoute() {
+    patch("/auctioned") {
+        val importResponse = AuctionedImport.import()
+        call.respond<String>(HttpStatusCode.OK, importResponse)
+    } describe {
+        summary = "Auctioned securities treasury import"
         200 response {}
     }
 
     patch("/savings-bonds-value-files") {
-        val importResponse = SavingsBondsValueFiles.import()
+        val importResponse = SavingsBondsValueFilesImport.import()
         call.respond<String>(HttpStatusCode.OK, importResponse)
     } describe {
         summary = "Savings bonds value files import"
