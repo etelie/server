@@ -22,6 +22,7 @@ val kotlinLoggingVersion: String by project
 val http4kVersion: String by project
 val mockkVersion: String by project
 val junitVersion: String by project
+val skrapeitVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
@@ -177,6 +178,7 @@ dependencies {
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
     implementation("io.github.oshai", "kotlin-logging-jvm", kotlinLoggingVersion)
+    implementation("it.skrape", "skrapeit", skrapeitVersion)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
