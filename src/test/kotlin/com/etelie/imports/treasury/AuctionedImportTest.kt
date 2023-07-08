@@ -2,7 +2,7 @@ package com.etelie.imports.treasury
 
 import com.etelie.imports.ImporterSecurityAssociationTable
 import com.etelie.securities.SecurityType.*
-import com.etelie.securities.detail.SecurityDetailGenerator
+import com.etelie.securities.detail.SecurityDetailFactory
 import com.etelie.securities.price.SecurityPriceTable
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -16,46 +16,46 @@ import kotlin.test.BeforeTest
 
 internal class AuctionedImportTest {
 
-    private val billResponse = TreasuryDirectSecurityResponseGenerator().build {
+    private val billResponse = TreasuryDirectSecurityResponseFactory.build {
         type = "Bill"
         floatingRate = "No"
         tips = "No"
     }
-    private val bondResponse = TreasuryDirectSecurityResponseGenerator().build {
+    private val bondResponse = TreasuryDirectSecurityResponseFactory.build {
         type = "Bond"
         floatingRate = "No"
         tips = "No"
     }
-    private val noteResponse = TreasuryDirectSecurityResponseGenerator().build {
+    private val noteResponse = TreasuryDirectSecurityResponseFactory.build {
         type = "Note"
         floatingRate = "No"
         tips = "No"
     }
-    private val frnResponse = TreasuryDirectSecurityResponseGenerator().build {
+    private val frnResponse = TreasuryDirectSecurityResponseFactory.build {
         type = "FRN"
         floatingRate = "Yes"
         tips = "No"
         spread = "0.5"
         frnIndexDeterminationRate = "1.0"
     }
-    private val tipsResponse = TreasuryDirectSecurityResponseGenerator().build {
+    private val tipsResponse = TreasuryDirectSecurityResponseFactory.build {
         type = "TIPS"
         floatingRate = "No"
         tips = "Yes"
     }
-    private val billDetail = SecurityDetailGenerator().build {
+    private val billDetail = SecurityDetailFactory.build {
         type = TREASURY_MARKET_BILL
     }
-    private val bondDetail = SecurityDetailGenerator().build {
+    private val bondDetail = SecurityDetailFactory.build {
         type = TREASURY_MARKET_BOND
     }
-    private val noteDetail = SecurityDetailGenerator().build {
+    private val noteDetail = SecurityDetailFactory.build {
         type = TREASURY_MARKET_NOTE
     }
-    private val frnDetail = SecurityDetailGenerator().build {
+    private val frnDetail = SecurityDetailFactory.build {
         type = TREASURY_MARKET_FRN
     }
-    private val tipsDetail = SecurityDetailGenerator().build {
+    private val tipsDetail = SecurityDetailFactory.build {
         type = TREASURY_MARKET_TIPS
     }
 
