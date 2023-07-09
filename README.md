@@ -205,6 +205,11 @@ checked in to version control, add a line to `setup.sh`:
 Custom exceptions should extend `EtelieException` which is just a shallow wrapper of `RuntimeException`. This allows us
 to use `EtelieException` as a catch-all type for custom exceptions without the hazard of catching all unchecked exceptions.
 
+#### Routing
+
+All HTTP routes should utilize the Tegral `describe` DSL extension in order for that route to be detected for inclusion
+in the auto-generated OpenAPI documentation.
+
 #### Code review
 
 All contributions must pass code review. All changes must be tested in the QA environment before merge.

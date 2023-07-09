@@ -163,6 +163,9 @@ dependencies {
     implementation("io.ktor", "ktor-server-rate-limit", ktorVersion)
     implementation("io.ktor", "ktor-server-status-pages", ktorVersion)
     implementation("io.ktor", "ktor-server-config-yaml", ktorVersion)
+    implementation("io.ktor", "ktor-client-core", ktorVersion)
+    implementation("io.ktor", "ktor-client-cio", ktorVersion)
+    implementation("io.ktor", "ktor-client-okhttp", ktorVersion)
 
     // Tegral
     implementation(tegralLibs.core)
@@ -175,10 +178,13 @@ dependencies {
     implementation("org.http4k", "http4k-client-apache")
     implementation("org.http4k", "http4k-client-apache-async")
 
+    // Skrape{it}
+    implementation("it.skrape", "skrapeit", skrapeitVersion)
+    implementation("it.skrape", "skrapeit-async-fetcher", skrapeitVersion)
+
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
     implementation("io.github.oshai", "kotlin-logging-jvm", kotlinLoggingVersion)
-    implementation("it.skrape", "skrapeit", skrapeitVersion)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)

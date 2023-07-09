@@ -5,8 +5,8 @@ import kotlinx.datetime.Instant
 import java.math.BigDecimal
 
 data class SecurityPrice(
-    val purchasedTimestamp: Instant,
-    val issuedTimestamp: Instant,
+    val purchasedTimestamp: Instant?,
+    val issuedTimestamp: Instant?,
     val term: SecurityTerm,
     val interestRateFixed: BigDecimal,
     val interestRateVariable: BigDecimal,

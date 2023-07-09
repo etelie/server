@@ -1,7 +1,11 @@
 package com.etelie.imports.treasury
 
 import com.etelie.imports.ImporterSecurityAssociationTable
-import com.etelie.securities.SecurityType.*
+import com.etelie.securities.SecurityType.TREASURY_MARKET_BILL
+import com.etelie.securities.SecurityType.TREASURY_MARKET_BOND
+import com.etelie.securities.SecurityType.TREASURY_MARKET_FRN
+import com.etelie.securities.SecurityType.TREASURY_MARKET_NOTE
+import com.etelie.securities.SecurityType.TREASURY_MARKET_TIPS
 import com.etelie.securities.detail.SecurityDetailFactory
 import com.etelie.securities.price.SecurityPriceTable
 import io.mockk.coEvery
@@ -92,7 +96,7 @@ internal class AuctionedImportTest {
 
                 AuctionedImport.import()
 
-                coVerify(exactly = 1) { SecurityPriceTable.insert(detail, any()) }
+                coVerify(exactly = 1) { SecurityPriceTable.insert(detail.type, any()) }
             }
         }
     }
@@ -105,11 +109,11 @@ internal class AuctionedImportTest {
 
             AuctionedImport.import()
 
-            coVerify(exactly = 1) { SecurityPriceTable.insert(billDetail, any()) }
-            coVerify(exactly = 1) { SecurityPriceTable.insert(bondDetail, any()) }
-            coVerify(exactly = 1) { SecurityPriceTable.insert(noteDetail, any()) }
-            coVerify(exactly = 1) { SecurityPriceTable.insert(frnDetail, any()) }
-            coVerify(exactly = 1) { SecurityPriceTable.insert(tipsDetail, any()) }
+            coVerify(exactly = 1) { SecurityPriceTable.insert(billDetail.type, any()) }
+            coVerify(exactly = 1) { SecurityPriceTable.insert(bondDetail.type, any()) }
+            coVerify(exactly = 1) { SecurityPriceTable.insert(noteDetail.type, any()) }
+            coVerify(exactly = 1) { SecurityPriceTable.insert(frnDetail.type, any()) }
+            coVerify(exactly = 1) { SecurityPriceTable.insert(tipsDetail.type, any()) }
         }
     }
 

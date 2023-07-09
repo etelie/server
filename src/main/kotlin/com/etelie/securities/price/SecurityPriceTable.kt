@@ -1,7 +1,7 @@
 package com.etelie.securities.price
 
 import com.etelie.securities.SecurityTerm
-import com.etelie.securities.detail.SecurityDetail
+import com.etelie.securities.SecurityType
 import com.etelie.securities.detail.SecurityDetailTable
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ object SecurityPriceTable : IntIdTable(
     columnName = "price_id",
 ) {
     val securityId = reference("security_id", SecurityDetailTable.securityId)
-    val purchasedTimestamp = timestamp("purchased_timestamp")
+    val purchasedTimestamp = timestamp("purchased_timestamp").nullable()
     val issuedTimestamp = timestamp("issued_timestamp").nullable()
     val termMonths = integer("term_months").nullable()
     val termWeeks = integer("term_weeks").nullable()
@@ -32,7 +32,7 @@ object SecurityPriceTable : IntIdTable(
      * @see SecurityPrice
      */
     suspend fun insert(
-        securityDetail: SecurityDetail,
+        securityType: SecurityType,
         securityPrice: SecurityPrice,
     ): Int = newSuspendedTransaction(coroutineContext) {
         val termInMonths: Int? = if (securityPrice.term.unit == SecurityTerm.Unit.MONTHS)
@@ -41,7 +41,7 @@ object SecurityPriceTable : IntIdTable(
             securityPrice.term.length else null
 
         val alreadyExistsQuery = selectAll().apply {
-            andWhere { securityId eq securityDetail.type.persistentId }
+            andWhere { securityId eq securityType.persistentId }
             andWhere { issuedTimestamp eq securityPrice.issuedTimestamp }
             andWhere { termMonths eq termInMonths }
             andWhere { termWeeks eq termInWeeks }
@@ -52,7 +52,7 @@ object SecurityPriceTable : IntIdTable(
         }
 
         return@newSuspendedTransaction insert {
-            it[securityId] = securityDetail.type.persistentId
+            it[securityId] = securityType.persistentId
             it[purchasedTimestamp] = securityPrice.purchasedTimestamp
             it[issuedTimestamp] = securityPrice.issuedTimestamp
             it[termMonths] = termInMonths

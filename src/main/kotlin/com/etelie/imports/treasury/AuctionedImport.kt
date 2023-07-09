@@ -44,18 +44,17 @@ object AuctionedImport {
                 }
             }
 
-        var insertedPrices = 0
+        var insertedPricesCount = 0
         securityPrices.entries.forEach { (detail, prices) ->
             prices.forEach { price ->
-                insertedPrices += SecurityPriceTable.insert(detail, price)
+                insertedPricesCount += SecurityPriceTable.insert(detail.type, price)
             }
         }
 
-        val finishMessage =
-            """${this@AuctionedImport::class.simpleName} complete;
-                |$insertedPrices prices inserted into security_price table""".trimMargin()
-        log.info { finishMessage.replace("\n", "") }
-        finishMessage
+
+        "${this@AuctionedImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
+            log.info { it.replace("\n", "") }
+        }
     }
 
     private enum class SecurityPriceConverter(

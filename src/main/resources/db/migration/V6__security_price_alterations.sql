@@ -23,4 +23,10 @@ alter table security_price
   add constraint unique_price_content unique nulls not distinct
     (security_id, issued_timestamp, term_weeks, term_months);
 
+alter table security_price
+  alter column purchased_timestamp drop not null;
+
+alter table security_price
+  alter column security_id set not null;
+
 comment on column security_price.term_weeks is 'unit: weeks';
