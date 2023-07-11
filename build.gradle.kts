@@ -65,7 +65,7 @@ application {
     val openTelemetryProperties = projectDir.resolve("src/main/resources/opentelemetry.properties")
     val isDeployed = deployableEnvironments.contains(executionEnvironment)
     val jvmArgs = mutableSetOf(
-        "-Dio.ktor.development=${!isDeployed}",
+        "-Dio.ktor.development=${executionEnvironment == "development"}",
         "-Dnewrelic.environment=$executionEnvironment",
         "-Dnewrelic.config.license_key=$newRelicLicenseKey",
         "-Dotel.javaagent.configuration-file=${openTelemetryProperties.absolutePath}",
