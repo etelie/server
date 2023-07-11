@@ -128,7 +128,7 @@ class TreasuryDirectSecurityResponseFactory private constructor() {
             "",
         )
 
-        fun build(block: TreasuryDirectSecurityResponseFactory.() -> Unit): TreasuryDirectSecurityResponse {
+        fun build(block: TreasuryDirectSecurityResponseFactory.() -> Unit = {}): TreasuryDirectSecurityResponse {
             return TreasuryDirectSecurityResponseFactory().apply(block).run {
                 baseResponse.copy(
                     type = type,

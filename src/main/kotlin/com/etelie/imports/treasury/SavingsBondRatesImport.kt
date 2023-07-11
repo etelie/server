@@ -6,6 +6,9 @@ import com.etelie.securities.SecurityType
 import com.etelie.securities.price.SecurityPrice
 import com.etelie.securities.price.SecurityPriceTable
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import java.math.BigDecimal
@@ -16,12 +19,12 @@ object SavingsBondRatesImport {
 
     const val importerId = 3
 
-    suspend fun import(): String {
+    suspend fun import(): String = coroutineScope {
         val scraperResult: SavingsBondScrapeResult?
         try {
             scraperResult = TreasuryDirectScraper.scrapeSavingsBondRates()
         } catch (e: WebContentNotFoundException) {
-            return "${this::class.simpleName} failed; scrape failure".also {
+            return@coroutineScope "${SavingsBondRatesImport::class.simpleName} failed; scrape failure".also {
                 log.error(e) { it }
             }
         }
@@ -41,11 +44,14 @@ object SavingsBondRatesImport {
             interestRateVariable = scraperResult.iBondVariableRate,
         )
 
-        var insertedPricesCount = 0
-        insertedPricesCount += SecurityPriceTable.insert(SecurityType.TREASURY_SAVINGS_EE, eeBondPrice)
-        insertedPricesCount += SecurityPriceTable.insert(SecurityType.TREASURY_SAVINGS_I, iBondPrice)
+        val insertedPricesCount: Int = awaitAll(
+            async { SecurityPriceTable.insert(SecurityType.TREASURY_SAVINGS_EE, eeBondPrice) },
+            async { SecurityPriceTable.insert(SecurityType.TREASURY_SAVINGS_I, iBondPrice) },
+        ).fold(0) { total, insertions ->
+            total + insertions
+        }
 
-        return "${this@SavingsBondRatesImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
+        "${SavingsBondRatesImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
             log.info { it.replace("\n", "") }
         }
     }

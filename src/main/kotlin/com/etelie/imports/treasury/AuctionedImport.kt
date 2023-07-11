@@ -39,7 +39,7 @@ object AuctionedImport {
                     SecurityPriceConverter.findConverter(securityDetail.type)?.run {
                         convert(security)
                     } ?: throw UnsupportedOperationException(
-                        "Unsupported security type for ${this@AuctionedImport::class.simpleName}",
+                        "Unsupported security type for ${AuctionedImport::class.simpleName}",
                     )
                 }
             }
@@ -51,7 +51,7 @@ object AuctionedImport {
             }
         }
 
-        "${this@AuctionedImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
+        "${AuctionedImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
             log.info { it.replace("\n", "") }
         }
     }
