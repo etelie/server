@@ -1,73 +1,82 @@
 package com.etelie.imports.treasury
 
 import com.etelie.network.WebContentNotFoundException
-import it.skrape.core.document
-import it.skrape.fetcher.AsyncFetcher
-import it.skrape.fetcher.Method
-import it.skrape.fetcher.response
-import it.skrape.fetcher.skrape
-import it.skrape.selects.html5.p
-import it.skrape.selects.html5.strong
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toKotlinLocalDate
+import org.http4k.client.ApacheClient
+import org.http4k.core.HttpHandler
+import org.http4k.core.Method
+import org.http4k.core.Request
+import java.math.BigDecimal
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object TreasuryDirectScraper {
 
+    private const val basePath = "https://treasurydirect.gov"
+    private val dateFormat = DateTimeFormatter.ofPattern("MMM d, y", Locale.US)
     private val coroutineContext = Dispatchers.IO + CoroutineName(this::class.simpleName!!)
+    private val client: HttpHandler = ApacheClient()
 
-    suspend fun scrape(): TreasuryDirectScraperResult = withContext(coroutineContext) {
-        skrape(AsyncFetcher) {
-            request {
-                method = Method.GET
-                url = "https://treasurydirect.gov/savings-bonds/"
-                userAgent = "Mozilla/5.0"
-            }
-            response {
-                val mainRates: List<String?> = document.strong {
-                    findAll {
-                        filter {
-                            it.ownText.contains(Regex("""Current Rate: \d+\.\d+%"""))
-                        }.map {
-                            Regex("""Current Rate: (.+)%""")
-                                .find(it.ownText)
-                                ?.groups
-                                ?.get(1)
-                                ?.value
-                        }
+    fun scrapeSavingsBondRates(): SavingsBondScrapeResult {
+        val eePath = "$basePath/savings-bonds/ee-bonds/"
+        val iPath = "$basePath/savings-bonds/i-bonds/"
+        val eeRequest = Request(Method.GET, eePath)
+        val iRequest = Request(Method.GET, iPath)
+        val eeResponse = client(eeRequest).bodyString()
+        val iResponse = client(iRequest).bodyString()
 
-                    }
-                }
-                val iBondFixedRate: String? = document.p {
-                    findFirst("#main > section.colored.gray > div > div:nth-child(2) > div:nth-child(2) > div > div > div > p:nth-child(4)") {
-                        let {
-                            Regex("""This includes a fixed rate of (.+)%""")
-                                .find(it.ownText)
-                                ?.groups
-                                ?.get(1)
-                                ?.value
-                        }
-                    }
-                }
+        val eeIssueMatches: List<MatchResult> = Regex("""For EE bonds issued (\w+ \d+, \d+) to .+.""")
+            .findAll(eeResponse)
+            .toList()
+        val eeRateMatches: List<MatchResult> = Regex("""(\d+\.\d+)%""")
+            .findAll(eeResponse)
+            .toList()
+        val iIssueMatches: List<MatchResult> = Regex("""For I bonds issued (\w+ \d+, \d+) to .+.""")
+            .findAll(iResponse)
+            .toList()
+        val iRateMatches: List<MatchResult> = Regex("""(\d+\.\d+)%""")
+            .findAll(iResponse)
+            .toList()
 
-                if (mainRates.size != 2 || mainRates.any { it == null } || iBondFixedRate == null) {
-                    throw WebContentNotFoundException("${this::class.simpleName} failed to find interest rates")
-                }
-
-                TreasuryDirectScraperResult(
-                    mainRates[0]!!,
-                    mainRates[1]!!,
-                    iBondFixedRate,
-                )
-            }
+        if (eeIssueMatches.size != 1 ||
+            iIssueMatches.size != 1 ||
+            eeRateMatches.size != 1 ||
+            iRateMatches.size != 2
+        ) {
+            throw WebContentNotFoundException("${this::class.simpleName} failed to find interest rates")
         }
+
+        val eeBondIssueDate: LocalDate = eeIssueMatches
+            .get(0)
+            .groupValues
+            .get(1)
+            .let { java.time.LocalDate.parse(it, dateFormat).toKotlinLocalDate() }
+        val eeBondFixedRate: BigDecimal = eeRateMatches
+            .map { it.groupValues.get(1) }
+            .get(0)
+            .let { BigDecimal(it) }
+        val iBondIssueDate: LocalDate = iIssueMatches
+            .get(0)
+            .groupValues
+            .get(1)
+            .let { java.time.LocalDate.parse(it, dateFormat).toKotlinLocalDate() }
+        val (
+            iBondFixedRate: BigDecimal,
+            iBondVariableRate: BigDecimal,
+        ) = iRateMatches
+            .map { it.groupValues.get(1) }
+            .let { Pair(BigDecimal(it.get(0)), BigDecimal(it.get(1))) }
+
+        return SavingsBondScrapeResult(
+            eeBondIssueDate = eeBondIssueDate,
+            eeBondFixedRate = eeBondFixedRate,
+            iBondIssueDate = iBondIssueDate,
+            iBondFixedRate = iBondFixedRate,
+            iBondVariableRate = iBondVariableRate,
+        )
     }
 
 }
-
-// https://treasurydirect.gov/savings-bonds/ee-bonds/
-// #main > div > div > div.col-md-9 > section:nth-child(1) > div > div.grid-row-container.row > div:nth-child(2) > div > div > div.rate-box.card > div > div > div > div:nth-child(3)
-
-// https://treasurydirect.gov/savings-bonds/i-bonds/
-// #main > div > div > div.col-md-9 > section:nth-child(1) > div > div.grid-row-container.row > div:nth-child(2) > div > div > div > div > div > div > div:nth-child(3)
-// #main > div > div > div.col-md-9 > section:nth-child(1) > div > div.grid-row-container.row > div:nth-child(2) > div > div > div > div > div > div > p:nth-child(4)

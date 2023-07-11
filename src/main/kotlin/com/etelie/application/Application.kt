@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     installAllPlugins()
 
-    if (ExecutionEnvironment.current.isServer()) {
+    if (ExecutionEnvironment.current.isServer() || environment.developmentMode) {
         PersistenceConfig.connectToDatabase(environment)
     }
 

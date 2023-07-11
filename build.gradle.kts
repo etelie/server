@@ -22,7 +22,6 @@ val kotlinLoggingVersion: String by project
 val http4kVersion: String by project
 val mockkVersion: String by project
 val junitVersion: String by project
-val skrapeitVersion: String by project
 
 val localFlywayUrl: String by project
 val localFlywayUser: String by project
@@ -177,10 +176,6 @@ dependencies {
     implementation("org.http4k", "http4k-core")
     implementation("org.http4k", "http4k-client-apache")
     implementation("org.http4k", "http4k-client-apache-async")
-
-    // Skrape{it}
-    implementation("it.skrape", "skrapeit", skrapeitVersion)
-    implementation("it.skrape", "skrapeit-async-fetcher", skrapeitVersion)
 
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)

@@ -51,7 +51,6 @@ object AuctionedImport {
             }
         }
 
-
         "${this@AuctionedImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
             log.info { it.replace("\n", "") }
         }

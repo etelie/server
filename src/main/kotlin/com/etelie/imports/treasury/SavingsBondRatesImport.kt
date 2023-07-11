@@ -7,6 +7,8 @@ import com.etelie.securities.price.SecurityPrice
 import com.etelie.securities.price.SecurityPriceTable
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.coroutineScope
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import java.math.BigDecimal
 
 private val log = KotlinLogging.logger {}
@@ -16,9 +18,9 @@ object SavingsBondRatesImport {
     const val importerId = 3
 
     suspend fun import(): String = coroutineScope {
-        val scraperResult: TreasuryDirectScraperResult?
+        val scraperResult: SavingsBondScrapeResult?
         try {
-            scraperResult = TreasuryDirectScraper.scrape()
+            scraperResult = TreasuryDirectScraper.scrapeSavingsBondRates()
         } catch (e: WebContentNotFoundException) {
             return@coroutineScope "${this::class.simpleName} failed; scrape failure".also {
                 log.error(e) { it }
@@ -27,23 +29,22 @@ object SavingsBondRatesImport {
 
         val eeBondPrice = SecurityPrice(
             purchasedTimestamp = null,
-            issuedTimestamp = null,
+            issuedTimestamp = scraperResult.eeBondIssueDate.atStartOfDayIn(TimeZone.UTC),
             term = SecurityTerm.months(30 * 12),
-            interestRateFixed = BigDecimal(scraperResult.eeBondFixedRate),
+            interestRateFixed = scraperResult.eeBondFixedRate,
             interestRateVariable = BigDecimal(0),
         )
         val iBondPrice = SecurityPrice(
             purchasedTimestamp = null,
-            issuedTimestamp = null,
+            issuedTimestamp = scraperResult.iBondIssueDate.atStartOfDayIn(TimeZone.UTC),
             term = SecurityTerm.months(30 * 12),
-            interestRateFixed = BigDecimal(scraperResult.iBondFixedRate),
-            interestRateVariable = BigDecimal(scraperResult.iBondVariableRate),
+            interestRateFixed = scraperResult.iBondFixedRate,
+            interestRateVariable = scraperResult.iBondVariableRate,
         )
 
         var insertedPricesCount = 0
         insertedPricesCount += SecurityPriceTable.insert(SecurityType.TREASURY_SAVINGS_EE, eeBondPrice)
         insertedPricesCount += SecurityPriceTable.insert(SecurityType.TREASURY_SAVINGS_I, iBondPrice)
-
 
         "${this@SavingsBondRatesImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
             log.info { it.replace("\n", "") }
