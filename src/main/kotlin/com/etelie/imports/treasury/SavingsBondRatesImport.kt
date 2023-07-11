@@ -6,7 +6,6 @@ import com.etelie.securities.SecurityType
 import com.etelie.securities.price.SecurityPrice
 import com.etelie.securities.price.SecurityPriceTable
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import java.math.BigDecimal
@@ -17,12 +16,12 @@ object SavingsBondRatesImport {
 
     const val importerId = 3
 
-    suspend fun import(): String = coroutineScope {
+    suspend fun import(): String {
         val scraperResult: SavingsBondScrapeResult?
         try {
             scraperResult = TreasuryDirectScraper.scrapeSavingsBondRates()
         } catch (e: WebContentNotFoundException) {
-            return@coroutineScope "${this::class.simpleName} failed; scrape failure".also {
+            return "${this::class.simpleName} failed; scrape failure".also {
                 log.error(e) { it }
             }
         }
@@ -46,7 +45,7 @@ object SavingsBondRatesImport {
         insertedPricesCount += SecurityPriceTable.insert(SecurityType.TREASURY_SAVINGS_EE, eeBondPrice)
         insertedPricesCount += SecurityPriceTable.insert(SecurityType.TREASURY_SAVINGS_I, iBondPrice)
 
-        "${this@SavingsBondRatesImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
+        return "${this@SavingsBondRatesImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
             log.info { it.replace("\n", "") }
         }
     }
