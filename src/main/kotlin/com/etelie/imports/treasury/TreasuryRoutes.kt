@@ -12,6 +12,7 @@ fun Route.treasuryImportRoutes() {
     route("/treasury-imports") {
         averageInterestRatesImportRoute()
         auctionedRoute()
+        savingsBondRoute()
     }
 }
 
@@ -31,6 +32,16 @@ fun Route.auctionedRoute() {
         call.respond<String>(HttpStatusCode.OK, importResponse)
     } describe {
         summary = "Auctioned securities treasury import"
+        200 response {}
+    }
+}
+
+fun Route.savingsBondRoute() {
+    patch("/savings-bonds") {
+        val importResponse = SavingsBondRatesImport.import()
+        call.respond<String>(HttpStatusCode.OK, importResponse)
+    } describe {
+        summary = "Savings bonds import"
         200 response {}
     }
 }

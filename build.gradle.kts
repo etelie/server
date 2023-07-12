@@ -10,8 +10,6 @@ val kotlinVersion: String by project
 val kotlinxVersion: String by project
 val logbackVersion: String by project
 val postgresqlVersion: String by project
-val h2Version: String by project
-val prometeusVersion: String by project
 val tomcatNativeVersion: String by project
 val exposedVersion: String by project
 val hikariCPVersion: String by project
@@ -67,7 +65,7 @@ application {
     val openTelemetryProperties = projectDir.resolve("src/main/resources/opentelemetry.properties")
     val isDeployed = deployableEnvironments.contains(executionEnvironment)
     val jvmArgs = mutableSetOf(
-        "-Dio.ktor.development=${!isDeployed}",
+        "-Dio.ktor.development=${executionEnvironment == "development"}",
         "-Dnewrelic.environment=$executionEnvironment",
         "-Dnewrelic.config.license_key=$newRelicLicenseKey",
         "-Dotel.javaagent.configuration-file=${openTelemetryProperties.absolutePath}",

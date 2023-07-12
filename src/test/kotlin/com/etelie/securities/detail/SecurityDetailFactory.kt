@@ -2,19 +2,12 @@ package com.etelie.securities.detail
 
 import com.etelie.securities.SecurityType
 
-class SecurityDetailGenerator {
+class SecurityDetailFactory private constructor() {
 
-    var type: SecurityType = SecurityType.TREASURY_MARKET_BILL
-
-    fun build(block: SecurityDetailGenerator.() -> Unit): SecurityDetail {
-        this.apply(block)
-        return baseSecurityDetail.copy(
-            type = type,
-        )
-    }
+    var type: SecurityType = baseSecurityDetail.type
 
     companion object {
-        private var baseSecurityDetail = SecurityDetail(
+        private val baseSecurityDetail = SecurityDetail(
             type = SecurityType.TREASURY_MARKET_BILL,
             description = "",
             interestFrequency = 1,
@@ -30,6 +23,14 @@ class SecurityDetailGenerator {
             isTaxableState = false,
             isTaxableLocal = false,
         )
+
+        fun build(block: SecurityDetailFactory.() -> Unit): SecurityDetail {
+            return SecurityDetailFactory().apply(block).run {
+                baseSecurityDetail.copy(
+                    type = type,
+                )
+            }
+        }
     }
 
 }

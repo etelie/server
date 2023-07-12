@@ -1,23 +1,12 @@
 package com.etelie.imports.treasury
 
-class TreasuryDirectSecurityResponseGenerator {
+class TreasuryDirectSecurityResponseFactory private constructor() {
 
-    var type = "Bill"
-    var floatingRate = "No"
-    var tips = "No"
-    var spread = ""
-    var frnIndexDeterminationRate = ""
-
-    fun build(block: TreasuryDirectSecurityResponseGenerator.() -> Unit): TreasuryDirectSecurityResponse {
-        apply(block)
-        return baseResponse.copy(
-            type = type,
-            floatingRate = floatingRate,
-            tips = tips,
-            spread = spread,
-            frnIndexDeterminationRate = frnIndexDeterminationRate,
-        )
-    }
+    var type = baseResponse.type
+    var floatingRate = baseResponse.floatingRate
+    var tips = baseResponse.tips
+    var spread = baseResponse.spread
+    var frnIndexDeterminationRate = baseResponse.frnIndexDeterminationRate
 
     companion object {
         private val baseResponse = TreasuryDirectSecurityResponse(
@@ -138,6 +127,18 @@ class TreasuryDirectSecurityResponseGenerator {
             "R_20230629_2.xml",
             "",
         )
+
+        fun build(block: TreasuryDirectSecurityResponseFactory.() -> Unit = {}): TreasuryDirectSecurityResponse {
+            return TreasuryDirectSecurityResponseFactory().apply(block).run {
+                baseResponse.copy(
+                    type = type,
+                    floatingRate = floatingRate,
+                    tips = tips,
+                    spread = spread,
+                    frnIndexDeterminationRate = frnIndexDeterminationRate,
+                )
+            }
+        }
     }
 
 }

@@ -31,7 +31,8 @@ Docker is used to package the application into self-contained images which are d
 
     sudo apt install docker docker-compose
 
-On macOS, you will also want to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to easily get the Docker daemon running on your system.
+On macOS, you will also want to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to easily get 
+the Docker daemon running on your system.
 
 #### 4. Configure AWS Vault
 
@@ -43,14 +44,17 @@ Check that aws-vault was installed properly by querying the version
 
     aws-vault --version
 
-By default, aws-vault will store your credentials in a brand new keychain vault. One side effect of this is that it will prompt you for your vault password fairly frequently. There are a couple of environment variables you can set to make it a smoother process.
+By default, aws-vault will store your credentials in a brand new keychain vault. One side effect of this is that it will 
+prompt you for your vault password fairly frequently. There are a couple of environment variables you can set to make it 
+a smoother process.
 
     export AWS_VAULT_KEYCHAIN_NAME=login  # fewer keychain password prompts
     export AWS_VAULT_PROMPT=osascript     # nice dialog prompt for entering mfa auth token (use zenity on Linux)
 
 ##### Configuring credentials
 
-Add your IAM user access credentials to the AWS Vault keyring. If you have not already been given AWS access keys, email devops@etelie.com to request access. (`ETELIE_USERNAME` should be the same as your email address before the '@' character)
+Add your IAM user access credentials to the AWS Vault keyring. If you have not already been given AWS access keys, email
+devops@etelie.com to request access. (`ETELIE_USERNAME` should be the same as your email address before the '@' character)
 
     aws-vault add ETELIE_USERNAME
 
@@ -70,7 +74,8 @@ To test you can use the AWS CLI with a specific profile:
 
     aws-vault exec PROFILE_NAME -- aws s3 ls
 
-Run a credential server with AWS vault to allow local services using the AWS SDK to use your role permissions as would an EC2 instance.
+Run a credential server with AWS vault to allow local services using the AWS SDK to use your role permissions as would
+an EC2 instance.
 
     aws-vault exec PROFILE_NAME --ec2-server
     echo $AWS_VAULT  # environment variable set to your PROFILE_NAME
@@ -111,7 +116,9 @@ To fix this, edit `/etc/sudoers`, and add the path to the `aws-vault` binary to 
 
 - ###### `osascript` not available
 
-Linux machines will not have access to the MacOS `osascript` utility, and the default `terminal` prompt option will not work with `aws-vault exec --server`, so you will need to install the `zenity` package and set use `--prompt=zenity` or set `AWS_VAULT_PROMPT=zenity` in your shell configuration.
+Linux machines will not have access to the MacOS `osascript` utility, and the default `terminal` prompt option will not 
+work with `aws-vault exec --server`, so you will need to install the `zenity` package and set use `--prompt=zenity` or
+set `AWS_VAULT_PROMPT=zenity` in your shell configuration.
 
 #### 5. Set up Docker with AWS ECR
 
@@ -146,9 +153,11 @@ Add to your shell configurations:
 
 ##### Set your IntelliJ project Java SDK
 
-Because you might have multiple installations of Java on your machine, make sure IntelliJ knows to use the Corretto 17 distribution.
+Because you might have multiple installations of Java on your machine, make sure IntelliJ knows to use the Corretto 17
+distribution.
 
-`File` | `Project Structure` - You can edit the JDK for the overall project in the `Project` tab, and can edit the JDK per-module under `Modules`.
+`File` | `Project Structure` - You can edit the JDK for the overall project in the `Project` tab, and can edit the JDK
+per-module under `Modules`.
 
 #### 7. Run the setup script
 
@@ -163,9 +172,12 @@ Start the local PostgreSQL instance along with the pgAdmin web server.
     cd ./opt/docker/server
     docker compose up
 
-The Dockerfile script creates the `etelie` user with password `etelie+1`. The maintenance database uses the standard `postgres` name. To database system is available within the docker network as `postgres:5432`. From the browser, its address is `localhost:5434`. 
+The Dockerfile script creates the `etelie` user with password `etelie+1`. The maintenance database uses the standard 
+`postgres` name. To database system is available within the docker network as `postgres:5432`. From the browser, its 
+address is `localhost:5434`. 
 
-Initialize the database contents with [Flyway](https://documentation.red-gate.com/fd) by executing all migration scripts (stored in `src/main/resources/db/migration/`).
+Initialize the database contents with [Flyway](https://documentation.red-gate.com/fd) by executing all migration scripts 
+(stored in `src/main/resources/db/migration/`).
 
     ./gradlew flywayMigrate
 
@@ -181,17 +193,38 @@ The `master` branch is kept in a production-deployable state at all times.
 
 #### Environment variables
 
-Developer-specific environment configurations are left blank in the `.env.template` file, which is checked in to version control. The template is copied to `.env` when running `setup.sh`, and the developer is prompted for values to fill in the blanks. To add an environment variable, be sure to add it to `.env.template`, and if the variable should not be checked in to version control, add a line to `setup.sh`:
+Developer-specific environment configurations are left blank in the `.env.template` file, which is checked in to version 
+control. The template is copied to `.env` when running `setup.sh`, and the developer is prompted for values to fill in 
+the blanks. To add an environment variable, be sure to add it to `.env.template`, and if the variable should not be 
+checked in to version control, add a line to `setup.sh`:
 
     set_env_value "MY_ENVIRONMENT_VARIABLE"
+
+#### Exceptions
+
+Custom exceptions should extend `EtelieException` which is just a shallow wrapper of `RuntimeException`. This allows us
+to use `EtelieException` as a catch-all type for custom exceptions without the hazard of catching all unchecked exceptions.
+
+#### Routing
+
+All HTTP routes should utilize the Tegral `describe` DSL extension in order for that route to be detected for inclusion
+in the auto-generated OpenAPI documentation.
 
 #### Code review
 
 All contributions must pass code review. All changes must be tested in the QA environment before merge.
 
-The role of the code reviewer is to ensure code quality does not diminish over time, not necessarily to ensure correctness. It is the responsibility of the developer to write correct code.
+The role of the code reviewer is to ensure code quality does not diminish over time, not necessarily to ensure correctness.
+It is the responsibility of the developer to write correct code.
 
 Read: [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
+
+#### Dependencies
+
+A list of approved open source licenses and specific dependencies is maintained in
+[this document](https://etelie.atlassian.net/wiki/spaces/ETELIE/pages/9535489/Open+source+dependencies)
+
+New dependencies must be approved and documented.
 
 ### Contact
 

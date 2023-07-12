@@ -1,5 +1,6 @@
 package com.etelie.schedule
 
+import com.etelie.application.EtelieException
 import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 
-class JobMissingSimpleNameException : IllegalStateException("Simple name not found on Job KClass")
+internal class JobMissingSimpleNameException : EtelieException("Simple name not found on Job KClass")
 
 fun JobBuilder.withStandardSettings(klass: KClass<out Job>): JobBuilder {
     val identity: String = klass.simpleName?.let { "$it-job " } ?: throw JobMissingSimpleNameException()
