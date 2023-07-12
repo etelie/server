@@ -11,6 +11,9 @@ class ControlRoutesTest {
 
     @Test
     fun healthcheck() = testApplication {
+        environment {
+            developmentMode = false
+        }
         client.get("/control/healthcheck").also { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals("Service is healthy", response.body())
