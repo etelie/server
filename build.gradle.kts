@@ -1,4 +1,3 @@
-
 import io.ktor.plugin.features.DockerPortMapping
 import io.ktor.plugin.features.DockerPortMappingProtocol
 import io.ktor.plugin.features.JreVersion
@@ -34,6 +33,7 @@ val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
 /** "production" | "staging" | "test" | "development" **/
 val executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
 val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
+val serverPort = System.getenv("SERVER_PORT").orEmpty().ifEmpty { "402" }.run { toInt() }
 
 val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase().run {
     when {
@@ -92,7 +92,7 @@ ktor {
         localImageName.set("$orgId/$moduleId")
         portMappings.set(
             listOf(
-                DockerPortMapping(402, 402, DockerPortMappingProtocol.TCP),
+                DockerPortMapping(serverPort, serverPort, DockerPortMappingProtocol.TCP),
             ),
         )
     }
@@ -144,7 +144,7 @@ dependencies {
             "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion:$tomcatNativeOSClassifier"
         } else {
             "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion"
-        }
+        },
     )
 
     // Ktor
