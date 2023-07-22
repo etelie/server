@@ -4,6 +4,7 @@ import io.ktor.plugin.features.JreVersion
 
 val orgId: String by project
 val moduleId: String by project
+val mainClassName: String by project
 
 val ktorVersion: String by project
 val kotlinVersion: String by project
@@ -46,7 +47,6 @@ val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase
 val newRelicJar = projectDir.resolve("opt/newrelic/newrelic.jar")
 val openTelemetryJar = projectDir.resolve("opt/opentelemetry/opentelemetry-javaagent.jar")
 val deployableEnvironments = setOf("production", "staging")
-val mainClassName = "com.etelie.application.ApplicationKt"
 
 group = "com.${orgId}" // "com.etelie"
 version = buildTag     // "{version}-{build}"
