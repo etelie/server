@@ -1,3 +1,4 @@
+
 import io.ktor.plugin.features.DockerPortMapping
 import io.ktor.plugin.features.DockerPortMappingProtocol
 import io.ktor.plugin.features.JreVersion
@@ -88,6 +89,7 @@ ktor {
     docker {
         jreVersion.set(JreVersion.JRE_17)
         imageTag.set(buildTag)
+        localImageName.set("$orgId/$moduleId")
         portMappings.set(
             listOf(
                 DockerPortMapping(402, 402, DockerPortMappingProtocol.TCP),
