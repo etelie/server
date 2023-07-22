@@ -110,6 +110,22 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.distTar {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.distZip {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.startScripts {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.startShadowScripts {
+    dependsOn(tasks.jar, tasks.shadowJar)
+}
+
 dependencies {
     // Kotlin
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", kotlinxVersion)
