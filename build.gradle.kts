@@ -46,6 +46,7 @@ val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase
 val newRelicJar = projectDir.resolve("opt/newrelic/newrelic.jar")
 val openTelemetryJar = projectDir.resolve("opt/opentelemetry/opentelemetry-javaagent.jar")
 val deployableEnvironments = setOf("production", "staging")
+val mainClassName = "com.etelie.application.ApplicationKt"
 
 group = "com.${orgId}" // "com.etelie"
 version = buildTag     // "{version}-{build}"
@@ -77,7 +78,7 @@ application {
         add("-javaagent:${openTelemetryJar.absolutePath}")
     }
 
-    mainClass.set("com.etelie.application.ApplicationKt")
+    mainClass.set(mainClassName)
     applicationDefaultJvmArgs = jvmArgs
 }
 
@@ -95,6 +96,12 @@ ktor {
                 DockerPortMapping(serverPort, serverPort, DockerPortMappingProtocol.TCP),
             ),
         )
+    }
+}
+
+jib {
+    container {
+        mainClass = mainClassName
     }
 }
 
