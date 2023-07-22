@@ -99,12 +99,6 @@ ktor {
     }
 }
 
-jib {
-    container {
-        mainClass = mainClassName
-    }
-}
-
 flyway {
     url = System.getenv("FLYWAY_URL") ?: localFlywayUrl
     user = System.getenv("FLYWAY_USER") ?: localFlywayUser
