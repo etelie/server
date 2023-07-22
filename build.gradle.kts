@@ -81,6 +81,10 @@ application {
 }
 
 ktor {
+    fatJar {
+        archiveFileName.set("com.$orgId.$moduleId-$buildTag.jar")
+    }
+
     docker {
         jreVersion.set(JreVersion.JRE_17)
         imageTag.set(buildTag)
