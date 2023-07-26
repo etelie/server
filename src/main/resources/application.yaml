@@ -4,8 +4,8 @@ ktor:
       - com.etelie.application.ApplicationKt.module
   environment: "$KTOR_ENV:dev"
   deployment:
-    port: "$KTOR_PORT:402"
-    host: "$KTOR_HOST:0.0.0.0"
+    port: "$SERVER_PORT:402"
+    host: "$SERVER_HOST:0.0.0.0"
 
 postgresql:
   deploy:
