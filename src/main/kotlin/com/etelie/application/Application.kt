@@ -17,7 +17,6 @@ fun main(args: Array<String>) {
         factory = Netty,
         commandLineEnvironment(args),
     ).start(wait = true)
-
 }
 
 @Suppress("unused") // Referenced in application.yaml

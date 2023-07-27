@@ -3,8 +3,9 @@ FROM arm64v8/amazoncorretto:17
 ARG BUILD_TAG
 ENV BUILD_TAG=${BUILD_TAG}
 
-ARG PORT
-EXPOSE ${PORT}
+ARG SERVER_PORT
+ENV SERVER_PORT=${SERVER_PORT}
+EXPOSE ${SERVER_PORT}
 
 COPY com.etelie.server-* /libs/
 CMD java -jar /libs/com.etelie.server-${BUILD_TAG}.jar
