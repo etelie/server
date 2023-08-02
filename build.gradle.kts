@@ -21,6 +21,7 @@ val tegralVersion: String by project
 val quartzVersion: String by project
 val kotlinLoggingVersion: String by project
 val http4kVersion: String by project
+val awsSdkVersion: String by project
 val mockkVersion: String by project
 val junitVersion: String by project
 
@@ -200,6 +201,10 @@ dependencies {
     implementation("org.http4k", "http4k-core")
     implementation("org.http4k", "http4k-client-apache")
     implementation("org.http4k", "http4k-client-apache-async")
+
+    // AWS
+    implementation("aws.sdk.kotlin", "secretsmanager", awsSdkVersion)
+    implementation("aws.sdk.kotlin", "rds", awsSdkVersion)
 
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
