@@ -16,15 +16,6 @@ import io.ktor.server.response.respond
 private val log = KotlinLogging.logger {}
 
 fun Application.pluginHTTP() {
-//    install(HttpsRedirect) {
-//            sslPort = 443
-//            permanentRedirect = false
-//        }
-
-//    install(HSTS) {
-//        includeSubDomains = true
-//    }
-
     install(DefaultHeaders) {
         header(HttpHeaders.Server, "redacted")
     }

@@ -4,6 +4,7 @@ import io.ktor.plugin.features.JreVersion
 
 val orgId: String by project
 val moduleId: String by project
+val mainClassName: String by project
 
 val ktorVersion: String by project
 val kotlinVersion: String by project
@@ -33,6 +34,7 @@ val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
 /** "production" | "staging" | "test" | "development" **/
 val executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
 val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
+val serverPort = System.getenv("SERVER_PORT").orEmpty().ifEmpty { "402" }.run { toInt() }
 
 val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase().run {
     when {
@@ -76,20 +78,29 @@ application {
         add("-javaagent:${openTelemetryJar.absolutePath}")
     }
 
-    mainClass.set("com.etelie.application.ApplicationKt")
+    mainClass.set(mainClassName)
     applicationDefaultJvmArgs = jvmArgs
 }
 
 ktor {
+    fatJar {
+        archiveFileName.set("com.$orgId.$moduleId-$buildTag.jar")
+    }
+
     docker {
         jreVersion.set(JreVersion.JRE_17)
         imageTag.set(buildTag)
+        localImageName.set("$orgId/$moduleId")
         portMappings.set(
             listOf(
-                DockerPortMapping(402, 402, DockerPortMappingProtocol.TCP),
+                DockerPortMapping(serverPort, serverPort, DockerPortMappingProtocol.TCP),
             ),
         )
     }
+}
+
+jib {
+    containerizingMode = "packaged"
 }
 
 flyway {
@@ -101,6 +112,22 @@ flyway {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.distTar {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.distZip {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.startScripts {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.startShadowScripts {
+    dependsOn(tasks.jar, tasks.shadowJar)
 }
 
 dependencies {
@@ -138,7 +165,7 @@ dependencies {
             "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion:$tomcatNativeOSClassifier"
         } else {
             "io.netty:netty-tcnative-boringssl-static:$tomcatNativeVersion"
-        }
+        },
     )
 
     // Ktor
