@@ -8,13 +8,14 @@ import aws.sdk.kotlin.services.secretsmanager.model.GetSecretValueRequest
 import com.etelie.application.ExecutionEnvironment
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.ApplicationEnvironment
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
-import javax.sql.DataSource
+
+private val log = KotlinLogging.logger {}
 
 object PersistenceConfig {
 
@@ -25,19 +26,20 @@ object PersistenceConfig {
     private val driverClassName: String = org.postgresql.Driver::class.qualifiedName!!
 
     fun connectToDatabase(environment: ApplicationEnvironment) = runBlocking {
-        val dataSource: DataSource =
+        val dataSource: HikariDataSource =
             if (ExecutionEnvironment.current.isDeployable()) {
                 createRdsDataSource(environment)
             } else {
                 createLocalDataSource(environment)
             }
-        val database = Database.connect(dataSource)
 
+        log.info("Attempting to connect to ${dataSource.jdbcUrl}")
+        val database = Database.connect(dataSource)
         TransactionManager.defaultDatabase = database
-        exposedLogger.info("Successfully connected to ${database.url}")
+        log.info("Successfully connected to ${database.url}")
     }
 
-    private fun createLocalDataSource(environment: ApplicationEnvironment): DataSource {
+    private fun createLocalDataSource(environment: ApplicationEnvironment): HikariDataSource {
         val host = environment.config.property("etelie.postgresql.deploy.host").getString()
         val port = environment.config.property("etelie.postgresql.deploy.port").getString()
         val user = environment.config.property("etelie.postgresql.credential.user").getString()
@@ -49,7 +51,7 @@ object PersistenceConfig {
         return createHikariDataSource(jdbcUrl, user, password, maxConnections)
     }
 
-    private suspend fun createRdsDataSource(environment: ApplicationEnvironment): DataSource {
+    private suspend fun createRdsDataSource(environment: ApplicationEnvironment): HikariDataSource {
         val instanceName = environment.config.property("etelie.aws.rds.db_instance_identifier").getString()
         val instance = getRdsInstance(instanceName)!!
         check(instance.dbInstanceIdentifier == instanceName)

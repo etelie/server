@@ -8,6 +8,7 @@ import com.etelie.plugin.pluginRouting
 import com.etelie.schedule.Scheduler
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.Application
+import io.ktor.server.application.log
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -21,6 +22,9 @@ fun main(args: Array<String>) {
 
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {
+    val buildTag = environment.config.property("etelie.build.tag").getString()
+    log.info("Starting application with tag [$buildTag]")
+
     installAllPlugins()
 
     if (ExecutionEnvironment.current.isServer() || environment.developmentMode) {
