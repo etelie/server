@@ -1,12 +1,20 @@
 package com.etelie.persistence
 
+import aws.sdk.kotlin.services.rds.RdsClient
+import aws.sdk.kotlin.services.rds.describeDbInstances
+import aws.sdk.kotlin.services.rds.model.DbInstance
+import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
+import aws.sdk.kotlin.services.secretsmanager.model.GetSecretValueRequest
+import com.etelie.application.ExecutionEnvironment
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.ApplicationEnvironment
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
+import javax.sql.DataSource
 
 object PersistenceConfig {
 
@@ -16,27 +24,74 @@ object PersistenceConfig {
      */
     private val driverClassName: String = org.postgresql.Driver::class.qualifiedName!!
 
-    fun connectToDatabase(environment: ApplicationEnvironment) {
-        val host = environment.config.property("postgresql.deploy.host").getString()
-        val port = environment.config.property("postgresql.deploy.port").getString()
-        val user = environment.config.property("postgresql.credential.user").getString()
-        val password = environment.config.property("postgresql.credential.password").getString()
-        val db = environment.config.property("postgresql.database").getString()
-        val maxConnections = environment.config.property("hikaricp.max_connections").getString().toInt()
-
-        val jdbcUrl = "jdbc:postgresql://$host:$port/$db"
-        val dataSource = createHikariDataSource(jdbcUrl, maxConnections, user, password)
+    fun connectToDatabase(environment: ApplicationEnvironment) = runBlocking {
+        val dataSource: DataSource =
+            if (ExecutionEnvironment.current.isDeployable()) {
+                createRdsDataSource(environment)
+            } else {
+                createLocalDataSource(environment)
+            }
         val database = Database.connect(dataSource)
 
         TransactionManager.defaultDatabase = database
         exposedLogger.info("Successfully connected to ${database.url}")
     }
 
+    private fun createLocalDataSource(environment: ApplicationEnvironment): DataSource {
+        val host = environment.config.property("etelie.postgresql.deploy.host").getString()
+        val port = environment.config.property("etelie.postgresql.deploy.port").getString()
+        val user = environment.config.property("etelie.postgresql.credential.user").getString()
+        val password = environment.config.property("etelie.postgresql.credential.password").getString()
+        val db = environment.config.property("etelie.postgresql.database").getString()
+        val maxConnections = environment.config.property("hikaricp.max_connections").getString().toInt()
+
+        val jdbcUrl = getJdbcUrl(host, port, db)
+        return createHikariDataSource(jdbcUrl, user, password, maxConnections)
+    }
+
+    private suspend fun createRdsDataSource(environment: ApplicationEnvironment): DataSource {
+        val instanceName = environment.config.property("etelie.aws.rds.db_instance_identifier").getString()
+        val instance = getRdsInstance(instanceName)!!
+        check(instance.dbInstanceIdentifier == instanceName)
+
+        val secretArn = instance.masterUserSecret!!.secretArn!!
+        val password = getRdsPassword(secretArn)!!
+
+        val host: String = instance.endpoint!!.address!!
+        val port: String = instance.endpoint!!.port.toString()
+        val db: String = instance.dbName!!
+        val user: String = instance.masterUsername!!
+        val maxConnections = environment.config.property("hikaricp.max_connections").getString().toInt()
+
+        val jdbcUrl = getJdbcUrl(host, port, db)
+        return createHikariDataSource(jdbcUrl, user, password, maxConnections)
+    }
+
+    private suspend fun getRdsInstance(id: String): DbInstance? {
+        val rdsClient = RdsClient.fromEnvironment()
+        val response = rdsClient.describeDbInstances {
+            dbInstanceIdentifier = id
+        }
+        return response.dbInstances?.get(0)
+    }
+
+    private suspend fun getRdsPassword(secretArn: String): String? {
+        val secretsManagerClient = SecretsManagerClient.fromEnvironment()
+        val request = GetSecretValueRequest {
+            secretId = secretArn
+        }
+        val response = secretsManagerClient.getSecretValue(request)
+        return response.secretString
+    }
+
+    private fun getJdbcUrl(host: String, port: String, db: String): String =
+        "jdbc:postgresql://$host:$port/$db"
+
     private fun createHikariDataSource(
         jdbcUrl: String,
-        maxConnections: Int,
         user: String,
         password: String,
+        maxConnections: Int,
     ) = HikariDataSource(
         HikariConfig().also {
             it.driverClassName = driverClassName

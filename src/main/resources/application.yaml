@@ -6,14 +6,18 @@ ktor:
     port: "$SERVER_PORT:402"
     host: "$SERVER_HOST:0.0.0.0"
 
-postgresql:
-  deploy:
-    host: "$POSTGRES_HOST:localhost"
-    port: "$POSTGRES_PORT:5434"
-  credential:
-    user: "$POSTGRES_USER:etelie"
-    password: "$POSTGRES_PASSWORD:etelie+1"
-  database: "$POSTGRES_DB:etelie"
-
 hikaricp:
   max_connections: 4
+
+etelie:
+  postgresql:
+    deploy:
+      host: "$POSTGRES_HOST:localhost"
+      port: "$POSTGRES_PORT:5434"
+    credential:
+      user: "$POSTGRES_USER:etelie"
+      password: "$POSTGRES_PASSWORD:etelie+1"
+    database: "$POSTGRES_DB:etelie"
+  aws:
+    rds:
+      db_instance_identifier: "server-database"
