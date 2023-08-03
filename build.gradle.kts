@@ -150,6 +150,7 @@ dependencies {
     // Monitoring (General)
     implementation("io.ktor", "ktor-server-metrics-micrometer", ktorVersion)
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
+    implementation("io.github.oshai", "kotlin-logging-jvm", kotlinLoggingVersion)
 
     // OpenTelemetry
     implementation(platform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion"))
@@ -208,7 +209,6 @@ dependencies {
 
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
-    implementation("io.github.oshai", "kotlin-logging-jvm", kotlinLoggingVersion)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)

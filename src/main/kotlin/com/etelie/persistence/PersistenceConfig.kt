@@ -33,7 +33,7 @@ object PersistenceConfig {
                 createLocalDataSource(environment)
             }
 
-        log.info("Attempting to connect to ${dataSource.jdbcUrl}")
+        log.info("Attempting to connect Exposed to ${dataSource.jdbcUrl}")
         val database = Database.connect(dataSource)
         TransactionManager.defaultDatabase = database
         log.info("Successfully connected to ${database.url}")
@@ -98,17 +98,20 @@ object PersistenceConfig {
         user: String,
         password: String,
         maxConnections: Int,
-    ) = HikariDataSource(
-        HikariConfig().also {
-            it.driverClassName = driverClassName
-            it.jdbcUrl = jdbcUrl
-            it.maximumPoolSize = maxConnections
-            it.isAutoCommit = false
-            it.transactionIsolation = Connection::TRANSACTION_REPEATABLE_READ.name
-            it.username = user
-            it.password = password
-            it.validate()
-        },
-    )
+    ): HikariDataSource {
+        log.info("Attempting to connect HikariCP to $jdbcUrl")
+        return HikariDataSource(
+            HikariConfig().also {
+                it.driverClassName = driverClassName
+                it.jdbcUrl = jdbcUrl
+                it.maximumPoolSize = maxConnections
+                it.isAutoCommit = false
+                it.transactionIsolation = Connection::TRANSACTION_REPEATABLE_READ.name
+                it.username = user
+                it.password = password
+                it.validate()
+            },
+        )
+    }
 
 }
