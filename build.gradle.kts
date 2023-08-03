@@ -36,6 +36,7 @@ val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
 val executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
 val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
 val serverPort = System.getenv("SERVER_PORT").orEmpty().ifEmpty { "402" }.run { toInt() }
+val logLevel = System.getenv("LOGGING_LEVEL").orEmpty().ifEmpty { "INFO" }
 
 val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase().run {
     when {
@@ -73,6 +74,7 @@ application {
         "-Dnewrelic.config.license_key=$newRelicLicenseKey",
         "-Dotel.javaagent.configuration-file=${openTelemetryProperties.absolutePath}",
         "-Dotel.resource.attributes=service.name=server-$executionEnvironment",
+        "-Detelie.logging.level=$logLevel",
     ).apply {
         if (!isDeployed) return@apply
         add("-javaagent:${newRelicJar.absolutePath}")
