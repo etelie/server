@@ -12,21 +12,7 @@ import io.ktor.server.routing.route
 
 fun Route.controlRoutes() {
     route("/control") {
-        healthCheckRoute()
         statusRoute()
-    }
-}
-
-fun Route.healthCheckRoute() {
-    get("/healthcheck") {
-        call.respond("Service is healthy")
-    } describe {
-        summary = "healthcheck"
-        200 response {
-            plainText {
-                schema<String>("Service is healthy")
-            }
-        }
     }
 }
 
