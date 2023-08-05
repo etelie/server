@@ -55,13 +55,25 @@ object PersistenceConfig {
         val instanceName = environment.config.property("etelie.aws.rds.db_instance_identifier").getString()
         log.debug { "Reading configuration of RDS instance [$instanceName]" }
 
-        val instance = getRdsInstance(instanceName)!!
+        var instance = DbInstance {
+            dbInstanceIdentifier = instanceName
+        }
+        try {
+            instance = getRdsInstance(instanceName)!!
+        } catch (e: Exception) {
+            log.error(e) { " fail " }
+        }
         check(instance.dbInstanceIdentifier == instanceName)
 
         val secretArn = instance.masterUserSecret!!.secretArn!!
         log.debug { "Reading secret value from [${secretArn}] with status [${instance.masterUserSecret?.secretStatus}]" }
 
-        val password = getRdsPassword(secretArn)!!
+        var password = "none"
+        try {
+            password = getRdsPassword(secretArn)!!
+        } catch (e: Exception) {
+            log.error(e) { "fail2" }
+        }
 
         val host: String = instance.endpoint!!.address!!
         val port: String = instance.endpoint!!.port.toString()
