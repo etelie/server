@@ -76,6 +76,8 @@ object PersistenceConfig {
     private suspend fun getRdsInstance(id: String): DbInstance? {
         log.info { "getting client" }
         val rdsClient = RdsClient.fromEnvironment()
+        val credentials = rdsClient.config.credentialsProvider.resolve()
+        log.info { "credentials: [$credentials]"}
         log.info { "describing instances" }
         val response = rdsClient.describeDbInstances {
             dbInstanceIdentifier = id
