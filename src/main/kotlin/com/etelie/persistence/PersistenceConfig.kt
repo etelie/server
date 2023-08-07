@@ -2,6 +2,7 @@ package com.etelie.persistence
 
 import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
 import aws.sdk.kotlin.services.secretsmanager.model.GetSecretValueRequest
+import com.amazonaws.regions.Regions
 import com.amazonaws.services.rds.AmazonRDSClient
 import com.amazonaws.services.rds.model.DescribeDBInstancesRequest
 import com.etelie.application.ExecutionEnvironment
@@ -74,10 +75,13 @@ object PersistenceConfig {
 
     private suspend fun getRdsInstance(id: String): com.amazonaws.services.rds.model.DBInstance? {
         log.debug { "getting client" }
-        val rdsClient = AmazonRDSClient.builder().build()
+        val rdsClient = AmazonRDSClient.builder()
+            .withRegion(Regions.US_EAST_1)
+            .build()
         log.debug { "describing instances" }
         val response = rdsClient.describeDBInstances(
-            DescribeDBInstancesRequest().withDBInstanceIdentifier(id),
+            DescribeDBInstancesRequest()
+                .withDBInstanceIdentifier(id),
         )
         return response.dbInstances.getOrNull(0)
     }
