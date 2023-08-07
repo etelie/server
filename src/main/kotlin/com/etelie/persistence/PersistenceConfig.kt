@@ -1,12 +1,9 @@
 package com.etelie.persistence
 
-import aws.sdk.kotlin.services.rds.RdsClient
-import aws.sdk.kotlin.services.rds.describeDbInstances
-import aws.sdk.kotlin.services.rds.model.DbInstance
 import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
 import aws.sdk.kotlin.services.secretsmanager.model.GetSecretValueRequest
-import aws.smithy.kotlin.runtime.retries.StandardRetryStrategy
-import aws.smithy.kotlin.runtime.retries.delay.ExponentialBackoffWithJitter
+import com.amazonaws.services.rds.AmazonRDSClient
+import com.amazonaws.services.rds.model.DescribeDBInstancesRequest
 import com.etelie.application.ExecutionEnvironment
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -16,7 +13,6 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
-import kotlin.time.Duration.Companion.seconds
 
 private val log = KotlinLogging.logger {}
 
@@ -76,23 +72,14 @@ object PersistenceConfig {
         return createHikariDataSource(jdbcUrl, user, password, maxConnections)
     }
 
-    private suspend fun getRdsInstance(id: String): DbInstance? {
+    private suspend fun getRdsInstance(id: String): com.amazonaws.services.rds.model.DBInstance? {
         log.debug { "getting client" }
-        val rdsClient = RdsClient.fromEnvironment {
-            retryStrategy = StandardRetryStrategy {
-                delayProvider = ExponentialBackoffWithJitter {
-                    log.debug {initialDelay}
-                    initialDelay = 5.seconds
-                }
-            }
-        }
-        val credentials = rdsClient.config.credentialsProvider.resolve()
-        log.debug { "credentials: [$credentials]"}
+        val rdsClient = AmazonRDSClient.builder().build()
         log.debug { "describing instances" }
-        val response = rdsClient.describeDbInstances {
-            dbInstanceIdentifier = id
-        }
-        return response.dbInstances?.get(0)
+        val response = rdsClient.describeDBInstances(
+            DescribeDBInstancesRequest().withDBInstanceIdentifier(id),
+        )
+        return response.dbInstances.getOrNull(0)
     }
 
     private suspend fun getRdsPassword(secretArn: String): String? {

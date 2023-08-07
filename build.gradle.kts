@@ -207,6 +207,10 @@ dependencies {
     implementation("aws.sdk.kotlin", "secretsmanager", awsSdkVersion)
     implementation("aws.sdk.kotlin", "rds", awsSdkVersion)
 
+    //todo: remove
+    implementation("com.amazonaws", "aws-java-sdk-s3", "1.12.523")
+    implementation("com.amazonaws", "aws-java-sdk-rds", "1.12.523")
+
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
 
