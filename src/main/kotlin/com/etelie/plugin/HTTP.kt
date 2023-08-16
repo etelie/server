@@ -1,5 +1,6 @@
 package com.etelie.plugin
 
+import com.etelie.application.ExecutionEnvironment
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.CacheControl
 import io.ktor.http.ContentType
@@ -18,7 +19,7 @@ private val log = KotlinLogging.logger {}
 fun Application.pluginHTTP() {
     install(DefaultHeaders) {
         header(HttpHeaders.Server, "redacted")
-        header(HttpHeaders.AccessControlAllowOrigin, "*") // todo: narrow to etelie.com/localhost depending on environment
+        header(HttpHeaders.AccessControlAllowOrigin, ExecutionEnvironment.current.getHost())
     }
 
     install(CachingHeaders) {

@@ -1,5 +1,6 @@
 package com.etelie.newsletter
 
+import com.etelie.application.EtelieException
 import com.etelie.application.logger
 import guru.zoroark.tegral.openapi.ktor.describe
 import io.ktor.http.HttpStatusCode
@@ -28,7 +29,11 @@ fun Route.subscriptionRoute() {
             return@post
         }
 
-        NewsletterService.createSubscription(email, ipAddress)
+        try {
+            NewsletterService.createSubscription(email, ipAddress)
+        } catch (e: EtelieException) {
+            call.respond(HttpStatusCode.BadRequest, "Failed to create subscription")
+        }
 
         call.respond(HttpStatusCode.OK)
     } describe {
