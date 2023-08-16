@@ -16,6 +16,7 @@ object NewsletterService {
             try {
                 NewsletterTargetTable.insert(it)
             } catch (e: ExposedSQLException) {
+                // todo: duplicate insert is a success
                 log.error(e) { "Failed to insert newsletter target :: $it" }
                 throw EtelieException(e)
             }

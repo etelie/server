@@ -3,6 +3,7 @@ package com.etelie.application
 enum class ExecutionEnvironment(
     val label: String,
 ) {
+
     UNKNOWN("unknown"),
     DEVELOPMENT("development"),
     TEST("test"),
@@ -29,16 +30,6 @@ enum class ExecutionEnvironment(
     fun isStaging(): Boolean = current == STAGING
     fun isProduction(): Boolean = current == PRODUCTION
 
-    fun getHosts(): Collection<String> = if (isProduction()) {
-        setOf("etelie.com")
-    } else if (isStaging()) {
-        setOf("qa.etelie.com")
-        // storybook.qa.etelie.com is intentionally excluded to forbid API requests via CORS
-    } else {
-        setOf("localhost", "127.0.0.1", "192.168.0.1", "0.0.0.0", "::1").flatMap {
-            setOf(it, "$it:3000")
-        }
-    }
 }
 
 fun ExecutionEnvironment?.isDeployable() = this?.isDeployable() ?: false

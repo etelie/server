@@ -50,3 +50,14 @@ fun Application.pluginHTTP() {
         }
     }
 }
+
+private fun ExecutionEnvironment.getHosts(): Collection<String> = if (isProduction()) {
+    setOf("etelie.com")
+} else if (isStaging()) {
+    setOf("qa.etelie.com")
+    // storybook.qa.etelie.com is intentionally excluded to forbid API requests via CORS
+} else {
+    setOf("localhost", "127.0.0.1", "192.168.0.1", "0.0.0.0", "::1").flatMap {
+        setOf(it, "$it:3000")
+    }
+}
