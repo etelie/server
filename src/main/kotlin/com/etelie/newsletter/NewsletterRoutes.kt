@@ -21,9 +21,7 @@ fun Route.newsletterRoutes() {
 fun Route.subscriptionRoute() {
     post("/subscription/{email}") {
         val email: String? = context.parameters.get("email")
-        val ipAddress: String = context.request.origin.localAddress
-        // todo: how to get source ip address from ip protocol? prefer not to add as query parameter
-        // todo: check that localAddress is correct
+        val ipAddress: String = context.request.origin.remoteAddress
 
         if (email == null) {
             this.call.respond(HttpStatusCode.BadRequest)

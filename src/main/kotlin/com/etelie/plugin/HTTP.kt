@@ -18,6 +18,7 @@ private val log = KotlinLogging.logger {}
 fun Application.pluginHTTP() {
     install(DefaultHeaders) {
         header(HttpHeaders.Server, "redacted")
+        header(HttpHeaders.AccessControlAllowOrigin, "*") // todo: narrow to etelie.com/localhost depending on environment
     }
 
     install(CachingHeaders) {
