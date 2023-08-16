@@ -18,7 +18,7 @@ object NewsletterTargetTable : IdTable<String>(
     suspend fun insert(target: NewsletterTarget) {
         newSuspendedTransaction(coroutineContext) {
             NewsletterTargetTable.insert {
-                it[email] = target.email
+                it[email] = target.emailAddress
                 it[ipAddress] = target.ipAddress
             }
         }

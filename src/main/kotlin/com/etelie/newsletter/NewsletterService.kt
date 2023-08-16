@@ -10,7 +10,7 @@ object NewsletterService {
 
     suspend fun createSubscription(emailAddress: String, ipAddress: String): NewsletterTarget {
         return NewsletterTarget(
-            email = emailAddress,
+            emailAddress = emailAddress,
             ipAddress = ipAddress,
         ).also {
             try {

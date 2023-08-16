@@ -9,22 +9,20 @@ import kotlin.test.Test
 
 class NewsletterServiceTest {
 
-    private val emailAddress = "test@example.com"
-    private val ipAddress = "192.168.0.1"
-    private val expectedNewsletterTarget = NewsletterTarget(emailAddress, ipAddress)
+    private val newsletterTarget = NewsletterTargetFactory.build { }
 
     @BeforeTest
     fun setUp() {
         mockkObject(NewsletterTargetTable)
-        coEvery { NewsletterTargetTable.insert(expectedNewsletterTarget) } returns Unit
+        coEvery { NewsletterTargetTable.insert(newsletterTarget) } returns Unit
     }
 
     @Test
     fun createSubscription() {
         runBlocking {
-            NewsletterService.createSubscription(emailAddress, ipAddress)
+            NewsletterService.createSubscription(newsletterTarget.emailAddress, newsletterTarget.ipAddress)
 
-            coVerify(exactly = 1) { NewsletterTargetTable.insert(expectedNewsletterTarget) }
+            coVerify(exactly = 1) { NewsletterTargetTable.insert(newsletterTarget) }
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.etelie.newsletter
 
 data class NewsletterTarget(
-    val email: String,
+    val emailAddress: String,
     val ipAddress: String,
 )
