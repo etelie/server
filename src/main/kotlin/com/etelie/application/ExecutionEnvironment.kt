@@ -28,6 +28,14 @@ enum class ExecutionEnvironment(
     fun isTest(): Boolean = current == TEST
     fun isStaging(): Boolean = current == STAGING
     fun isProduction(): Boolean = current == PRODUCTION
+
+    fun getHost(): String = if (isProduction()) {
+        "etelie.com"
+    } else if (isStaging()) {
+        "qa.etelie.com"
+    } else {
+        "localhost"
+    }
 }
 
 fun ExecutionEnvironment?.isDeployable() = this?.isDeployable() ?: false
