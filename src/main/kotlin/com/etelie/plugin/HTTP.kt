@@ -5,11 +5,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.CacheControl
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.CachingOptions
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.cachingheaders.CachingHeaders
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
@@ -19,7 +21,6 @@ private val log = KotlinLogging.logger {}
 fun Application.pluginHTTP() {
     install(DefaultHeaders) {
         header(HttpHeaders.Server, "redacted")
-        header(HttpHeaders.AccessControlAllowOrigin, ExecutionEnvironment.current.getHost())
     }
 
     install(CachingHeaders) {
@@ -36,6 +37,16 @@ fun Application.pluginHTTP() {
             log.error(exception) { "${exception.javaClass.simpleName} (suppressed by Ktor StatusPages plugin)" }
             call.response.status(HttpStatusCode.InternalServerError)
             call.respond("${call.response.status()}: $exception")
+        }
+    }
+
+    install(CORS) {
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
+        ExecutionEnvironment.current.getHosts().forEach {
+            allowHost(it, listOf("http", "https"))
         }
     }
 }

@@ -29,12 +29,14 @@ enum class ExecutionEnvironment(
     fun isStaging(): Boolean = current == STAGING
     fun isProduction(): Boolean = current == PRODUCTION
 
-    fun getHost(): String = if (isProduction()) {
-        "etelie.com"
+    fun getHosts(): Collection<String> = if (isProduction()) {
+        setOf("etelie.com")
     } else if (isStaging()) {
-        "qa.etelie.com"
+        setOf("qa.etelie.com", "storybook.qa.etelie.com")
     } else {
-        "localhost"
+        setOf("localhost", "127.0.0.1", "192.168.0.1", "0.0.0.0", "::1").flatMap {
+            setOf(it, "$it:3000", "$it:6006")
+        }
     }
 }
 
