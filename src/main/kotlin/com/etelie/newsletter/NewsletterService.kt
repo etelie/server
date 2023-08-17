@@ -14,13 +14,17 @@ object NewsletterService {
             ipAddress = ipAddress,
         ).also {
             try {
+                val existing: NewsletterTarget? = NewsletterTargetTable.get(it.emailAddress)
+                if (existing != null) {
+                    return existing
+                }
+
                 NewsletterTargetTable.insert(it)
+                log.info { "Inserted newsletter target :: $it" }
             } catch (e: ExposedSQLException) {
-                // todo: duplicate insert is a success
                 log.error(e) { "Failed to insert newsletter target :: $it" }
                 throw EtelieException(e)
             }
-            log.info { "Inserted newsletter target :: $it" }
         }
     }
 
