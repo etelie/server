@@ -21,14 +21,14 @@ enum class ExecutionEnvironment(
         }
     }
 
-    fun isDeployable() = this == PRODUCTION || this == STAGING
-    fun isServer() = isDeployable() || this == DEVELOPMENT
+    fun isDeployable() = isProduction() || isStaging()
+    fun isServer() = isDeployable() || isDevelopment()
 
-    fun isUnknown(): Boolean = current == UNKNOWN
-    fun isDevelopment(): Boolean = current == DEVELOPMENT
-    fun isTest(): Boolean = current == TEST
-    fun isStaging(): Boolean = current == STAGING
-    fun isProduction(): Boolean = current == PRODUCTION
+    fun isUnknown(): Boolean = this == UNKNOWN
+    fun isDevelopment(): Boolean = this == DEVELOPMENT
+    fun isTest(): Boolean = this == TEST
+    fun isStaging(): Boolean = this == STAGING
+    fun isProduction(): Boolean = this == PRODUCTION
 
 }
 
