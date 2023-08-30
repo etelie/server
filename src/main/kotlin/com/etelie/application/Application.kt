@@ -1,5 +1,6 @@
 package com.etelie.application
 
+import com.etelie.imports.treasury.TreasuryDirectClient
 import com.etelie.persistence.PersistenceConfig
 import com.etelie.plugin.pluginApi
 import com.etelie.plugin.pluginHTTP
@@ -26,6 +27,8 @@ fun Application.module() {
     log.info("Starting application with tag [$buildTag] in environment [${ExecutionEnvironment.current.label}]")
 
     installAllPlugins()
+
+    this.log.info(TreasuryDirectClient.auctionedSecurities(31).toString())
 
     if (ExecutionEnvironment.current.isServer() || environment.developmentMode) {
         PersistenceConfig.connectToDatabase(environment)
