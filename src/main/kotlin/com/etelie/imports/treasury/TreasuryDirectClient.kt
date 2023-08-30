@@ -1,5 +1,6 @@
 package com.etelie.imports.treasury
 
+import com.etelie.application.logger
 import com.etelie.network.addAllQueries
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -7,6 +8,8 @@ import org.http4k.client.ApacheClient
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
+
+private val log = logger {}
 
 object TreasuryDirectClient {
     private const val scheme: String = "https"
@@ -32,7 +35,15 @@ object TreasuryDirectClient {
             )
 
         val responseBody = client(request).bodyString()
-        return json.decodeFromString<List<TreasuryDirectSecurityResponse>>(responseBody)
+        try {
+            val decoded: List<TreasuryDirectSecurityResponse> =
+                json.decodeFromString<List<TreasuryDirectSecurityResponse>>(responseBody)
+            return decoded
+
+        } catch (e: Exception) {
+            log.error() { "failed to decode: $responseBody"}
+        }
+        return emptyList()
     }
 
 }
