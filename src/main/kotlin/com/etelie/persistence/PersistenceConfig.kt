@@ -53,13 +53,13 @@ object PersistenceConfig {
 
     private suspend fun createRdsDataSource(environment: ApplicationEnvironment): HikariDataSource {
         val instanceName = environment.config.property("etelie.aws.rds.db_instance_identifier").getString()
-        log.debug { "Reading configuration of RDS instance [$instanceName]" }
+        log.info { "Reading configuration of RDS instance [$instanceName]" }
 
         val instance = getRdsInstance(instanceName)!!
         check(instance.dbInstanceIdentifier == instanceName)
 
         val secretArn = instance.masterUserSecret!!.secretArn!!
-        log.debug { "Reading secret value from [${secretArn}] with status [${instance.masterUserSecret?.secretStatus}]" }
+        log.info { "Reading secret value from [${secretArn}] with status [${instance.masterUserSecret?.secretStatus}]" }
 
         val password = getRdsPassword(secretArn)!!
 
@@ -73,12 +73,10 @@ object PersistenceConfig {
         return createHikariDataSource(jdbcUrl, user, password, maxConnections)
     }
 
-    private suspend fun getRdsInstance(id: String): com.amazonaws.services.rds.model.DBInstance? {
-        log.debug { "getting client" }
+    private fun getRdsInstance(id: String): com.amazonaws.services.rds.model.DBInstance? {
         val rdsClient = AmazonRDSClient.builder()
             .withRegion(Regions.US_EAST_1)
             .build()
-        log.debug { "describing instances" }
         val response = rdsClient.describeDBInstances(
             DescribeDBInstancesRequest()
                 .withDBInstanceIdentifier(id),

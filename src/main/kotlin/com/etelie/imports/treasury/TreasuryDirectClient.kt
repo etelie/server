@@ -38,12 +38,9 @@ object TreasuryDirectClient {
         val responseBody = response.bodyString()
 
         try {
-            val decoded: List<TreasuryDirectSecurityResponse> =
-                json.decodeFromString<List<TreasuryDirectSecurityResponse>>(responseBody)
-            return decoded
-
+            return json.decodeFromString<List<TreasuryDirectSecurityResponse>>(responseBody)
         } catch (e: Exception) {
-            log.error() { "${response.status} :: failed to decode: $responseBody :: ${response.headers}"}
+            log.error() { "${response.status} :: failed to decode: $responseBody :: ${response.headers}" }
         }
         return emptyList()
     }
