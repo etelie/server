@@ -1,9 +1,11 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.etelie.schedule
 
+import com.etelie.application.logger
 import com.etelie.imports.treasury.AuctionedImportJob
 import com.etelie.imports.treasury.AverageInterestRatesImportJob
 import com.etelie.imports.treasury.SavingsBondRatesImportJob
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.ApplicationEnvironment
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.ApplicationStarting
@@ -19,7 +21,7 @@ import org.quartz.SchedulerException
 import org.quartz.Trigger
 import org.quartz.impl.StdSchedulerFactory
 
-private val log = KotlinLogging.logger {}
+private val log = logger {}
 
 object Scheduler {
 
@@ -30,10 +32,10 @@ object Scheduler {
             awaitAll(
                 async { AverageInterestRatesImportJob.getJobDefinition() },
                 async { AuctionedImportJob.getJobDefinition() },
-                async { SavingsBondRatesImportJob.getJobDefinition() }
-            ).forEach {
-                subscribe(it)
-                log.info { "Scheduled job: ${it.jobDetail.description}" }
+                async { SavingsBondRatesImportJob.getJobDefinition() },
+            ).forEach { definition ->
+                subscribe(definition)
+                log.info { "Scheduled job: ${definition.jobDetail.description}" }
             }
         }
     }

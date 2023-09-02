@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.etelie.application
 
 enum class ExecutionEnvironment(
