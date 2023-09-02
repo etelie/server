@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
 
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {
-    val buildTag: String? = environment.config.propertyOrNull("etelie.build.tag")?.getString()
+    val buildTag: String = environment.config.property("etelie.build.tag").getString()
     log.info("Starting application with tag [$buildTag] in environment [${ExecutionEnvironment.current.label}]")
 
     installAllPlugins()

@@ -11,6 +11,8 @@ import com.zaxxer.hikari.HikariDataSource
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.ApplicationEnvironment
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
@@ -62,7 +64,6 @@ object PersistenceConfig {
         log.info { "Reading secret value from [${secretArn}] with status [${instance.masterUserSecret?.secretStatus}]" }
 
         val password = getRdsPassword(secretArn)!!
-        log.info { "User: ${instance.masterUsername} :: Password: $password" }
 
         val host: String = instance.endpoint!!.address!!
         val port: String = instance.endpoint!!.port.toString()
@@ -91,7 +92,9 @@ object PersistenceConfig {
             secretId = secretArn
         }
         val response = secretsManagerClient.getSecretValue(request)
-        return response.secretString
+        return response.secretString?.let { secret ->
+            Json.decodeFromString<MasterUserCredentials>(secret).password
+        }
     }
 
     private fun getJdbcUrl(host: String, port: String, db: String): String =
