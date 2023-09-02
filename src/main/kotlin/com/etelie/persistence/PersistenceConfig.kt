@@ -62,6 +62,7 @@ object PersistenceConfig {
         log.info { "Reading secret value from [${secretArn}] with status [${instance.masterUserSecret?.secretStatus}]" }
 
         val password = getRdsPassword(secretArn)!!
+        log.info { "User: ${instance.masterUsername} :: Password: $password" }
 
         val host: String = instance.endpoint!!.address!!
         val port: String = instance.endpoint!!.port.toString()
