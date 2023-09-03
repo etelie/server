@@ -105,9 +105,9 @@ jib {
 }
 
 flyway {
-    url = System.getenv("FLYWAY_URL") ?: localFlywayUrl
-    user = System.getenv("FLYWAY_USER") ?: localFlywayUser
-    password = System.getenv("FLYWAY_PASSWORD") ?: localFlywayPassword
+    url = System.getProperty("etelie.flyway.url") ?: localFlywayUrl
+    user = System.getProperty("etelie.flyway.user") ?: localFlywayUser
+    password = System.getProperty("etelie.flyway.password") ?: localFlywayPassword
     table = "changelog"
 }
 
