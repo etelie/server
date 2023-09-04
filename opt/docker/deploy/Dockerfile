@@ -14,7 +14,7 @@ ARG EXECUTION_ENVIRONMENT
 ENV EXECUTION_ENVIRONMENT=${EXECUTION_ENVIRONMENT}
 
 ARG NEWRELIC_LICENSE_KEY
-ENV NEWRELIC_LICENSE_KEY=${NEWRELIC_LICENSE_KEY}
 
 COPY com.etelie.server-* /libs/
-CMD java -jar /libs/com.etelie.server-${BUILD_TAG}.jar
+CMD java -jar /libs/com.etelie.server-${BUILD_TAG}.jar \
+  -Dnewrelic.config.license_key='${NEWRELIC_LICENSE_KEY}'
