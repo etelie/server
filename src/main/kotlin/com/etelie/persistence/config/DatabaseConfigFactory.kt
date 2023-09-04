@@ -1,7 +1,6 @@
 package com.etelie.persistence.config
 
 import com.etelie.application.ExecutionEnvironment
-import io.ktor.server.application.ApplicationEnvironment
 import kotlin.reflect.full.primaryConstructor
 
 object DatabaseConfigFactory {
@@ -14,12 +13,11 @@ object DatabaseConfigFactory {
 
     fun fromExecutionEnvironment(
         executionEnvironment: ExecutionEnvironment,
-        applicationEnvironment: ApplicationEnvironment,
     ): DatabaseConfig? {
         return getMap()
             .get(executionEnvironment)
             ?.primaryConstructor
-            ?.call(applicationEnvironment)
+            ?.call(ExecutionEnvironment.applicationEnvironment)
     }
 
 }

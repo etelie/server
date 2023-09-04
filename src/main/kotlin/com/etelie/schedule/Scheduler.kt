@@ -2,10 +2,12 @@
 
 package com.etelie.schedule
 
+import com.etelie.application.ExecutionEnvironment
 import com.etelie.application.logger
 import com.etelie.imports.treasury.AuctionedImportJob
 import com.etelie.imports.treasury.AverageInterestRatesImportJob
 import com.etelie.imports.treasury.SavingsBondRatesImportJob
+import com.etelie.persistence.config.DatabaseConfigFactory
 import io.ktor.server.application.ApplicationEnvironment
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.ApplicationStarting
@@ -24,6 +26,16 @@ import org.quartz.impl.StdSchedulerFactory
 private val log = logger {}
 
 object Scheduler {
+
+    init {
+        val dataConfig = DatabaseConfigFactory.fromExecutionEnvironment(ExecutionEnvironment.current)
+        check(dataConfig != null) { "Connecting to database within an unsupported environment [${ExecutionEnvironment.current.label}]" }
+
+        val sysProps = System.getProperties()
+        sysProps.setProperty("org.quartz.dataSource.postgresql.URL", dataConfig.jdbcUrl)
+        sysProps.setProperty("org.quartz.dataSource.postgresql.user", dataConfig.user)
+        sysProps.setProperty("org.quartz.dataSource.postgresql.password", dataConfig.password)
+    }
 
     private val scheduler = StdSchedulerFactory().scheduler
 

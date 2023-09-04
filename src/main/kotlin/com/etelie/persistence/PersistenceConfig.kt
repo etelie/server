@@ -25,9 +25,8 @@ object PersistenceConfig {
     fun connectToDatabase(environment: ApplicationEnvironment) = runBlocking {
         val config = DatabaseConfigFactory.fromExecutionEnvironment(
             executionEnvironment = ExecutionEnvironment.current,
-            applicationEnvironment = environment,
         )
-        check(config != null) // Invalid state if within an unsupported environment (e.g. test)
+        check(config != null) { "Connecting to database within an unsupported environment [${ExecutionEnvironment.current.label}]" }
 
         log.info("Attempting to connect HikariCP to ${config.jdbcUrl}")
         val dataSource = createHikariDataSource(config)

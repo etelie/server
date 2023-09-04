@@ -19,18 +19,24 @@ enum class ExecutionEnvironment(
     companion object {
         private val env: String? by lazy { System.getenv("EXECUTION_ENVIRONMENT") }
         private var initialized = false
-        private var developmentMode: Boolean? = null
+        private var _applicationEnvironment: ApplicationEnvironment? = null
 
         val current: ExecutionEnvironment
             get() {
                 if (!initialized) {
                     log.warn { "Evaluating execution environment before initialization" }
                 }
-                return env?.let { fromLabel(it) } ?: if (developmentMode == true) DEVELOPMENT else UNKNOWN
+                return env?.let { fromLabel(it) }
+                    ?: if (applicationEnvironment.developmentMode) DEVELOPMENT else UNKNOWN
+            }
+        val applicationEnvironment: ApplicationEnvironment
+            get() {
+                check(initialized) { "Cannot access application environment if ExecutionEnvironment has not been initialized" }
+                return _applicationEnvironment!!
             }
 
         fun initialize(applicationEnvironment: ApplicationEnvironment) {
-            developmentMode = applicationEnvironment.developmentMode
+            _applicationEnvironment = applicationEnvironment
             initialized = true
         }
 
