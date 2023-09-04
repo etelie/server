@@ -22,12 +22,13 @@ fun main(args: Array<String>) {
 
 @Suppress("unused") // Referenced in application.yaml
 fun Application.module() {
+    ExecutionEnvironment.initialize(environment)
     val buildTag: String = environment.config.property("etelie.build.tag").getString()
     log.info("Starting application with tag [$buildTag] in environment [${ExecutionEnvironment.current.label}]")
 
     installAllPlugins()
 
-    if (ExecutionEnvironment.current.isServer() || environment.developmentMode) {
+    if (ExecutionEnvironment.current.isServer()) {
         PersistenceConfig.connectToDatabase(environment)
     }
 

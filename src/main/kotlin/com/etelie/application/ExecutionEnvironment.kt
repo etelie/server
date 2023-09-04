@@ -2,6 +2,10 @@
 
 package com.etelie.application
 
+import io.ktor.server.application.ApplicationEnvironment
+
+private val log = logger { }
+
 enum class ExecutionEnvironment(
     val label: String,
 ) {
@@ -14,9 +18,21 @@ enum class ExecutionEnvironment(
 
     companion object {
         private val env: String? by lazy { System.getenv("EXECUTION_ENVIRONMENT") }
+        private var initialized = false
+        private var developmentMode: Boolean? = null
 
         val current: ExecutionEnvironment
-            get() = env?.let { fromLabel(it) } ?: UNKNOWN
+            get() {
+                if (!initialized) {
+                    log.warn { "Evaluating execution environment before initialization" }
+                }
+                return env?.let { fromLabel(it) } ?: if (developmentMode == true) DEVELOPMENT else UNKNOWN
+            }
+
+        fun initialize(applicationEnvironment: ApplicationEnvironment) {
+            developmentMode = applicationEnvironment.developmentMode
+            initialized = true
+        }
 
         private fun fromLabel(label: String) = values().firstOrNull {
             it.label.equals(label, ignoreCase = true)

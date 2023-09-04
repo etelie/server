@@ -12,6 +12,8 @@ etelie:
   aws:
     rds:
       db_instance_identifier: "server-database"
+  hikaricp:
+    max_connections: 4
 
 ktor:
   application:
@@ -20,6 +22,3 @@ ktor:
   deployment:
     port: "$SERVER_PORT:402"
     host: "$SERVER_HOST:0.0.0.0"
-
-hikaricp:
-  max_connections: 4
