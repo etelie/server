@@ -33,8 +33,8 @@ val versionNumber = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" 
 val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
 
 /** "production" | "staging" | "test" | "development" **/
-val executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
-val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
+val environmentLabel = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
+val newRelicLicenseKey = System.getenv("NEWRELIC_LICENSE_KEY").orEmpty()
 val serverPort = System.getenv("SERVER_PORT").orEmpty().ifEmpty { "402" }.run { toInt() }
 
 val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase().run {
@@ -66,13 +66,14 @@ plugins {
 
 application {
     val openTelemetryProperties = projectDir.resolve("src/main/resources/opentelemetry.properties")
-    val isDeployed = deployableEnvironments.contains(executionEnvironment)
+    val isDeployed = deployableEnvironments.contains(environmentLabel)
     val jvmArgs = mutableSetOf(
-        "-Dio.ktor.development=${executionEnvironment == "development"}",
-        "-Dnewrelic.environment=$executionEnvironment",
+        "-Dio.ktor.development=${environmentLabel == "development"}",
+        "-Dnewrelic.environment=$environmentLabel",
         "-Dnewrelic.config.license_key=$newRelicLicenseKey",
         "-Dotel.javaagent.configuration-file=${openTelemetryProperties.absolutePath}",
-        "-Dotel.resource.attributes=service.name=server-$executionEnvironment",
+        "-Dotel.resource.attributes=service.name=server-$environmentLabel",
+        "-Dotel.service.name=$moduleId-$environmentLabel"
     ).apply {
         if (!isDeployed) return@apply
         add("-javaagent:${newRelicJar.absolutePath}")
