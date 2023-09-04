@@ -1,4 +1,4 @@
-package com.etelie.persistence.config
+package com.etelie.persistence.database
 
 import com.etelie.application.ExecutionEnvironment
 import kotlin.reflect.full.primaryConstructor

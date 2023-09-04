@@ -7,7 +7,7 @@ import com.etelie.application.logger
 import com.etelie.imports.treasury.AuctionedImportJob
 import com.etelie.imports.treasury.AverageInterestRatesImportJob
 import com.etelie.imports.treasury.SavingsBondRatesImportJob
-import com.etelie.persistence.config.DatabaseConfigFactory
+import com.etelie.persistence.database.DatabaseConfigFactory
 import io.ktor.server.application.ApplicationEnvironment
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.ApplicationStarting

@@ -1,8 +1,8 @@
 package com.etelie.persistence
 
 import com.etelie.application.ExecutionEnvironment
-import com.etelie.persistence.config.DatabaseConfig
-import com.etelie.persistence.config.DatabaseConfigFactory
+import com.etelie.persistence.database.DatabaseConfig
+import com.etelie.persistence.database.DatabaseConfigFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -14,7 +14,7 @@ import java.sql.Connection
 
 private val log = KotlinLogging.logger {}
 
-object PersistenceConfig {
+object PersistenceService {
 
     /**
      * The fully qualified dot-separated name of the class, or null if the class is local or a class of an anonymous object.

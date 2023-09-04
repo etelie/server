@@ -1,4 +1,4 @@
-package com.etelie.persistence
+package com.etelie.persistence.database
 
 import kotlinx.serialization.Serializable
 

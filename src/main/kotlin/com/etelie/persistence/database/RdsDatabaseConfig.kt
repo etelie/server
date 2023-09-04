@@ -1,4 +1,4 @@
-package com.etelie.persistence.config
+package com.etelie.persistence.database
 
 import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
 import aws.sdk.kotlin.services.secretsmanager.model.GetSecretValueRequest
@@ -8,7 +8,6 @@ import com.amazonaws.services.rds.model.DBInstance
 import com.amazonaws.services.rds.model.DescribeDBInstancesRequest
 import com.etelie.application.ExecutionEnvironment
 import com.etelie.application.logger
-import com.etelie.persistence.MasterUserCredentials
 import io.ktor.server.application.ApplicationEnvironment
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString

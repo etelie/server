@@ -1,6 +1,6 @@
 package com.etelie.application
 
-import com.etelie.persistence.PersistenceConfig
+import com.etelie.persistence.PersistenceService
 import com.etelie.plugin.pluginApi
 import com.etelie.plugin.pluginHTTP
 import com.etelie.plugin.pluginMonitoring
@@ -29,7 +29,7 @@ fun Application.module() {
     installAllPlugins()
 
     if (ExecutionEnvironment.current.isServer()) {
-        PersistenceConfig.connectToDatabase(environment)
+        PersistenceService.connectToDatabase(environment)
     }
 
     if (ExecutionEnvironment.current.isDeployable()) {
