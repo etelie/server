@@ -14,6 +14,7 @@ class NewsletterServiceTest {
     @BeforeTest
     fun setUp() {
         mockkObject(NewsletterTargetTable)
+        coEvery { NewsletterTargetTable.get(newsletterTarget.emailAddress) } returns null
         coEvery { NewsletterTargetTable.insert(newsletterTarget) } returns Unit
     }
 

@@ -21,6 +21,7 @@ val tegralVersion: String by project
 val quartzVersion: String by project
 val kotlinLoggingVersion: String by project
 val http4kVersion: String by project
+val awsSdkVersion: String by project
 val mockkVersion: String by project
 val junitVersion: String by project
 
@@ -104,9 +105,9 @@ jib {
 }
 
 flyway {
-    url = System.getenv("FLYWAY_URL") ?: localFlywayUrl
-    user = System.getenv("FLYWAY_USER") ?: localFlywayUser
-    password = System.getenv("FLYWAY_PASSWORD") ?: localFlywayPassword
+    url = System.getProperty("etelie.flyway.url") ?: localFlywayUrl
+    user = System.getProperty("etelie.flyway.user") ?: localFlywayUser
+    password = System.getProperty("etelie.flyway.password") ?: localFlywayPassword
     table = "changelog"
 }
 
@@ -149,6 +150,7 @@ dependencies {
     // Monitoring (General)
     implementation("io.ktor", "ktor-server-metrics-micrometer", ktorVersion)
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
+    implementation("io.github.oshai", "kotlin-logging-jvm", kotlinLoggingVersion)
 
     // OpenTelemetry
     implementation(platform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion"))
@@ -201,9 +203,12 @@ dependencies {
     implementation("org.http4k", "http4k-client-apache")
     implementation("org.http4k", "http4k-client-apache-async")
 
+    // AWS
+    implementation("aws.sdk.kotlin", "secretsmanager", awsSdkVersion)
+    implementation("aws.sdk.kotlin", "rds", awsSdkVersion)
+
     // Miscellaneous
     implementation("org.quartz-scheduler", "quartz", quartzVersion)
-    implementation("io.github.oshai", "kotlin-logging-jvm", kotlinLoggingVersion)
 
     // Test
     testImplementation("org.jetbrains.kotlin", "kotlin-test", kotlinVersion)
