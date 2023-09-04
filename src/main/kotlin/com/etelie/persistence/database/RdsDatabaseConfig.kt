@@ -1,11 +1,10 @@
 package com.etelie.persistence.database
 
+import aws.sdk.kotlin.services.rds.RdsClient
+import aws.sdk.kotlin.services.rds.model.DbInstance
+import aws.sdk.kotlin.services.rds.model.DescribeDbInstancesRequest
 import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
 import aws.sdk.kotlin.services.secretsmanager.model.GetSecretValueRequest
-import com.amazonaws.regions.Regions
-import com.amazonaws.services.rds.AmazonRDSClient
-import com.amazonaws.services.rds.model.DBInstance
-import com.amazonaws.services.rds.model.DescribeDBInstancesRequest
 import com.etelie.application.ExecutionEnvironment
 import com.etelie.application.logger
 import io.ktor.server.application.ApplicationEnvironment
@@ -30,8 +29,10 @@ sealed class RdsDatabaseConfig(
         get() = applicationEnvironment.config
             .property("etelie.aws.rds.db_instance_identifier")
             .getString()
-    private val instance: DBInstance by lazy {
-        getRdsInstance(instanceName)!!
+    private val instance: DbInstance by lazy {
+        runBlocking {
+            getRdsInstance(instanceName)!!
+        }
     }
 
     override val host: String by lazy {
@@ -57,22 +58,16 @@ sealed class RdsDatabaseConfig(
             .getString()
             .toInt()
 
-    private fun getRdsInstance(id: String): DBInstance? {
+    private suspend fun getRdsInstance(id: String): DbInstance? {
         log.info { "Reading configuration of RDS instance [$instanceName]" }
 
-        // todo: revert to kotlin SDK
-        val rdsClient = AmazonRDSClient.builder()
-            .withRegion(Regions.US_EAST_1)
-            .build()
-        val response = rdsClient.describeDBInstances(
-            DescribeDBInstancesRequest()
-                .withDBInstanceIdentifier(id),
-        )
-        val instance = response.dbInstances.getOrNull(0)
+        val rdsClient = RdsClient.fromEnvironment()
+        val request = DescribeDbInstancesRequest {
+            dbInstanceIdentifier = id
+        }
+        val response = rdsClient.describeDbInstances(request)
 
-        check(instance != null)
-        check(instance.dbInstanceIdentifier == instanceName)
-        return instance
+        return response.dbInstances?.getOrNull(0)
     }
 
     private suspend fun getRdsPassword(secretArn: String): String? {
