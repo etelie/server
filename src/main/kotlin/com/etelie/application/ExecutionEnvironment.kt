@@ -55,5 +55,3 @@ enum class ExecutionEnvironment(
     fun isProduction(): Boolean = this == PRODUCTION
 
 }
-
-fun ExecutionEnvironment?.isDeployable() = this?.isDeployable() ?: false
