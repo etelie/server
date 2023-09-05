@@ -46,9 +46,11 @@ opt/docker/server/pgadmin/data/
 
 ### New Relic ###
 opt/newrelic/*
+!opt/newrelic/newrelic.jar
 !opt/newrelic/newrelic.yml
 
 ### Open Telemetry ###
 opt/opentelemetry/*
+!opt/opentelemetry/opentelemetry-javaagent.jar
 !opt/opentelemetry/.keep
 

@@ -1,7 +1,3 @@
-import io.ktor.plugin.features.DockerPortMapping
-import io.ktor.plugin.features.DockerPortMappingProtocol
-import io.ktor.plugin.features.JreVersion
-
 val orgId: String by project
 val moduleId: String by project
 val mainClassName: String by project
@@ -33,8 +29,8 @@ val versionNumber = System.getenv("VERSION_NUMBER").orEmpty().ifEmpty { "0.0.0" 
 val buildTag = System.getenv("BUILD_TAG").orEmpty().ifEmpty { "0.0.0-dev" }
 
 /** "production" | "staging" | "test" | "development" **/
-val executionEnvironment = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
-val newRelicLicenseKey = System.getenv("NEW_RELIC_LICENSE_KEY").orEmpty()
+val environmentLabel = System.getenv("EXECUTION_ENVIRONMENT").orEmpty().ifEmpty { "development" }
+val newRelicLicenseKey = System.getenv("NEWRELIC_LICENSE_KEY").orEmpty()
 val serverPort = System.getenv("SERVER_PORT").orEmpty().ifEmpty { "402" }.run { toInt() }
 
 val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase().run {
@@ -47,10 +43,27 @@ val tomcatNativeOSClassifier = System.getProperty("os.name").orEmpty().lowercase
 }
 val newRelicJar = projectDir.resolve("opt/newrelic/newrelic.jar")
 val openTelemetryJar = projectDir.resolve("opt/opentelemetry/opentelemetry-javaagent.jar")
-val deployableEnvironments = setOf("production", "staging")
+val openTelemetryProperties = projectDir.resolve("src/main/resources/opentelemetry.properties")
+
+fun isDeployed(environmentLabel: String): Boolean {
+    val deployableEnvironments = setOf("production", "staging")
+    return deployableEnvironments.contains(environmentLabel)
+}
+
+fun getJvmArgs(environmentLabel: String) = mutableSetOf(
+    "-Dio.ktor.development=${environmentLabel == "development"}",
+    "-Dnewrelic.environment=$environmentLabel",
+    "-Dnewrelic.config.license_key=$newRelicLicenseKey",
+    "-Dotel.javaagent.configuration-file=${openTelemetryProperties.absolutePath}",
+    "-Dotel.service.name=$moduleId-$environmentLabel",
+).apply {
+    if (!isDeployed(environmentLabel)) return@apply
+    add("-javaagent:${newRelicJar.absolutePath}")
+    add("-javaagent:${openTelemetryJar.absolutePath}")
+}
 
 group = "com.${orgId}" // "com.etelie"
-version = buildTag     // "{version}-{build}"
+version = buildTag // "{version}-{build}"
 
 repositories {
     mavenCentral()
@@ -65,38 +78,13 @@ plugins {
 }
 
 application {
-    val openTelemetryProperties = projectDir.resolve("src/main/resources/opentelemetry.properties")
-    val isDeployed = deployableEnvironments.contains(executionEnvironment)
-    val jvmArgs = mutableSetOf(
-        "-Dio.ktor.development=${executionEnvironment == "development"}",
-        "-Dnewrelic.environment=$executionEnvironment",
-        "-Dnewrelic.config.license_key=$newRelicLicenseKey",
-        "-Dotel.javaagent.configuration-file=${openTelemetryProperties.absolutePath}",
-        "-Dotel.resource.attributes=service.name=server-$executionEnvironment",
-    ).apply {
-        if (!isDeployed) return@apply
-        add("-javaagent:${newRelicJar.absolutePath}")
-        add("-javaagent:${openTelemetryJar.absolutePath}")
-    }
-
     mainClass.set(mainClassName)
-    applicationDefaultJvmArgs = jvmArgs
+    applicationDefaultJvmArgs = getJvmArgs(environmentLabel)
 }
 
 ktor {
     fatJar {
         archiveFileName.set("com.$orgId.$moduleId-$buildTag.jar")
-    }
-
-    docker {
-        jreVersion.set(JreVersion.JRE_17)
-        imageTag.set(buildTag)
-        localImageName.set("$orgId/$moduleId")
-        portMappings.set(
-            listOf(
-                DockerPortMapping(serverPort, serverPort, DockerPortMappingProtocol.TCP),
-            ),
-        )
     }
 }
 
