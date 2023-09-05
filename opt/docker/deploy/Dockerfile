@@ -13,8 +13,8 @@ ENV LOGGING_LEVEL=${LOGGING_LEVEL}
 ARG EXECUTION_ENVIRONMENT
 ENV EXECUTION_ENVIRONMENT=${EXECUTION_ENVIRONMENT}
 
-ARG NEWRELIC_LICENSE_KEY
+ARG JDK_JAVA_OPTIONS
+ENV JDK_JAVA_OPTIONS=${JDK_JAVA_OPTIONS}
 
 COPY com.etelie.server-* /libs/
-CMD java -jar /libs/com.etelie.server-${BUILD_TAG}.jar \
-  -Dnewrelic.config.license_key='${NEWRELIC_LICENSE_KEY}'
+CMD java -jar /libs/com.etelie.server-${BUILD_TAG}.jar
