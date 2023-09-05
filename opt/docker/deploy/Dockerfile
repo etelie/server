@@ -16,6 +16,8 @@ ENV EXECUTION_ENVIRONMENT=${EXECUTION_ENVIRONMENT}
 ARG JDK_JAVA_OPTIONS
 ENV JDK_JAVA_OPTIONS=${JDK_JAVA_OPTIONS}
 
+RUN ls -alhF
+
 COPY newrelic/* /libs/
 COPY opentelemetry/* /libs/
 COPY com.etelie.server-* /libs/
