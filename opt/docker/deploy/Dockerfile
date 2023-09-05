@@ -20,6 +20,4 @@ COPY newrelic/* /libs/
 COPY opentelemetry/* /libs/
 COPY com.etelie.server-* /libs/
 
-RUN ls -alhF /libs
-
 CMD java -jar /libs/com.etelie.server-${BUILD_TAG}.jar
