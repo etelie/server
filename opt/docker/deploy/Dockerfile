@@ -16,8 +16,8 @@ ENV EXECUTION_ENVIRONMENT=${EXECUTION_ENVIRONMENT}
 ARG JDK_JAVA_OPTIONS
 ENV JDK_JAVA_OPTIONS=${JDK_JAVA_OPTIONS}
 
-COPY newrelic.jar /libs/
-COPY opentelemetry-javaagent.jar opentelemetry.properties /libs/
+COPY newrelic/* /libs/
+COPY opentelemetry/* /libs/
 COPY com.etelie.server-* /libs/
 
 CMD java -jar /libs/com.etelie.server-${BUILD_TAG}.jar
