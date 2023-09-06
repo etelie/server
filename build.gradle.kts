@@ -147,7 +147,6 @@ dependencies {
     implementation("io.opentelemetry", "opentelemetry-semconv")
     implementation("io.opentelemetry", "opentelemetry-exporter-otlp")
     implementation("io.opentelemetry", "opentelemetry-extension-kotlin")
-    implementation("io.opentelemetry.instrumentation", "opentelemetry-ktor-2.0", openTelemetryInstrumentationVersion)
 
     // Netty/TomcatNative
     implementation(
