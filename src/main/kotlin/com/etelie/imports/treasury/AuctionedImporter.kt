@@ -1,6 +1,7 @@
 package com.etelie.imports.treasury
 
 import com.etelie.application.logger
+import com.etelie.imports.PriceImporter
 import com.etelie.imports.ImporterSecurityAssociationTable
 import com.etelie.imports.ImporterSecurityAssociationTable.detailForSerialName
 import com.etelie.imports.ImporterSecurityAssociationTable.serialNames
@@ -15,7 +16,7 @@ import java.math.BigDecimal
 
 private val log = logger {}
 
-object AuctionedImport {
+object AuctionedImporter : PriceImporter() {
 
     const val importerId = 2
 
@@ -39,7 +40,7 @@ object AuctionedImport {
                     SecurityPriceConverter.findConverter(securityDetail.type)?.run {
                         convert(security)
                     } ?: throw UnsupportedOperationException(
-                        "Unsupported security type for ${AuctionedImport::class.simpleName}",
+                        "Unsupported security type for ${AuctionedImporter::class.simpleName}",
                     )
                 }
             }
@@ -51,8 +52,8 @@ object AuctionedImport {
             }
         }
 
-        "${AuctionedImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
-            log.info { it.replace("\n", "") }
+        getSuccessMessage(insertedPricesCount).also {
+            log.info { it }
         }
     }
 

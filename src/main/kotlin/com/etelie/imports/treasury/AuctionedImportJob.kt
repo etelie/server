@@ -16,13 +16,13 @@ class AuctionedImportJob : Job {
 
     override fun execute(context: JobExecutionContext?): Unit = runBlocking(jobCoroutineContext) {
         logged(log, context) {
-            AuctionedImport.import()
+            AuctionedImporter.import()
         }
     }
 
     companion object {
         private suspend fun getCronExpression(): String {
-            return ImporterTable.fetchCronExpression(AuctionedImport.importerId)
+            return ImporterTable.fetchCronExpression(AuctionedImporter.importerId)
         }
 
         suspend fun getJobDefinition(): JobDefinition {

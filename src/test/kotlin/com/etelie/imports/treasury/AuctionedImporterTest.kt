@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import kotlin.test.BeforeTest
 
-internal class AuctionedImportTest {
+internal class AuctionedImporterTest {
 
     private val billResponse = TreasuryDirectSecurityResponseFactory.build {
         type = "Bill"
@@ -70,7 +70,7 @@ internal class AuctionedImportTest {
 
         mockkObject(TreasuryDirectClient)
         mockkObject(ImporterSecurityAssociationTable)
-        coEvery { ImporterSecurityAssociationTable.fetchSecuritiesForImporter(AuctionedImport.importerId) }
+        coEvery { ImporterSecurityAssociationTable.fetchSecuritiesForImporter(AuctionedImporter.importerId) }
             .returns(
                 listOf(
                     billDetail to "Bill",
@@ -94,7 +94,7 @@ internal class AuctionedImportTest {
             runBlocking {
                 every { TreasuryDirectClient.auctionedSecurities(0) } returns listOf(response)
 
-                AuctionedImport.import()
+                AuctionedImporter.import()
 
                 coVerify(exactly = 1) { SecurityPriceTable.insert(detail.type, any()) }
             }
@@ -107,7 +107,7 @@ internal class AuctionedImportTest {
             every { TreasuryDirectClient.auctionedSecurities(0) }
                 .returns(listOf(billResponse, bondResponse, noteResponse, frnResponse, tipsResponse))
 
-            AuctionedImport.import()
+            AuctionedImporter.import()
 
             coVerify(exactly = 1) { SecurityPriceTable.insert(billDetail.type, any()) }
             coVerify(exactly = 1) { SecurityPriceTable.insert(bondDetail.type, any()) }

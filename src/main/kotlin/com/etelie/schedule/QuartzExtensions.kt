@@ -44,7 +44,9 @@ fun CronScheduleBuilder.withStandardSettings(): CronScheduleBuilder {
 }
 
 fun KClass<out Job>.createStandardJobDetail(): JobDetail {
-    return JobBuilder.newJob().withStandardSettings(this).build()
+    return JobBuilder.newJob()
+        .withStandardSettings(this)
+        .build()
 }
 
 fun KClass<out Job>.createStandardTrigger(scheduleBuilder: ScheduleBuilder<out Trigger>): Trigger {

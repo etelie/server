@@ -16,13 +16,13 @@ class SavingsBondRatesImportJob : Job {
 
     override fun execute(context: JobExecutionContext?): Unit = runBlocking(jobCoroutineContext) {
         logged(log, context) {
-            SavingsBondRatesImport.import()
+            SavingsBondRatesImporter.import()
         }
     }
 
     companion object {
         private suspend fun getCronExpression(): String {
-            return ImporterTable.fetchCronExpression(SavingsBondRatesImport.importerId)
+            return ImporterTable.fetchCronExpression(SavingsBondRatesImporter.importerId)
         }
 
         suspend fun getJobDefinition(): JobDefinition {
