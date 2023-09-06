@@ -29,7 +29,7 @@ fun Application.module() {
     installAllPlugins()
 
     if (ExecutionEnvironment.current.isServer()) {
-        PersistenceService.connectToDatabase(environment)
+        PersistenceService.connectToDatabase()
     }
 
     if (ExecutionEnvironment.current.isDeployable()) {

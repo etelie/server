@@ -4,7 +4,7 @@ import com.etelie.application.ExecutionEnvironment
 import io.ktor.server.application.ApplicationEnvironment
 
 class LocalDatabaseConfig(
-    private val applicationEnvironment: ApplicationEnvironment,
+    applicationEnvironment: ApplicationEnvironment,
 ) : DatabaseConfig(
     executionEnvironment = ExecutionEnvironment.DEVELOPMENT,
 ) {

@@ -15,8 +15,8 @@ import kotlinx.serialization.json.Json
 private val log = logger { }
 
 sealed class RdsDatabaseConfig(
-    final override val executionEnvironment: ExecutionEnvironment,
-    protected open val applicationEnvironment: ApplicationEnvironment,
+    executionEnvironment: ExecutionEnvironment,
+    val applicationEnvironment: ApplicationEnvironment,
 ) : DatabaseConfig(
     executionEnvironment = executionEnvironment,
 ) {

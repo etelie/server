@@ -6,7 +6,6 @@ import com.etelie.persistence.database.DatabaseConfigFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.server.application.ApplicationEnvironment
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -22,7 +21,7 @@ object PersistenceService {
      */
     private val driverClassName: String = org.postgresql.Driver::class.qualifiedName!!
 
-    fun connectToDatabase(environment: ApplicationEnvironment) = runBlocking {
+    fun connectToDatabase() = runBlocking {
         val config = DatabaseConfigFactory.fromExecutionEnvironment(
             executionEnvironment = ExecutionEnvironment.current,
         )
