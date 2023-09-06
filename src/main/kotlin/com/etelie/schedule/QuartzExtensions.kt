@@ -68,19 +68,22 @@ val JobExecutionContext?.name: String
 val JobExecutionContext?.startMessage: String
     get() = run {
         val fireTime: String = this?.fireTime?.toInstant()?.let {
-            DateTimeFormatter.RFC_1123_DATE_TIME.format(it)
+            DateTimeFormatter.ISO_OFFSET_TIME.format(it)
         } ?: "unknown time"
         "$name started at $fireTime"
     }
 
-
 val JobExecutionContext?.finishMessage: String
     get() = run {
-        val endTime: String = DateTimeFormatter.RFC_1123_DATE_TIME.format(Instant.now())
+        val endTime: String = DateTimeFormatter.ISO_OFFSET_TIME.format(Instant.now())
         "$name finished at $endTime"
     }
 
-suspend fun <JobType : Job> JobType.logged(logger: KLogger, context: JobExecutionContext?, execute: suspend () -> Unit) {
+suspend fun <JobType : Job> JobType.logged(
+    logger: KLogger,
+    context: JobExecutionContext?,
+    execute: suspend () -> Unit,
+) {
     logger.info { context.startMessage }
     execute()
     logger.info { context.finishMessage }
