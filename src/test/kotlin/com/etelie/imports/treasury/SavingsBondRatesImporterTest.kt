@@ -54,7 +54,7 @@ internal class SavingsBondRatesImporterTest {
 
         val message: String = SavingsBondRatesImporter.import()
 
-        assertEquals("SavingsBondRatesImport failed; scrape failure", message)
+        assertEquals(SavingsBondRatesImporter.getFailureMessage("scrape failure"), message)
         coVerify(exactly = 0) { SecurityPriceTable.insert(any(), any()) }
     }
 
