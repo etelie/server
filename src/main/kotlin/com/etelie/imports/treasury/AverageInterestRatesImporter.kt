@@ -3,6 +3,7 @@ package com.etelie.imports.treasury
 import com.etelie.imports.ImporterSecurityAssociationTable
 import com.etelie.imports.ImporterSecurityAssociationTable.detailForSerialName
 import com.etelie.imports.ImporterSecurityAssociationTable.serialNames
+import com.etelie.imports.PriceImporter
 import com.etelie.securities.detail.SecurityDetail
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.async
@@ -17,7 +18,7 @@ import java.math.BigDecimal
 
 private val log = KotlinLogging.logger {}
 
-object AverageInterestRatesImport {
+object AverageInterestRatesImporter : PriceImporter() {
 
     const val importerId = 1
 
@@ -35,7 +36,11 @@ object AverageInterestRatesImport {
                     ?: throw IllegalStateException("Security type not found after filter")
             }
 
-        averageRatesPerSecurity.entries.joinToString("\n")
+        getSuccessMessage(0).also {
+            val message = averageRatesPerSecurity.entries.joinToString("\n")
+            log.info { "Spurious result: $message" }
+            log.info { it }
+        }
     }
 
 }

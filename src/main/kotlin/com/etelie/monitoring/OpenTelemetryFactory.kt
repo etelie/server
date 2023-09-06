@@ -18,7 +18,11 @@ import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 
 object OpenTelemetryFactory {
 
-    fun fromEnvironment(executionEnvironment: ExecutionEnvironment): OpenTelemetry {
+    val instance by lazy {
+        fromEnvironment(ExecutionEnvironment.current)
+    }
+
+    private fun fromEnvironment(executionEnvironment: ExecutionEnvironment): OpenTelemetry {
         if (!executionEnvironment.isDeployable()) {
             return OpenTelemetry.noop()
         }

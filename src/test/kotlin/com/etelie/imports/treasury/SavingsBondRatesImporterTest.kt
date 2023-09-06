@@ -20,7 +20,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
-internal class SavingsBondRatesImportTest {
+internal class SavingsBondRatesImporterTest {
 
     private val mockEEFixedRate = BigDecimal("1.1")
     private val mockIFixedRate = BigDecimal("2.2")
@@ -52,15 +52,15 @@ internal class SavingsBondRatesImportTest {
     fun `content not found exception handled`(): Unit = runBlocking {
         every { TreasuryDirectScraper.scrapeSavingsBondRates() } throws WebContentNotFoundException()
 
-        val message: String = SavingsBondRatesImport.import()
+        val message: String = SavingsBondRatesImporter.import()
 
-        assertEquals("SavingsBondRatesImport failed; scrape failure", message)
+        assertEquals(SavingsBondRatesImporter.getFailureMessage("scrape failure"), message)
         coVerify(exactly = 0) { SecurityPriceTable.insert(any(), any()) }
     }
 
     @Test
     fun `import both savings bond types`(): Unit = runBlocking {
-        val message: String = SavingsBondRatesImport.import()
+        val message: String = SavingsBondRatesImporter.import()
         val expectedEEPrice = SecurityPrice(
             purchasedTimestamp = null,
             issuedTimestamp = mockEEIssueDate.atStartOfDayIn(TimeZone.UTC),

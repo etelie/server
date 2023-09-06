@@ -1,5 +1,6 @@
 package com.etelie.imports.treasury
 
+import com.etelie.imports.PriceImporter
 import com.etelie.network.WebContentNotFoundException
 import com.etelie.securities.SecurityTerm
 import com.etelie.securities.SecurityType
@@ -15,7 +16,7 @@ import java.math.BigDecimal
 
 private val log = KotlinLogging.logger {}
 
-object SavingsBondRatesImport {
+object SavingsBondRatesImporter : PriceImporter() {
 
     const val importerId = 3
 
@@ -24,7 +25,7 @@ object SavingsBondRatesImport {
         try {
             scraperResult = TreasuryDirectScraper.scrapeSavingsBondRates()
         } catch (e: WebContentNotFoundException) {
-            return@coroutineScope "${SavingsBondRatesImport::class.simpleName} failed; scrape failure".also {
+            return@coroutineScope getFailureMessage("scrape failure").also {
                 log.error(e) { it }
             }
         }
@@ -51,8 +52,8 @@ object SavingsBondRatesImport {
             total + insertions
         }
 
-        "${SavingsBondRatesImport::class.simpleName} complete; $insertedPricesCount prices inserted into security_price table".also {
-            log.info { it.replace("\n", "") }
+        getSuccessMessage(insertedPricesCount).also {
+            log.info { it }
         }
     }
 

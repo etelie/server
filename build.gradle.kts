@@ -144,10 +144,8 @@ dependencies {
     implementation(platform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion"))
     implementation("io.opentelemetry", "opentelemetry-api")
     implementation("io.opentelemetry", "opentelemetry-sdk")
-    implementation("io.opentelemetry", "opentelemetry-semconv")
     implementation("io.opentelemetry", "opentelemetry-exporter-otlp")
     implementation("io.opentelemetry", "opentelemetry-extension-kotlin")
-    implementation("io.opentelemetry.instrumentation", "opentelemetry-ktor-2.0", openTelemetryInstrumentationVersion)
 
     // Netty/TomcatNative
     implementation(

@@ -16,13 +16,13 @@ class AverageInterestRatesImportJob : Job {
 
     override fun execute(context: JobExecutionContext?): Unit = runBlocking(jobCoroutineContext) {
         logged(log, context) {
-            AverageInterestRatesImport.import()
+            AverageInterestRatesImporter.import()
         }
     }
 
     companion object {
         private suspend fun getCronExpression(): String {
-            return ImporterTable.fetchCronExpression(AverageInterestRatesImport.importerId)
+            return ImporterTable.fetchCronExpression(AverageInterestRatesImporter.importerId)
         }
         suspend fun getJobDefinition(): JobDefinition {
             return AverageInterestRatesImportJob::class.createStandardJobDefinition(getCronExpression())
