@@ -1,9 +1,11 @@
 package com.etelie.schedule
 
 import com.etelie.application.EtelieException
+import com.etelie.time.toJavaTimeZone
 import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
+import kotlinx.datetime.TimeZone
 import org.quartz.CronScheduleBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
@@ -40,6 +42,7 @@ fun TriggerBuilder<Trigger>.withStandardSettings(klass: KClass<out Job>): Trigge
 fun CronScheduleBuilder.withStandardSettings(): CronScheduleBuilder {
     return apply {
         withMisfireHandlingInstructionFireAndProceed()
+        inTimeZone(TimeZone.UTC.toJavaTimeZone())
     }
 }
 
@@ -59,7 +62,9 @@ fun KClass<out Job>.createStandardTrigger(scheduleBuilder: ScheduleBuilder<out T
 
 fun KClass<out Job>.createStandardJobDefinition(cronExpression: String): JobDefinition {
     val jobDetail = createStandardJobDetail()
-    val scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withStandardSettings()
+    val scheduleBuilder = CronScheduleBuilder
+        .cronSchedule(cronExpression)
+        .withStandardSettings()
     val trigger = createStandardTrigger(scheduleBuilder)
     return JobDefinition(jobDetail, trigger)
 }
