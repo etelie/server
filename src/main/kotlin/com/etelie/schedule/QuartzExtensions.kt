@@ -6,6 +6,7 @@ import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaZoneId
 import org.quartz.CronScheduleBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
@@ -14,8 +15,7 @@ import org.quartz.JobExecutionContext
 import org.quartz.ScheduleBuilder
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 
@@ -75,7 +75,7 @@ val JobExecutionContext?.name: String
 
 val JobExecutionContext?.startMessage: String
     get() = run {
-        val fireTime: String = this?.fireTime?.toInstant()?.atOffset(ZoneOffset.UTC)?.let {
+        val fireTime: String = this?.fireTime?.toInstant()?.atZone(TimeZone.UTC.toJavaZoneId())?.let {
             DateTimeFormatter.ISO_OFFSET_TIME.format(it)
         } ?: "unknown time"
         "$name started at $fireTime"
@@ -83,7 +83,7 @@ val JobExecutionContext?.startMessage: String
 
 val JobExecutionContext?.finishMessage: String
     get() = run {
-        val endTime: String = DateTimeFormatter.ISO_OFFSET_TIME.format(OffsetDateTime.now())
+        val endTime: String = DateTimeFormatter.ISO_OFFSET_TIME.format(ZonedDateTime.now(TimeZone.UTC.toJavaZoneId()))
         "$name finished at $endTime"
     }
 
