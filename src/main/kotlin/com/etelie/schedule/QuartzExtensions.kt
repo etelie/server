@@ -14,7 +14,8 @@ import org.quartz.JobExecutionContext
 import org.quartz.ScheduleBuilder
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 
@@ -74,7 +75,7 @@ val JobExecutionContext?.name: String
 
 val JobExecutionContext?.startMessage: String
     get() = run {
-        val fireTime: String = this?.fireTime?.toInstant()?.let {
+        val fireTime: String = this?.fireTime?.toInstant()?.atOffset(ZoneOffset.UTC)?.let {
             DateTimeFormatter.ISO_OFFSET_TIME.format(it)
         } ?: "unknown time"
         "$name started at $fireTime"
@@ -82,7 +83,7 @@ val JobExecutionContext?.startMessage: String
 
 val JobExecutionContext?.finishMessage: String
     get() = run {
-        val endTime: String = DateTimeFormatter.ISO_OFFSET_TIME.format(Instant.now())
+        val endTime: String = DateTimeFormatter.ISO_OFFSET_TIME.format(OffsetDateTime.now())
         "$name finished at $endTime"
     }
 
