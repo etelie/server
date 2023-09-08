@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     ).start(wait = true)
 }
 
-@Suppress("unused") // Referenced in application.yaml
+@Suppress("unused") // Referenced in application.yml
 fun Application.module() {
     ExecutionEnvironment.initialize(environment)
     val buildTag: String = environment.config.property("etelie.build.tag").getString()
