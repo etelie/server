@@ -389,6 +389,7 @@ common: &default_settings
 
 production:
   <<: *default_settings
+  app_name: server-production
 
 staging:
   <<: *default_settings
