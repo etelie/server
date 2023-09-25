@@ -15,7 +15,7 @@ enum class Control(
     }
 
     companion object {
-        val coroutineContext = Dispatchers.IO + CoroutineName(Control::class.simpleName!!)
+        private val coroutineContext = Dispatchers.IO + CoroutineName(Control::class.simpleName!!)
     }
 
 }

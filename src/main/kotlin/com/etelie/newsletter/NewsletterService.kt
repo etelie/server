@@ -8,13 +8,12 @@ private val log = logger { }
 
 object NewsletterService {
 
-    suspend fun createSubscription(emailAddress: String, ipAddress: String): NewsletterTarget {
+    suspend fun createSubscription(emailAddress: String): NewsletterTarget {
         return NewsletterTarget(
             emailAddress = emailAddress,
-            ipAddress = ipAddress,
         ).also {
             try {
-                val existing: NewsletterTarget? = NewsletterTargetTable.get(it.emailAddress)
+                val existing: NewsletterTarget? = NewsletterTargetTable.getById(it.emailAddress)
                 if (existing != null) {
                     return existing
                 }

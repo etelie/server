@@ -30,7 +30,7 @@ fun Route.subscriptionRoute() {
         }
 
         try {
-            NewsletterService.createSubscription(email, ipAddress)
+            NewsletterService.createSubscription(email)
         } catch (e: EtelieException) {
             call.respond(HttpStatusCode.BadRequest, "Failed to create subscription")
         }
