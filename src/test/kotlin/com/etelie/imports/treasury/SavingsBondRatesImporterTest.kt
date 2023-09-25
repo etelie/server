@@ -45,7 +45,6 @@ internal class SavingsBondRatesImporterTest {
 
         mockkObject(SecurityPriceTable)
         coEvery { SecurityPriceTable.insert(any(), any()) } returns 1
-
     }
 
     @Test

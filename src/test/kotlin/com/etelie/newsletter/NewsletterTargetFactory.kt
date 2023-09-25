@@ -2,10 +2,12 @@ package com.etelie.newsletter
 
 class NewsletterTargetFactory private constructor() {
 
+    var created = baseSecurityDetail.created
+    var updated = baseSecurityDetail.updated
+
     companion object {
         private val baseSecurityDetail = NewsletterTarget(
             emailAddress = "test@example.com",
-            ipAddress = "192.168.0.1",
         )
 
         fun build(block: NewsletterTargetFactory.() -> Unit): NewsletterTarget {
